@@ -598,9 +598,9 @@
     <string name="versions_manage_game_path_exists_message">यह गेम डायरेक्टरी किसी मौजूदा डायरेक्टरी से टकराती है। एक समय में दो गेम डायरेक्टरी मैनेज नहीं कर सकते।</string>
     <string name="versions_manage_game_path_error_title">गेम डायरेक्टरी खोलने में समस्या</string>
     <string name="versions_manage_game_path_storage_permissions">बाहरी स्टोरेज में गेम इंस्टॉल करने के लिए पहले लॉन्चर को स्टोरेज की अनुमति दें।</string>
-    <string name="versions_manage_game_path_storage_permissions_sdk30">बाहरी स्टोरेज में गेम इंस्टॉल करने के लिए पहले लॉन्चर को 'सभी फ़ाइलें मैनेज करें' की अनुमति दें।</string>
+    <string name="versions_manage_game_path_storage_permissions_sdk30">बाहरी स्टोरेज में गेम इंस्टॉल करने के लिए पहले लॉन्चर को \'सभी फ़ाइलें मैनेज करें\' की अनुमति दें।</string>
     <string name="versions_manage_game_storage_permissions">बाहरी गेम फ़ोल्डर इस्तेमाल करने के लिए लॉन्चर को स्टोरेज की अनुमति दें।</string>
-    <string name="versions_manage_game_storage_permissions_sdk30">बाहरी गेम फ़ोल्डर इस्तेमाल करने के लिए लॉन्चर को 'सभी फ़ाइलें मैनेज करें' की अनुमति दें।</string>
+    <string name="versions_manage_game_storage_permissions_sdk30">बाहरी गेम फ़ोल्डर इस्तेमाल करने के लिए लॉन्चर को \'सभी फ़ाइलें मैनेज करें\' की अनुमति दें।</string>
     <string name="versions_manage_no_versions">कोई वर्ज़न इंस्टॉल नहीं है</string>
     <string name="versions_manage_category_vanilla">वेनिला</string>
     <string name="versions_manage_category_modloader">मॉड सपोर्ट वाला</string>
@@ -609,10 +609,10 @@
     <string name="versions_manage_invalid">अमान्य वर्ज़न</string>
     <string name="versions_manage_rename_version">वर्ज़न का नाम बदलें</string>
     <string name="versions_manage_copy_version">वर्ज़न की कॉपी बनाएँ</string>
-    <string name="versions_manage_copy_version_tip">मौजूदा वर्ज़न की नई कॉपी बनाएँ। इसमें डिफ़ॉल्ट रूप से वर्ज़न आइसोलेशन चालू रहेगा। सेव, रिसोर्स पैक, गेम सेटिंग्स आदि भी कॉपी करने के लिए नीचे 'सभी फ़ाइलें कॉपी करें' चुनें।</string>
+    <string name="versions_manage_copy_version_tip">मौजूदा वर्ज़न की नई कॉपी बनाएँ। इसमें डिफ़ॉल्ट रूप से वर्ज़न आइसोलेशन चालू रहेगा। सेव, रिसोर्स पैक, गेम सेटिंग्स आदि भी कॉपी करने के लिए नीचे \'सभी फ़ाइलें कॉपी करें\' चुनें।</string>
     <string name="versions_manage_copy_version_all">सभी फ़ाइलें कॉपी करें</string>
     <string name="versions_manage_delete_version">वर्ज़न हटाएँ</string>
-    <string name="versions_manage_delete_version_tip_hint1">वर्ज़न हटाने पर './versions/%s' फ़ोल्डर की सभी फ़ाइलें भी हट जाएँगी, जिनमें सेव, रिसोर्स पैक और मॉड शामिल हैं।</string>
+    <string name="versions_manage_delete_version_tip_hint1">वर्ज़न हटाने पर \'./versions/%s\' फ़ोल्डर की सभी फ़ाइलें भी हट जाएँगी, जिनमें सेव, रिसोर्स पैक और मॉड शामिल हैं।</string>
     <string name="versions_manage_delete_version_tip_hint2">अगर वर्ज़न आइसोलेशन चालू है, तो संबंधित फ़ाइलें इसी फ़ोल्डर में होंगी और वर्ज़न हटाने पर वे भी हट जाएँगी।</string>
     <string name="versions_manage_delete_version_tip_hint3">अगर वर्ज़न आइसोलेशन बंद है, तो गेम फ़ाइलें मुख्य फ़ोल्डर में रहेंगी और वर्ज़न हटाने से सभी संबंधित फ़ाइलें नहीं हटेंगी।</string>
     <string name="versions_manage_delete_version_tip_hint4">आगे बढ़ने से पहले ज़रूरी डेटा का बैकअप लें और सावधानी से हटाएँ!</string>
@@ -1397,7 +1397,7 @@
     <string name="renderer_version_support">Minecraft वर्ज़न सपोर्ट:</string>
     <string name="renderer_version_unsupported_warning">मौजूदा रेंडरर %s इस गेम वर्ज़न को सपोर्ट नहीं करता। इसे जारी रखने से रेंडरिंग की समस्या या क्रैश हो सकता है। क्या आप आगे बढ़ना चाहते हैं?</string>
     <string name="renderer_version_storage_permissions">मौजूदा रेंडरर %s को कॉन्फ़िग फ़ाइल से सेट किया जा सकता है। पहले लॉन्चर को बाहरी स्टोरेज की अनुमति दें, वरना यह रेंडरर की कॉन्फ़िग फ़ाइल पढ़ नहीं पाएगा।</string>
-    <string name="renderer_version_storage_permissions_sdk30">मौजूदा रेंडरर %s को कॉन्फ़िग फ़ाइल से सेट किया जा सकता है। पहले लॉन्चर को 'सभी फ़ाइलें मैनेज करें' की अनुमति दें, वरना यह रेंडरर की कॉन्फ़िग फ़ाइल पढ़ नहीं पाएगा।</string>
+    <string name="renderer_version_storage_permissions_sdk30">मौजूदा रेंडरर %s को कॉन्फ़िग फ़ाइल से सेट किया जा सकता है। पहले लॉन्चर को \'सभी फ़ाइलें मैनेज करें\' की अनुमति दें, वरना यह रेंडरर की कॉन्फ़िग फ़ाइल पढ़ नहीं पाएगा।</string>
     <string name="renderer_version_all">सभी वर्ज़न</string>
     <string name="plugin_download_title">प्लगइन डाउनलोड करें</string>
     <string name="plugin_download_summary">प्लगइन डाउनलोड करके ऐप की तरह इंस्टॉल करें। लॉन्चर दोबारा खोलने पर यह अपने-आप लोड हो जाएगा!</string>
@@ -1421,7 +1421,7 @@
     <string name="manage_delete_all_error">रिसोर्स हटाते समय त्रुटि हुई</string>
     <string name="manage_delete_all_success">चुनी गई सभी रिसोर्स फ़ाइलें सफलतापूर्वक हट गईं!</string>
     <string name="gamepad_mode_prompt_description">गेमपैड इनपुट मिला। लॉन्चर दो गेमपैड इनपुट मोड सपोर्ट करता है। इस्तेमाल करने वाला मोड चुनें।</string>
-    <string name="gamepad_mode_prompt_hint">बाद में इसे गेम मेन्यू के 'Gamepad' टैब या लॉन्चर सेटिंग्स में बदल सकते हैं।</string>
+    <string name="gamepad_mode_prompt_hint">बाद में इसे गेम मेन्यू के \'Gamepad\' टैब या लॉन्चर सेटिंग्स में बदल सकते हैं।</string>
     <string name="control_keyboard_bind_title">कुंजी बाँधें</string>
     <string name="control_keyboard_bind_summary">अपने कीबोर्ड पर वह कुंजी दबाएँ जिसे जोड़ना चाहते हैं</string>
     <string name="upgrade_version_change">वर्ज़न: %s</string>
@@ -1442,7 +1442,7 @@
     <string name="version_summary_fools_2_0">हम इन्हें अपडेट नहीं करेंगे! बग मिला तो आपकी किस्मत खराब! XD</string>
     <string name="version_summary_fools_the_love_and_hugs_update">प्यार और गले मिलने वाला अपडेट, दुनिया को शांति और इंद्रधनुष से भरता है।</string>
     <string name="version_summary_fools_trendy_update">भविष्य आ गया! Minecraft में आधुनिक तकनीक जोड़ दी गई है!</string>
-    <string name="version_summary_fools_3d_shareware">हमें तहखाने से Minecraft का यह '1994 DOS वर्ज़न' मिला है!</string>
+    <string name="version_summary_fools_3d_shareware">हमें तहखाने से Minecraft का यह \'1994 DOS वर्ज़न\' मिला है!</string>
     <string name="version_summary_fools_infinite">हमने 2 अरब (ठीक 2,147,483,647) नए डायमेंशन जोड़ दिए हैं!</string>
     <string name="version_summary_fools_one_block_at_time">गेम को उसके सबसे सरल रूप में बदल दिया: एक समय में एक ब्लॉक।</string>
     <string name="version_summary_fools_a_or_b">रिसर्च बताती है कि खिलाड़ियों को चुनाव पसंद हैं, इसलिए अब हर चीज़ पर वोट कर सकते हैं!</string>
@@ -1506,7 +1506,7 @@
     <string name="mods_update">मॉड अपडेट करें</string>
     <string name="screenshots_manage">स्क्रीनशॉट</string>
     <string name="servers_list">सर्वर</string>
-    <string name="settings_control_mouse_physical_mouse_warning">अगर आपका डिवाइस माउस के दाएँ क्लिक को Back या बीच वाले क्लिक को Home समझता है, तो System Settings > Developer Options में 'Disable Permission Monitoring' चालू करें। इससे समस्या ठीक हो सकती है।</string>
+    <string name="settings_control_mouse_physical_mouse_warning">अगर आपका डिवाइस माउस के दाएँ क्लिक को Back या बीच वाले क्लिक को Home समझता है, तो System Settings > Developer Options में \'Disable Permission Monitoring\' चालू करें। इससे समस्या ठीक हो सकती है।</string>
     <string name="about_sponsor">सपोर्ट करें</string>
     <string name="about_sponsors_title">लॉन्चर के प्रायोजक</string>
     <string name="about_sponsors_summary">%s को सपोर्ट करने वाले सभी प्रायोजकों का धन्यवाद</string>

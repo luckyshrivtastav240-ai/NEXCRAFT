@@ -6,6 +6,12 @@ on:
       - '**'
   workflow_dispatch:
 
+# Keep only the newest build for each branch. Rapid commits should not
+# leave dozens of obsolete Android matrix builds waiting in the runner queue.
+concurrency:
+  group: nexcraft-build-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   Build:
     uses: ./.github/workflows/build.yml

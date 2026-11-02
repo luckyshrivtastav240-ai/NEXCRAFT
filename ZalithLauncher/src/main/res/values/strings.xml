@@ -3052,35 +3052,66 @@
     <string name="guide_tip_blank">Tap any blank area to continue to the next step</string>
     <!-- Next-step hint shown near a screen corner during the final guide step; tapping any blank area finishes the whole guide -->
     <string name="guide_tip_finish">Tap any blank area to finish the guide</string>
+    <!-- Title of the optional NEXCRAFT PIN protection setting -->
     <string name="app_lock_title">App Lock</string>
+    <!-- Summary shown when the NEXCRAFT app lock is enabled -->
     <string name="app_lock_summary_on">PIN lock is ON. NEXCRAFT asks for your PIN when it opens.</string>
+    <!-- Summary shown when the NEXCRAFT app lock is disabled -->
     <string name="app_lock_summary_off">PIN lock is OFF. Set a 4–8 digit PIN to protect NEXCRAFT.</string>
+    <!-- Dialog title for changing or disabling the app PIN -->
     <string name="app_lock_manage_title">Manage app lock</string>
+    <!-- Dialog title shown when creating the first app PIN -->
     <string name="app_lock_set_title">Set app PIN</string>
+    <!-- Label for the current PIN input field -->
     <string name="app_lock_current_pin">Current PIN</string>
+    <!-- Label for the new PIN input field -->
     <string name="app_lock_new_pin">New PIN</string>
+    <!-- Label for the first PIN input field -->
     <string name="app_lock_create_pin">Create PIN</string>
+    <!-- Label for confirming a new PIN -->
     <string name="app_lock_confirm_pin">Confirm PIN</string>
+    <!-- Button that saves the new app PIN -->
     <string name="app_lock_save_pin">Save PIN</string>
+    <!-- Button that disables the app PIN lock -->
     <string name="app_lock_turn_off">Turn OFF</string>
+    <!-- Button that closes the app PIN dialog -->
     <string name="app_lock_cancel">Cancel</string>
+    <!-- Validation error shown when the current PIN is wrong -->
     <string name="app_lock_incorrect_current">Current PIN is incorrect.</string>
+    <!-- Validation error shown when a PIN is not 4 to 8 digits -->
     <string name="app_lock_length_error">PIN must be 4 to 8 digits.</string>
+    <!-- Validation error shown when the new PIN fields do not match -->
     <string name="app_lock_mismatch">PIN entries do not match.</string>
+    <!-- Validation error shown when disabling the lock without the current PIN -->
     <string name="app_lock_turn_off_error">Enter your current PIN to turn off the lock.</string>
+    <!-- Title shown on the NEXCRAFT app lock screen -->
     <string name="app_lock_gate_title">NEXCRAFT locked</string>
+    <!-- Instruction shown on the NEXCRAFT app lock screen -->
     <string name="app_lock_gate_prompt">Enter your PIN to open the launcher.</string>
+    <!-- Button that unlocks NEXCRAFT after PIN verification -->
     <string name="app_lock_unlock">Unlock</string>
+    <!-- Error shown when the entered app unlock PIN is incorrect -->
     <string name="app_lock_incorrect">Incorrect PIN. Try again.</string>
+    <!-- Title of the home screen app icon design selector -->
     <string name="nexcraft_icon_style_title">App icon design</string>
+    <!-- Description of the home screen app icon design selector -->
     <string name="nexcraft_icon_style_summary">Choose the NEXCRAFT icon shown on your home screen.</string>
+    <!-- Classic NEXCRAFT monogram app icon style -->
     <string name="nexcraft_icon_style_nx">NX Classic</string>
+    <!-- Minecraft grass block app icon style -->
     <string name="nexcraft_icon_style_grass">Grass Block</string>
+    <!-- Ender eye app icon style -->
     <string name="nexcraft_icon_style_ender">Ender Eye</string>
+    <!-- Title of the app icon accent color selector -->
     <string name="nexcraft_icon_color_title">App icon color</string>
+    <!-- Description of the app icon accent color selector -->
     <string name="nexcraft_icon_color_summary">Choose the accent color for your selected icon.</string>
+    <!-- Blue accent for the app icon -->
     <string name="nexcraft_icon_color_blue">Ocean Blue</string>
+    <!-- Green accent for the app icon -->
     <string name="nexcraft_icon_color_green">Emerald Green</string>
+    <!-- Purple accent for the app icon -->
     <string name="nexcraft_icon_color_purple">Royal Purple</string>
+    <!-- Red accent for the app icon -->
     <string name="nexcraft_icon_color_red">Crimson Red</string>
 </resources>

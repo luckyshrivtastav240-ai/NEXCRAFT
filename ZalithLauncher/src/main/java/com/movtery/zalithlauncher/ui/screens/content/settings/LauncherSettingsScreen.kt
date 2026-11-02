@@ -946,9 +946,9 @@ private fun AppLockSettingsCard() {
             confirmButton = {
                 TextButton(onClick = {
                     error = when {
-                        enabled && !AppLockStore.verify(context, currentPin) -> stringResource(R.string.app_lock_incorrect_current)
-                        newPin.length !in 4..8 -> stringResource(R.string.app_lock_length_error)
-                        newPin != confirmPin -> stringResource(R.string.app_lock_mismatch)
+                        enabled && !AppLockStore.verify(context, currentPin) -> context.getString(R.string.app_lock_incorrect_current)
+                        newPin.length !in 4..8 -> context.getString(R.string.app_lock_length_error)
+                        newPin != confirmPin -> context.getString(R.string.app_lock_mismatch)
                         else -> null
                     }
                     if (error == null) {
@@ -967,9 +967,9 @@ private fun AppLockSettingsCard() {
                                 enabled = false
                                 dialogOpen = false
                             } else {
-                                error = stringResource(R.string.app_lock_turn_off_error)
+                                error = context.getString(R.string.app_lock_turn_off_error)
                             }
-                        }) { Text("Turn OFF") }
+                        }) { Text(stringResource(R.string.app_lock_turn_off)) }
                     }
                     TextButton(onClick = { dialogOpen = false }) { Text(stringResource(R.string.app_lock_cancel)) }
                 }

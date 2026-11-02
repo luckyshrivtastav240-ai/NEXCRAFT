@@ -558,4 +558,10 @@
     <string name="download_install_input_version_name">वर्ज़न का नाम</string>
     <string name="download_install_input_version_name_title">नया वर्ज़न नाम डालें</string>
     <string name="download_install_warning_mobile_data">मोबाइल डेटा से डाउनलोड करने पर आपका डेटा खर्च होगा।</string>
+
+    <string name="nexcraft_performance_profiles_title">गेम प्रदर्शन प्रोफ़ाइल</string>
+    <string name="nexcraft_performance_profiles_summary">गेम रेज़ोल्यूशन और लगातार प्रदर्शन के लिए शुरुआती सेटिंग चुनें। RAM की मात्रा आपके नियंत्रण में रहेगी। असली FPS आपके डिवाइस, Minecraft वर्ज़न, रेंडरर और सेटिंग्स पर निर्भर करता है।</string>
+    <string name="nexcraft_performance_profile_performance">बेहतर प्रदर्शन</string>
+    <string name="nexcraft_performance_profile_balanced">संतुलित</string>
+    <string name="nexcraft_performance_profile_quality">बेहतर ग्राफ़िक्स</string>
 </resources>

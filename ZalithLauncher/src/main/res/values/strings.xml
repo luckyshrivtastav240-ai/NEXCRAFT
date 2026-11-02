@@ -3114,4 +3114,6 @@
     <string name="nexcraft_icon_color_purple">Royal Purple</string>
     <!-- Red accent for the app icon -->
     <string name="nexcraft_icon_color_red">Crimson Red</string>
+    <!-- License notice displayed on the NEXCRAFT home identity card -->
+    <string name="nexcraft_unofficial_modified_notice">Unofficial Modified Version</string>
 </resources>

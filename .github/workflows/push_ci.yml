@@ -22,3 +22,48 @@ jobs:
       STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
       OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
       CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
+
+  Screenshot:
+    name: Capture real NEXCRAFT Android screen
+    needs: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Download x86_64 debug APK
+        uses: actions/download-artifact@v7
+        with:
+          name: debug apk (x86_64)
+          path: artifacts/apk
+
+      - name: Verify APK
+        run: |
+          APK="$(find artifacts/apk -type f -name '*.apk' | head -n 1)"
+          test -n "$APK"
+          echo "APK_PATH=$APK" >> "$GITHUB_ENV"
+          ls -lh "$APK"
+
+      - name: Install and capture app in Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-boot-timeout: 600
+          script: |
+            adb install "$APK_PATH"
+            adb shell monkey -p com.movtery.zalithlauncher.v2.debug 1
+            sleep 35
+            mkdir -p screenshots
+            adb shell screencap -p /sdcard/nexcraft-home.png
+            adb pull /sdcard/nexcraft-home.png screenshots/nexcraft-home.png
+            test -s screenshots/nexcraft-home.png
+            file screenshots/nexcraft-home.png
+
+      - name: Upload actual emulator screenshot
+        uses: actions/upload-artifact@v7
+        with:
+          name: NEXCRAFT real emulator screenshot
+          path: screenshots/nexcraft-home.png
+          if-no-files-found: error
+          retention-days: 14

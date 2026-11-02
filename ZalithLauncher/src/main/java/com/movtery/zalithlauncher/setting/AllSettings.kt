@@ -36,6 +36,8 @@ import com.movtery.zalithlauncher.setting.enums.FpsDisplayMode
 import com.movtery.zalithlauncher.setting.enums.GamepadInputMode
 import com.movtery.zalithlauncher.setting.enums.GestureActionType
 import com.movtery.zalithlauncher.setting.enums.MirrorSourceType
+import com.movtery.zalithlauncher.setting.enums.NEXCRAFTIconColor
+import com.movtery.zalithlauncher.setting.enums.NEXCRAFTIconStyle
 import com.movtery.zalithlauncher.setting.enums.MouseControlMode
 import com.movtery.zalithlauncher.setting.enums.MouseTouchBlockMode
 import com.movtery.zalithlauncher.setting.enums.ResolutionRule
@@ -377,6 +379,12 @@ object AllSettings : SettingsRegistry() {
     val gyroscopeInvertY = boolSetting("gyroscopeInvertY", false)
 
     //Launcher
+    /** NEXCRAFT home-screen icon design. */
+    val launcherAppIconStyle = enumSetting("launcherAppIconStyle", NEXCRAFTIconStyle.NX)
+
+    /** NEXCRAFT home-screen icon accent color. */
+    val launcherAppIconColor = enumSetting("launcherAppIconColor", NEXCRAFTIconColor.BLUE)
+
     /**
      * 颜色主题色
      * Android 12+ 默认动态主题色

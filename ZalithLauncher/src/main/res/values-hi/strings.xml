@@ -19,4 +19,24 @@
     <string name="settings_launcher_background_opacity_title">पृष्ठभूमि की पारदर्शिता</string>
     <string name="settings_launcher_background_video_volume_title">पृष्ठभूमि वीडियो की आवाज़</string>
     <string name="main_launch_game">गेम शुरू करें</string>
+    <string name="app_lock_title">ऐप लॉक</string>
+    <string name="app_lock_summary_on">PIN लॉक चालू है। NEXCRAFT खोलने पर PIN माँगा जाएगा।</string>
+    <string name="app_lock_summary_off">PIN लॉक बंद है। NEXCRAFT की सुरक्षा के लिए 4–8 अंकों का PIN सेट करें।</string>
+    <string name="app_lock_manage_title">ऐप लॉक सेटिंग</string>
+    <string name="app_lock_set_title">ऐप PIN सेट करें</string>
+    <string name="app_lock_current_pin">मौजूदा PIN</string>
+    <string name="app_lock_new_pin">नया PIN</string>
+    <string name="app_lock_create_pin">PIN बनाएँ</string>
+    <string name="app_lock_confirm_pin">PIN की पुष्टि करें</string>
+    <string name="app_lock_save_pin">PIN सेव करें</string>
+    <string name="app_lock_turn_off">बंद करें</string>
+    <string name="app_lock_cancel">रद्द करें</string>
+    <string name="app_lock_incorrect_current">मौजूदा PIN गलत है।</string>
+    <string name="app_lock_length_error">PIN में 4 से 8 अंक होने चाहिए।</string>
+    <string name="app_lock_mismatch">दोनों PIN एक जैसे नहीं हैं।</string>
+    <string name="app_lock_turn_off_error">लॉक बंद करने के लिए मौजूदा PIN डालें।</string>
+    <string name="app_lock_gate_title">NEXCRAFT लॉक है</string>
+    <string name="app_lock_gate_prompt">लॉन्चर खोलने के लिए अपना PIN डालें।</string>
+    <string name="app_lock_unlock">अनलॉक करें</string>
+    <string name="app_lock_incorrect">गलत PIN। फिर से कोशिश करें।</string>
 </resources>

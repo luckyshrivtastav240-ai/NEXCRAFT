@@ -3052,4 +3052,24 @@
     <string name="guide_tip_blank">Tap any blank area to continue to the next step</string>
     <!-- Next-step hint shown near a screen corner during the final guide step; tapping any blank area finishes the whole guide -->
     <string name="guide_tip_finish">Tap any blank area to finish the guide</string>
+    <string name="app_lock_title">App Lock</string>
+    <string name="app_lock_summary_on">PIN lock is ON. NEXCRAFT asks for your PIN when it opens.</string>
+    <string name="app_lock_summary_off">PIN lock is OFF. Set a 4–8 digit PIN to protect NEXCRAFT.</string>
+    <string name="app_lock_manage_title">Manage app lock</string>
+    <string name="app_lock_set_title">Set app PIN</string>
+    <string name="app_lock_current_pin">Current PIN</string>
+    <string name="app_lock_new_pin">New PIN</string>
+    <string name="app_lock_create_pin">Create PIN</string>
+    <string name="app_lock_confirm_pin">Confirm PIN</string>
+    <string name="app_lock_save_pin">Save PIN</string>
+    <string name="app_lock_turn_off">Turn OFF</string>
+    <string name="app_lock_cancel">Cancel</string>
+    <string name="app_lock_incorrect_current">Current PIN is incorrect.</string>
+    <string name="app_lock_length_error">PIN must be 4 to 8 digits.</string>
+    <string name="app_lock_mismatch">PIN entries do not match.</string>
+    <string name="app_lock_turn_off_error">Enter your current PIN to turn off the lock.</string>
+    <string name="app_lock_gate_title">NEXCRAFT locked</string>
+    <string name="app_lock_gate_prompt">Enter your PIN to open the launcher.</string>
+    <string name="app_lock_unlock">Unlock</string>
+    <string name="app_lock_incorrect">Incorrect PIN. Try again.</string>
 </resources>

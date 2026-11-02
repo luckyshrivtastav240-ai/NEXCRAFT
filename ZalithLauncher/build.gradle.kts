@@ -16,10 +16,10 @@ plugins {
 }
 
 val zalithPackageName = "com.movtery.zalithlauncher"
-val launcherAPPName = project.findProperty("launcher_app_name") as? String ?: error("The \"launcher_app_name\" property is not set in gradle.properties.")
-val launcherName = project.findProperty("launcher_name") as? String ?: error("The \"launcher_name\" property is not set in gradle.properties.")
-val launcherShortName = project.findProperty("launcher_short_name") as? String ?: error("The \"launcher_short_name\" property is not set in gradle.properties.")
-val launcherUrl = project.findProperty("url_home") as? String ?: error("The \"url_home\" property is not set in gradle.properties.")
+val launcherAPPName = "NEXCRAFT Launcher"
+val launcherName = "NEXCRAFT"
+val launcherShortName = "NX"
+val launcherUrl = "https://github.com/luckyshrivtastav240-ai/NEXCRAFT"
 
 val launcherVersionCode = (project.findProperty("launcher_version_code") as? String)?.toIntOrNull() ?: error("The \"launcher_version_code\" property is not set as an integer in gradle.properties.")
 val launcherVersionName = project.findProperty("launcher_version_name") as? String ?: error("The \"launcher_version_name\" property is not set in gradle.properties.")

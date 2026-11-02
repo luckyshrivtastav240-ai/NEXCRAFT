@@ -30,7 +30,6 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="${launcher_name}"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/AppTheme.ZalithLauncher"
         android:appCategory="game"
         android:supportsRtl="true"
@@ -58,7 +57,6 @@
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
             android:icon="@mipmap/nx_blue"
-            android:roundIcon="@mipmap/nx_blue"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -71,7 +69,6 @@
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
             android:icon="@mipmap/nx_green"
-            android:roundIcon="@mipmap/nx_green"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
@@ -84,7 +81,6 @@
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
             android:icon="@mipmap/nx_purple"
-            android:roundIcon="@mipmap/nx_purple"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
@@ -97,7 +93,6 @@
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
             android:icon="@mipmap/nx_red"
-            android:roundIcon="@mipmap/nx_red"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
@@ -110,7 +105,6 @@
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
             android:icon="@mipmap/grass_blue"
-            android:roundIcon="@mipmap/grass_blue"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
@@ -123,7 +117,6 @@
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
             android:icon="@mipmap/grass_green"
-            android:roundIcon="@mipmap/grass_green"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
@@ -136,7 +129,6 @@
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
             android:icon="@mipmap/grass_purple"
-            android:roundIcon="@mipmap/grass_purple"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
@@ -149,7 +141,6 @@
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
             android:icon="@mipmap/grass_red"
-            android:roundIcon="@mipmap/grass_red"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
@@ -162,7 +153,6 @@
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
             android:icon="@mipmap/ender_blue"
-            android:roundIcon="@mipmap/ender_blue"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
@@ -175,7 +165,6 @@
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
             android:icon="@mipmap/ender_green"
-            android:roundIcon="@mipmap/ender_green"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
@@ -188,7 +177,6 @@
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
             android:icon="@mipmap/ender_purple"
-            android:roundIcon="@mipmap/ender_purple"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
@@ -201,7 +189,6 @@
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
             android:icon="@mipmap/ender_red"
-            android:roundIcon="@mipmap/ender_red"
             android:enabled="false"
             android:exported="true">
             <intent-filter>

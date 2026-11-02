@@ -3072,4 +3072,15 @@
     <string name="app_lock_gate_prompt">Enter your PIN to open the launcher.</string>
     <string name="app_lock_unlock">Unlock</string>
     <string name="app_lock_incorrect">Incorrect PIN. Try again.</string>
+    <string name="nexcraft_icon_style_title">App icon design</string>
+    <string name="nexcraft_icon_style_summary">Choose the NEXCRAFT icon shown on your home screen.</string>
+    <string name="nexcraft_icon_style_nx">NX Classic</string>
+    <string name="nexcraft_icon_style_grass">Grass Block</string>
+    <string name="nexcraft_icon_style_ender">Ender Eye</string>
+    <string name="nexcraft_icon_color_title">App icon color</string>
+    <string name="nexcraft_icon_color_summary">Choose the accent color for your selected icon.</string>
+    <string name="nexcraft_icon_color_blue">Ocean Blue</string>
+    <string name="nexcraft_icon_color_green">Emerald Green</string>
+    <string name="nexcraft_icon_color_purple">Royal Purple</string>
+    <string name="nexcraft_icon_color_red">Crimson Red</string>
 </resources>

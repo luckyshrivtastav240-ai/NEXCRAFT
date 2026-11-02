@@ -52,12 +52,163 @@
             android:windowSoftInputMode="adjustResize"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
             android:screenOrientation="sensorLandscape">
+        </activity>
+        <activity-alias
+            android:name=".icon.NX_BLUE"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/nx_blue"
+            android:roundIcon="@mipmap/nx_blue"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity-alias>
+        <activity-alias
+            android:name=".icon.NX_GREEN"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/nx_green"
+            android:roundIcon="@mipmap/nx_green"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".icon.NX_PURPLE"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/nx_purple"
+            android:roundIcon="@mipmap/nx_purple"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".icon.NX_RED"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/nx_red"
+            android:roundIcon="@mipmap/nx_red"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".icon.GRASS_BLUE"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/grass_blue"
+            android:roundIcon="@mipmap/grass_blue"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".icon.GRASS_GREEN"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/grass_green"
+            android:roundIcon="@mipmap/grass_green"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".icon.GRASS_PURPLE"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/grass_purple"
+            android:roundIcon="@mipmap/grass_purple"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".icon.GRASS_RED"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/grass_red"
+            android:roundIcon="@mipmap/grass_red"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".icon.ENDER_BLUE"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/ender_blue"
+            android:roundIcon="@mipmap/ender_blue"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".icon.ENDER_GREEN"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/ender_green"
+            android:roundIcon="@mipmap/ender_green"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".icon.ENDER_PURPLE"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/ender_purple"
+            android:roundIcon="@mipmap/ender_purple"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".icon.ENDER_RED"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/ender_red"
+            android:roundIcon="@mipmap/ender_red"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
 
         <activity-alias
             android:label="@string/import_modpack"

@@ -42,6 +42,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -64,6 +67,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.input.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.materialkolor.PaletteStyle
@@ -76,6 +82,7 @@ import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskSystem
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.setting.AppLockStore
 import com.movtery.zalithlauncher.setting.enums.AppLanguage
 import com.movtery.zalithlauncher.setting.enums.BackgroundBlur
 import com.movtery.zalithlauncher.setting.enums.DarkMode
@@ -230,6 +237,14 @@ fun LauncherSettingsScreen(
                         title = stringResource(R.string.settings_launcher_full_screen_title),
                         summary = stringResource(R.string.settings_launcher_full_screen_summary)
                     )
+                }
+            }
+
+            AnimatedItem { ctx ->
+                SettingsCardColumn(
+                    modifier = Modifier.fillMaxWidth().animated(ctx)
+                ) {
+                    AppLockSettingsCard()
                 }
             }
 
@@ -811,5 +826,121 @@ private fun BackgroundOperation(
                 changeOperation(BackgroundOperation.None)
             }
         }
+    }
+}
+
+@Composable
+private fun AppLockSettingsCard() {
+    val context = LocalContext.current
+    var enabled by remember { mutableStateOf(AppLockStore.isEnabled(context)) }
+    var dialogOpen by remember { mutableStateOf(false) }
+    var currentPin by remember { mutableStateOf("") }
+    var newPin by remember { mutableStateOf("") }
+    var confirmPin by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    SettingsCard(
+        modifier = Modifier.fillMaxWidth(),
+        position = CardPosition.Top
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            TitleAndSummary(
+                title = "App Lock",
+                summary = if (enabled) "PIN lock is ON. NEXCRAFT asks for your PIN when it opens."
+                else "PIN lock is OFF. Set a 4–8 digit PIN to protect NEXCRAFT."
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = {
+                    currentPin = ""
+                    newPin = ""
+                    confirmPin = ""
+                    error = null
+                    dialogOpen = true
+                }) {
+                    Text(if (enabled) "Change PIN" else "Set PIN")
+                }
+                if (enabled) {
+                    TextButton(onClick = {
+                        currentPin = ""
+                        newPin = ""
+                        confirmPin = ""
+                        error = null
+                        dialogOpen = true
+                    }) { Text("Turn OFF") }
+                }
+            }
+        }
+    }
+
+    if (dialogOpen) {
+        AlertDialog(
+            onDismissRequest = { dialogOpen = false },
+            title = { Text(if (enabled) "Manage app lock" else "Set app PIN") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (enabled) {
+                        OutlinedTextField(
+                            value = currentPin,
+                            onValueChange = { if (it.length <= 8 && it.all(Char::isDigit)) currentPin = it },
+                            label = { Text("Current PIN") },
+                            singleLine = true,
+                            visualTransformation = PasswordVisualTransformation(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
+                        )
+                    }
+                    OutlinedTextField(
+                        value = newPin,
+                        onValueChange = { if (it.length <= 8 && it.all(Char::isDigit)) newPin = it },
+                        label = { Text(if (enabled) "New PIN" else "Create PIN") },
+                        singleLine = true,
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
+                    )
+                    OutlinedTextField(
+                        value = confirmPin,
+                        onValueChange = { if (it.length <= 8 && it.all(Char::isDigit)) confirmPin = it },
+                        label = { Text("Confirm PIN") },
+                        singleLine = true,
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
+                    )
+                    error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    error = when {
+                        enabled && !AppLockStore.verify(context, currentPin) -> "Current PIN is incorrect."
+                        newPin.length !in 4..8 -> "PIN must be 4 to 8 digits."
+                        newPin != confirmPin -> "PIN entries do not match."
+                        else -> null
+                    }
+                    if (error == null) {
+                        AppLockStore.setPin(context, newPin)
+                        enabled = true
+                        dialogOpen = false
+                    }
+                }) { Text("Save PIN") }
+            },
+            dismissButton = {
+                Row {
+                    if (enabled) {
+                        TextButton(onClick = {
+                            if (AppLockStore.verify(context, currentPin)) {
+                                AppLockStore.disable(context)
+                                enabled = false
+                                dialogOpen = false
+                            } else {
+                                error = "Enter your current PIN to turn off the lock."
+                            }
+                        }) { Text("Turn OFF") }
+                    }
+                    TextButton(onClick = { dialogOpen = false }) { Text("Cancel") }
+                }
+            }
+        )
     }
 }

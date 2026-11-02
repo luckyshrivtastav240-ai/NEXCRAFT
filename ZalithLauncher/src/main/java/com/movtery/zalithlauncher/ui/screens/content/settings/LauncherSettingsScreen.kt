@@ -616,7 +616,20 @@ private fun CustomThemeDialog(
                                 items(PaletteStyle.entries) { style ->
                                     RadioCard(
                                         selected = paletteStyle == style,
-                                        text = style.name,
+                                        text = if (AllSettings.launcherLanguage.state == AppLanguage.HINDI) {
+                                            when (style.name) {
+                                                "TONAL_SPOT" -> "टोनल स्पॉट"
+                                                "NEUTRAL" -> "न्यूट्रल"
+                                                "VIBRANT" -> "वाइब्रेंट"
+                                                "EXPRESSIVE" -> "एक्सप्रेसिव"
+                                                "RAINBOW" -> "इंद्रधनुष"
+                                                "FRUIT_SALAD" -> "फ्रूट सलाद"
+                                                "MONOCHROME" -> "मोनोक्रोम"
+                                                "FIDELITY" -> "फिडेलिटी"
+                                                "CONTENT" -> "कंटेंट"
+                                                else -> style.name.replace("_", " ")
+                                            }
+                                        } else style.name,
                                         onClick = {
                                             onPaletteStyleChange(style)
                                         }

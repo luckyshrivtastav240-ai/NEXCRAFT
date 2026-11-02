@@ -1,19 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-   Sample data extraction rules file; uncomment and customize as necessary.
-   See https://developer.android.com/about/versions/12/backup-restore#xml-changes
-   for details.
--->
+<?xml version="1.0" encoding="utf-8"?>
 <data-extraction-rules>
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <!-- The PIN ciphertext cannot be decrypted without the device Keystore key. -->
+        <exclude domain="sharedpref" path="nexcraft_app_lock.xml" />
     </cloud-backup>
-    <!--
     <device-transfer>
-        <include .../>
-        <exclude .../>
+        <!-- Do not transfer a PIN ciphertext without its original Keystore key. -->
+        <exclude domain="sharedpref" path="nexcraft_app_lock.xml" />
     </device-transfer>
-    -->
 </data-extraction-rules>

@@ -3116,4 +3116,10 @@
     <string name="nexcraft_icon_color_red">Crimson Red</string>
     <!-- License notice displayed on the NEXCRAFT home identity card -->
     <string name="nexcraft_unofficial_modified_notice">Unofficial Modified Version</string>
+
+    <string name="nexcraft_performance_profiles_title">Quick performance profiles</string>
+    <string name="nexcraft_performance_profiles_summary">Choose a starting preset for game resolution and sustained performance. RAM allocation remains under your control. Actual FPS depends on your device, Minecraft version, renderer, and settings.</string>
+    <string name="nexcraft_performance_profile_performance">Performance</string>
+    <string name="nexcraft_performance_profile_balanced">Balanced</string>
+    <string name="nexcraft_performance_profile_quality">Visual quality</string>
 </resources>

@@ -19,9 +19,12 @@
 package com.movtery.zalithlauncher.ui.screens.content.home
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -109,23 +112,38 @@ object HomeCards {
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.extraLarge
         ) {
-            Column(
-                modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
-                verticalArrangement = Arrangement.spacedBy(5.dp)
+            Row(
+                modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-                Text(
-                    text = "NEXCRAFT",
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Text(
-                    text = "Minecraft: Java Edition for Android",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Text(
-                    text = stringResource(R.string.nexcraft_unofficial_modified_notice),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                androidx.compose.material3.Surface(
+                    shape = MaterialTheme.shapes.large,
+                    color = MaterialTheme.colorScheme.primaryContainer
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.nexcraft_icon_nx_blue),
+                        contentDescription = null,
+                        modifier = Modifier.padding(8.dp).size(44.dp)
+                    )
+                }
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = "NEXCRAFT",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    Text(
+                        text = "Minecraft: Java Edition for Android",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = stringResource(R.string.nexcraft_unofficial_modified_notice),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
         }
     }

@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -86,6 +87,7 @@ import com.movtery.zalithlauncher.setting.AppLockStore
 import com.movtery.zalithlauncher.setting.AppIconManager
 import com.movtery.zalithlauncher.setting.enums.NEXCRAFTIconColor
 import com.movtery.zalithlauncher.setting.enums.NEXCRAFTIconStyle
+import com.movtery.zalithlauncher.setting.enums.nexcraftIconPreview
 import com.movtery.zalithlauncher.setting.enums.AppLanguage
 import com.movtery.zalithlauncher.setting.enums.BackgroundBlur
 import com.movtery.zalithlauncher.setting.enums.DarkMode
@@ -255,9 +257,51 @@ fun LauncherSettingsScreen(
                 SettingsCardColumn(
                     modifier = Modifier.fillMaxWidth().animated(ctx)
                 ) {
+                    SettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Top
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Surface(
+                                shape = MaterialTheme.shapes.extraLarge,
+                                color = MaterialTheme.colorScheme.surfaceContainerHighest
+                            ) {
+                                Image(
+                                    painter = painterResource(
+                                        nexcraftIconPreview(
+                                            AllSettings.launcherAppIconStyle.state,
+                                            AllSettings.launcherAppIconColor.state
+                                        )
+                                    ),
+                                    contentDescription = stringResource(R.string.nexcraft_icon_style_title),
+                                    modifier = Modifier.padding(10.dp).size(64.dp)
+                                )
+                            }
+                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text(
+                                    text = stringResource(R.string.nexcraft_icon_style_title),
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                                Text(
+                                    text = stringResource(AllSettings.launcherAppIconStyle.state.textRes) +
+                                        " · " + stringResource(AllSettings.launcherAppIconColor.state.textRes),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Text(
+                                    text = stringResource(R.string.nexcraft_icon_style_summary),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
                     ListSettingsCard(
                         modifier = Modifier.fillMaxWidth(),
-                        position = CardPosition.Top,
+                        position = CardPosition.Middle,
                         unit = AllSettings.launcherAppIconStyle,
                         items = NEXCRAFTIconStyle.entries,
                         title = stringResource(R.string.nexcraft_icon_style_title),

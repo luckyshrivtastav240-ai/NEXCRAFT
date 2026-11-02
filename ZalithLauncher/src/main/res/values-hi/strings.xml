@@ -223,4 +223,5 @@
     <string name="control_editor_edit_position_y">Y निर्देशांक</string>
     <string name="control_editor_edit_size_width">कंट्रोल की चौड़ाई</string>
     <string name="control_editor_edit_size_height">कंट्रोल की ऊँचाई</string>
+    <string name="nexcraft_unofficial_modified_notice">अनौपचारिक संशोधित संस्करण</string>
 </resources>

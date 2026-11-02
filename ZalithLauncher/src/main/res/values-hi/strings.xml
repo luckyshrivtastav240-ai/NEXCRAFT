@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="generic_follow_system">सिस्टम की भाषा अपनाएँ</string>
+    <string name="generic_cancel">रद्द करें</string>
+    <string name="generic_confirm">पुष्टि करें</string>
+    <string name="generic_close">बंद करें</string>
+    <string name="generic_done">हो गया</string>
+    <string name="generic_custom">कस्टम</string>
+    <string name="settings_launcher_color_theme_title">रंग थीम</string>
+    <string name="settings_launcher_color_theme_summary">लॉन्चर के रंग बदलें</string>
+    <string name="settings_launcher_dark_mode_title">डार्क मोड</string>
+    <string name="settings_launcher_language">भाषा</string>
+    <string name="settings_launcher_festivals_effects_title">त्योहारों के विशेष प्रभाव</string>
+    <string name="settings_launcher_festivals_effects_summary">खास अवसरों पर लॉन्चर में विशेष प्रभाव दिखाएँ</string>
+    <string name="settings_launcher_full_screen_title">फुल स्क्रीन मोड</string>
+    <string name="settings_launcher_full_screen_summary">नॉच और कैमरा कटआउट सहित पूरी स्क्रीन पर लॉन्चर दिखाएँ</string>
+    <string name="settings_launcher_background_title">लॉन्चर की पृष्ठभूमि</string>
+    <string name="settings_launcher_background_summary">लॉन्चर की पृष्ठभूमि के लिए तस्वीर या वीडियो चुनें</string>
+    <string name="settings_launcher_background_opacity_title">पृष्ठभूमि की पारदर्शिता</string>
+    <string name="settings_launcher_background_video_volume_title">पृष्ठभूमि वीडियो की आवाज़</string>
+    <string name="main_launch_game">गेम शुरू करें</string>
+</resources>

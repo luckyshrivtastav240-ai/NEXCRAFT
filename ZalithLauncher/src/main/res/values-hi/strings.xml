@@ -1012,17 +1012,12 @@
     <string name="account_supporting_microsoft_tip_link_purchase">Minecraft खरीदें</string>
     <string name="account_supporting_microsoft_tip_link_make_gameid">प्रोफ़ाइल बनाएँ या नाम बदलें</string>
     <string name="account_supporting_microsoft_tip_hint_t1">अपना अकाउंट जोड़ने के लिए ये चरण पूरे करें:</string>
-    <string name="account_supporting_microsoft_tip_hint_t2">1. "Login" दबाएँ — लॉन्चर सत्यापन कोड प्राप्त करेगा।
-</string>
-    <string name="account_supporting_microsoft_tip_hint_t3">2. पॉप-अप वेबसाइट पर %s द्वारा दिया गया कोड डालें और "Allow access" दबाएँ।
-</string>
-    <string name="account_supporting_microsoft_tip_hint_t4">3. वेबसाइट पर दिए निर्देशों से लॉगिन पूरा करें।
-</string>
-    <string name="account_supporting_microsoft_tip_hint_t5">4. "Let this app access your info?" पूछे जाने पर "Accept" दबाएँ।
-</string>
+    <string name="account_supporting_microsoft_tip_hint_t2">1. "Login" दबाएँ — लॉन्चर सत्यापन कोड प्राप्त करेगा।\n</string>
+    <string name="account_supporting_microsoft_tip_hint_t3">2. पॉप-अप वेबसाइट पर %s द्वारा दिया गया कोड डालें और "Allow access" दबाएँ।\n</string>
+    <string name="account_supporting_microsoft_tip_hint_t4">3. वेबसाइट पर दिए निर्देशों से लॉगिन पूरा करें।\n</string>
+    <string name="account_supporting_microsoft_tip_hint_t5">4. "Let this app access your info?" पूछे जाने पर "Accept" दबाएँ।\n</string>
     <string name="account_supporting_microsoft_tip_hint_t6">5. वेबसाइट पर "All done!" दिखने पर अकाउंट अपने-आप जुड़ जाएगा। थोड़ा इंतज़ार करें।</string>
-    <string name="account_supporting_microsoft_tip_hint_t7">अगर वेबसाइट पर "Error" आए या अकाउंट न जुड़े तो ऊपर के चरण फिर से करें।
-</string>
+    <string name="account_supporting_microsoft_tip_hint_t7">अगर वेबसाइट पर "Error" आए या अकाउंट न जुड़े तो ऊपर के चरण फिर से करें।\n</string>
     <string name="account_supporting_microsoft_tip_hint_t8">टिप: नेटवर्क धीमा होने पर वेबसाइट देर से खुलेगी या नहीं खुलेगी। नेटवर्क प्रॉक्सी इस्तेमाल करके फिर कोशिश करें।</string>
     <string name="account_delete_title">अकाउंट हटाएँ</string>
     <string name="account_delete_message">क्या आप लॉन्चर से अकाउंट %s हटाना चाहते हैं?</string>
@@ -1353,10 +1348,8 @@
     <string name="screenshots_manage_export_selected_message">क्या चुने गए %1$d स्क्रीनशॉट सिस्टम गैलरी में एक्सपोर्ट करने हैं?</string>
     <string name="minecraft_download_stat_download_task">डाउनलोड तैयार हो रहे हैं</string>
     <string name="minecraft_download_stat_verify_task">जाँच तैयार हो रही है</string>
-    <string name="minecraft_download_downloading_game_files">फ़ाइलें डाउनलोड हो रही हैं 
-(%1$d/%2$d, %3$s/%4$s)</string>
-    <string name="minecraft_download_verifying_and_repairing_files">फ़ाइलों की जाँच और मरम्मत हो रही है 
-(%1$d/%2$d, %3$s/%4$s)</string>
+    <string name="minecraft_download_downloading_game_files">फ़ाइलें डाउनलोड हो रही हैं \n(%1$d/%2$d, %3$s/%4$s)</string>
+    <string name="minecraft_download_verifying_and_repairing_files">फ़ाइलों की जाँच और मरम्मत हो रही है \n(%1$d/%2$d, %3$s/%4$s)</string>
     <string name="minecraft_download_failed">Minecraft डाउनलोड करते समय त्रुटि हुई</string>
     <string name="minecraft_download_failed_notfound">कुछ ज़रूरी फ़ाइलें डाउनलोड नहीं हो सकीं। कई बार कोशिश के बाद भी समस्या रहे तो गेम की लाइब्रेरी फ़ाइलें गायब हो सकती हैं। गेम दोबारा इंस्टॉल करने की सलाह है।</string>
     <string name="about_launcher_title">लॉन्चर के बारे में</string>

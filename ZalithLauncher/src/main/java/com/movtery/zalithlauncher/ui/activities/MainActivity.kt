@@ -61,6 +61,7 @@ import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.path.URL_SUPPORT
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.AppLockStore
+import com.movtery.zalithlauncher.setting.AppIconManager
 import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.base.BaseAppCompatActivity
@@ -221,6 +222,12 @@ class MainActivity : BaseAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Restore the user's selected NEXCRAFT launcher icon after process recreation or app update.
+        AppIconManager.apply(
+            context = this,
+            style = AllSettings.launcherAppIconStyle.state,
+            color = AllSettings.launcherAppIconColor.state
+        )
         //处理外部导入
         val isImporting = handleImportIfNeeded(intent)
 

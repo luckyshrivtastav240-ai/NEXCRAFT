@@ -114,65 +114,80 @@ object HomeCards {
         }
     }
 
-    /** Persistent identity and license notice for this unofficial modified build. */
+    /** NEXCRAFT dashboard hero with persistent unofficial-build notice. */
     private fun unofficialVersionCard() = SystemCard(id = "system_unofficial_version") {
         val selectedVersion by VersionsManager.currentVersion.collectAsStateWithLifecycle()
         val iconStyle = AllSettings.launcherAppIconStyle.state
         val iconColor = AllSettings.launcherAppIconColor.state
-        BackgroundCard(
+        val hasValidVersion = selectedVersion?.isValid() == true
+
+        androidx.compose.material3.Surface(
             modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.extraLarge
+            shape = MaterialTheme.shapes.extraLarge,
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            tonalElevation = 2.dp
         ) {
             Row(
-                modifier = Modifier.padding(horizontal = 18.dp, vertical = 16.dp),
+                modifier = Modifier.padding(horizontal = 18.dp, vertical = 18.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(14.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 androidx.compose.material3.Surface(
-                    shape = MaterialTheme.shapes.large,
+                    shape = MaterialTheme.shapes.extraLarge,
                     color = MaterialTheme.colorScheme.primaryContainer
                 ) {
                     Image(
                         painter = painterResource(nexcraftIconPreview(iconStyle, iconColor)),
-                        contentDescription = null,
-                        modifier = Modifier.padding(8.dp).size(52.dp)
+                        contentDescription = "NEXCRAFT",
+                        modifier = Modifier.padding(10.dp).size(58.dp)
                     )
                 }
+
                 Column(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Text(
                         text = "NEXCRAFT",
-                        style = MaterialTheme.typography.titleLarge
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = "Minecraft: Java Edition for Android",
-                        style = MaterialTheme.typography.bodyMedium
+                        text = "MINECRAFT: JAVA EDITION  •  ANDROID",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
                         text = stringResource(R.string.nexcraft_unofficial_modified_notice),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    androidx.compose.material3.Surface(
+                        shape = CircleShape,
+                        color = if (hasValidVersion) MaterialTheme.colorScheme.primaryContainer
+                        else MaterialTheme.colorScheme.surfaceContainerHighest,
+                        contentColor = if (hasValidVersion) MaterialTheme.colorScheme.onPrimaryContainer
+                        else MaterialTheme.colorScheme.onSurfaceVariant
                     ) {
-                        androidx.compose.material3.Surface(
-                            shape = CircleShape,
-                            color = if (selectedVersion?.isValid() == true)
-                                MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.outline
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(7.dp)
                         ) {
-                            Spacer(Modifier.size(7.dp))
+                            Spacer(
+                                Modifier
+                                    .size(7.dp)
+                                    .then(
+                                        if (hasValidVersion) Modifier
+                                        else Modifier.alpha(0.55f)
+                                    )
+                            )
+                            Text(
+                                text = selectedVersion?.takeIf { it.isValid() }?.getVersionName()
+                                    ?: stringResource(R.string.versions_manage_no_versions),
+                                style = MaterialTheme.typography.labelMedium
+                            )
                         }
-                        Text(
-                            text = selectedVersion?.takeIf { it.isValid() }?.getVersionName()
-                                ?: stringResource(R.string.versions_manage_no_versions),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
                     }
                 }
             }

@@ -848,9 +848,8 @@ private fun AppLockSettingsCard() {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             TitleAndSummary(
-                title = "App Lock",
-                summary = if (enabled) "PIN lock is ON. NEXCRAFT asks for your PIN when it opens."
-                else "PIN lock is OFF. Set a 4–8 digit PIN to protect NEXCRAFT."
+                title = stringResource(R.string.app_lock_title),
+                summary = stringResource(if (enabled) R.string.app_lock_summary_on else R.string.app_lock_summary_off)
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(onClick = {
@@ -860,7 +859,7 @@ private fun AppLockSettingsCard() {
                     error = null
                     dialogOpen = true
                 }) {
-                    Text(if (enabled) "Change PIN" else "Set PIN")
+                    Text(stringResource(if (enabled) R.string.app_lock_new_pin else R.string.app_lock_create_pin))
                 }
                 if (enabled) {
                     TextButton(onClick = {
@@ -869,7 +868,7 @@ private fun AppLockSettingsCard() {
                         confirmPin = ""
                         error = null
                         dialogOpen = true
-                    }) { Text("Turn OFF") }
+                    }) { Text(stringResource(R.string.app_lock_turn_off)) }
                 }
             }
         }
@@ -878,14 +877,14 @@ private fun AppLockSettingsCard() {
     if (dialogOpen) {
         AlertDialog(
             onDismissRequest = { dialogOpen = false },
-            title = { Text(if (enabled) "Manage app lock" else "Set app PIN") },
+            title = { Text(stringResource(if (enabled) R.string.app_lock_manage_title else R.string.app_lock_set_title)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     if (enabled) {
                         OutlinedTextField(
                             value = currentPin,
                             onValueChange = { if (it.length <= 8 && it.all(Char::isDigit)) currentPin = it },
-                            label = { Text("Current PIN") },
+                            label = { Text(stringResource(R.string.app_lock_current_pin)) },
                             singleLine = true,
                             visualTransformation = PasswordVisualTransformation(),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
@@ -894,7 +893,7 @@ private fun AppLockSettingsCard() {
                     OutlinedTextField(
                         value = newPin,
                         onValueChange = { if (it.length <= 8 && it.all(Char::isDigit)) newPin = it },
-                        label = { Text(if (enabled) "New PIN" else "Create PIN") },
+                        label = { Text(stringResource(if (enabled) R.string.app_lock_new_pin else R.string.app_lock_create_pin)) },
                         singleLine = true,
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
@@ -902,7 +901,7 @@ private fun AppLockSettingsCard() {
                     OutlinedTextField(
                         value = confirmPin,
                         onValueChange = { if (it.length <= 8 && it.all(Char::isDigit)) confirmPin = it },
-                        label = { Text("Confirm PIN") },
+                        label = { Text(stringResource(R.string.app_lock_confirm_pin)) },
                         singleLine = true,
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
@@ -913,9 +912,9 @@ private fun AppLockSettingsCard() {
             confirmButton = {
                 TextButton(onClick = {
                     error = when {
-                        enabled && !AppLockStore.verify(context, currentPin) -> "Current PIN is incorrect."
-                        newPin.length !in 4..8 -> "PIN must be 4 to 8 digits."
-                        newPin != confirmPin -> "PIN entries do not match."
+                        enabled && !AppLockStore.verify(context, currentPin) -> stringResource(R.string.app_lock_incorrect_current)
+                        newPin.length !in 4..8 -> stringResource(R.string.app_lock_length_error)
+                        newPin != confirmPin -> stringResource(R.string.app_lock_mismatch)
                         else -> null
                     }
                     if (error == null) {
@@ -923,7 +922,7 @@ private fun AppLockSettingsCard() {
                         enabled = true
                         dialogOpen = false
                     }
-                }) { Text("Save PIN") }
+                }) { Text(stringResource(R.string.app_lock_save_pin)) }
             },
             dismissButton = {
                 Row {
@@ -934,11 +933,11 @@ private fun AppLockSettingsCard() {
                                 enabled = false
                                 dialogOpen = false
                             } else {
-                                error = "Enter your current PIN to turn off the lock."
+                                error = stringResource(R.string.app_lock_turn_off_error)
                             }
                         }) { Text("Turn OFF") }
                     }
-                    TextButton(onClick = { dialogOpen = false }) { Text("Cancel") }
+                    TextButton(onClick = { dialogOpen = false }) { Text(stringResource(R.string.app_lock_cancel)) }
                 }
             }
         )

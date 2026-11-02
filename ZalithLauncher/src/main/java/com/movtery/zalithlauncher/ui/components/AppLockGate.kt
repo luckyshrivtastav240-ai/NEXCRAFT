@@ -26,6 +26,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.setting.AppLockStore
 
 @Composable
@@ -36,10 +38,10 @@ fun AppLockGate(onUnlocked: () -> Unit) {
     BackHandler(enabled = true) { }
     AlertDialog(
         onDismissRequest = {},
-        title = { Text("NEXCRAFT locked") },
+        title = { Text(stringResource(R.string.app_lock_gate_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Enter your PIN to open the launcher.")
+                Text(stringResource(R.string.app_lock_gate_prompt))
                 OutlinedTextField(
                     value = pin,
                     onValueChange = {
@@ -53,10 +55,10 @@ fun AppLockGate(onUnlocked: () -> Unit) {
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
                     isError = error,
-                    label = { Text("PIN") }
+                    label = { Text(stringResource(R.string.app_lock_current_pin)) }
                 )
                 if (error) Text(
-                    "Incorrect PIN. Try again.",
+                    stringResource(R.string.app_lock_incorrect),
                     color = MaterialTheme.colorScheme.error
                 )
             }
@@ -68,7 +70,7 @@ fun AppLockGate(onUnlocked: () -> Unit) {
                     else error = true
                 },
                 enabled = pin.length in 4..8
-            ) { Text("Unlock") }
+            ) { Text(stringResource(R.string.app_lock_unlock)) }
         }
     )
 }

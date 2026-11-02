@@ -83,6 +83,9 @@ import com.movtery.zalithlauncher.coroutine.TaskSystem
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.setting.AppLockStore
+import com.movtery.zalithlauncher.setting.AppIconManager
+import com.movtery.zalithlauncher.setting.enums.NEXCRAFTIconColor
+import com.movtery.zalithlauncher.setting.enums.NEXCRAFTIconStyle
 import com.movtery.zalithlauncher.setting.enums.AppLanguage
 import com.movtery.zalithlauncher.setting.enums.BackgroundBlur
 import com.movtery.zalithlauncher.setting.enums.DarkMode
@@ -245,6 +248,37 @@ fun LauncherSettingsScreen(
                     modifier = Modifier.fillMaxWidth().animated(ctx)
                 ) {
                     AppLockSettingsCard()
+                }
+            }
+
+            AnimatedItem { ctx ->
+                SettingsCardColumn(
+                    modifier = Modifier.fillMaxWidth().animated(ctx)
+                ) {
+                    ListSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Top,
+                        unit = AllSettings.launcherAppIconStyle,
+                        items = NEXCRAFTIconStyle.entries,
+                        title = stringResource(R.string.nexcraft_icon_style_title),
+                        summary = stringResource(R.string.nexcraft_icon_style_summary),
+                        getItemText = { stringResource(it.textRes) },
+                        onValueChange = {
+                            AppIconManager.apply(context, it, AllSettings.launcherAppIconColor.state)
+                        }
+                    )
+                    ListSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Bottom,
+                        unit = AllSettings.launcherAppIconColor,
+                        items = NEXCRAFTIconColor.entries,
+                        title = stringResource(R.string.nexcraft_icon_color_title),
+                        summary = stringResource(R.string.nexcraft_icon_color_summary),
+                        getItemText = { stringResource(it.textRes) },
+                        onValueChange = {
+                            AppIconManager.apply(context, AllSettings.launcherAppIconStyle.state, it)
+                        }
+                    )
                 }
             }
 

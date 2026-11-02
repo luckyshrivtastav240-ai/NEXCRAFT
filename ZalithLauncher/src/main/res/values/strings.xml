@@ -2672,6 +2672,7 @@
     <string name="language_brazilian_portuguese" translatable="false">Português (Brasil)</string>
     <string name="language_uyghur" translatable="false">ۋىغرۇچە</string>
     <string name="language_filipino" translatable="false">Filipino</string>
+    <string name="language_hindi" translatable="false">हिन्दी</string>
     <string name="language_thai" translatable="false">ไทย</string>
     <string name="language_korean" translatable="false">한국어</string>
     <!-- Option in the game version touch vibration setting for a constant vibration -->

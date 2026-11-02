@@ -122,7 +122,7 @@ object HomeCards {
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    text = "Unofficial Modified Version",
+                    text = stringResource(R.string.nexcraft_unofficial_modified_notice),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary
                 )

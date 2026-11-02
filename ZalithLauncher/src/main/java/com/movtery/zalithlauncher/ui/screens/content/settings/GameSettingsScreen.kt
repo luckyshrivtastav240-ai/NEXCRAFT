@@ -45,6 +45,7 @@ import com.movtery.zalithlauncher.game.plugin.natives.NativePluginManager
 import com.movtery.zalithlauncher.path.URL_CLOUD_NATIVE_LIB_PLUGINS
 import com.movtery.zalithlauncher.path.URL_GITHUB_NATIVE_LIB_PLUGINS
 import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.setting.enums.ResolutionRule
 import com.movtery.zalithlauncher.setting.unit.floatRange
 import com.movtery.zalithlauncher.setting.unit.min
 import com.movtery.zalithlauncher.ui.base.BaseScreen
@@ -111,18 +112,21 @@ fun GameSettingsScreen(
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 Button(onClick = {
+                                    AllSettings.resolutionRule.save(ResolutionRule.PERCENTAGE)
                                     AllSettings.resolutionRatio.save(75)
                                     AllSettings.sustainedPerformance.save(true)
                                 }) {
                                     Text(stringResource(R.string.nexcraft_performance_profile_performance))
                                 }
                                 Button(onClick = {
+                                    AllSettings.resolutionRule.save(ResolutionRule.PERCENTAGE)
                                     AllSettings.resolutionRatio.save(100)
                                     AllSettings.sustainedPerformance.save(false)
                                 }) {
                                     Text(stringResource(R.string.nexcraft_performance_profile_balanced))
                                 }
                                 Button(onClick = {
+                                    AllSettings.resolutionRule.save(ResolutionRule.PERCENTAGE)
                                     AllSettings.resolutionRatio.save(125)
                                     AllSettings.sustainedPerformance.save(false)
                                 }) {

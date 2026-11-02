@@ -97,8 +97,36 @@ object HomeCards {
 
     /** 系统卡片（不可变更） */
     fun systemCards(): List<SystemCard> = buildList {
+        add(unofficialVersionCard())
         if (BuildConfig.DEBUG) {
             add(debugWarningCard())
+        }
+    }
+
+    /** Persistent identity and license notice for this unofficial modified build. */
+    private fun unofficialVersionCard() = SystemCard(id = "system_unofficial_version") {
+        BackgroundCard(
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.extraLarge
+        ) {
+            Column(
+                modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                Text(
+                    text = "NEXCRAFT",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Text(
+                    text = "Minecraft: Java Edition for Android",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = "Unofficial Modified Version",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 

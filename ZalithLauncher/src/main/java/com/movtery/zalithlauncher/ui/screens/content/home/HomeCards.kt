@@ -33,12 +33,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.movtery.cardgrid.model.CardLimits
 import com.movtery.cardgrid.model.CardType
 import com.movtery.zalithlauncher.BuildConfig
 import com.movtery.zalithlauncher.BuildKeys
+import com.movtery.zalithlauncher.game.version.installed.VersionsManager
+import com.movtery.zalithlauncher.game.version.installed.getVersionName
+import com.movtery.zalithlauncher.game.version.installed.isValid
+import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.setting.enums.nexcraftIconPreview
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
 import com.movtery.zalithlauncher.ui.screens.content.home.server.ServerCardContent
@@ -108,6 +116,9 @@ object HomeCards {
 
     /** Persistent identity and license notice for this unofficial modified build. */
     private fun unofficialVersionCard() = SystemCard(id = "system_unofficial_version") {
+        val selectedVersion by VersionsManager.currentVersion.collectAsStateWithLifecycle()
+        val iconStyle = AllSettings.launcherAppIconStyle.state
+        val iconColor = AllSettings.launcherAppIconColor.state
         BackgroundCard(
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.extraLarge
@@ -122,12 +133,13 @@ object HomeCards {
                     color = MaterialTheme.colorScheme.primaryContainer
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.nexcraft_icon_nx_blue),
+                        painter = painterResource(nexcraftIconPreview(iconStyle, iconColor)),
                         contentDescription = null,
-                        modifier = Modifier.padding(8.dp).size(44.dp)
+                        modifier = Modifier.padding(8.dp).size(52.dp)
                     )
                 }
                 Column(
+                    modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
@@ -143,6 +155,25 @@ object HomeCards {
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        androidx.compose.material3.Surface(
+                            shape = CircleShape,
+                            color = if (selectedVersion?.isValid() == true)
+                                MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.outline
+                        ) {
+                            Spacer(Modifier.size(7.dp))
+                        }
+                        Text(
+                            text = selectedVersion?.takeIf { it.isValid() }?.getVersionName()
+                                ?: stringResource(R.string.versions_manage_no_versions),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
         }

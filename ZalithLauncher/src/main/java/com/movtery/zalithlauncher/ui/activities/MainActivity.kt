@@ -129,6 +129,13 @@ private const val TAG = "MainActivity"
 
 @AndroidEntryPoint
 class MainActivity : BaseAppCompatActivity() {
+    private var appLockUnlocked by mutableStateOf(false)
+
+    override fun onStop() {
+        if (AppLockStore.isEnabled(this)) appLockUnlocked = false
+        super.onStop()
+    }
+
     override fun isIgnoreNotch(): Boolean = AllSettings.launcherFullScreen.getValue()
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
@@ -341,7 +348,6 @@ class MainActivity : BaseAppCompatActivity() {
                 backgroundViewModel = backgroundViewModel,
                 festivals = festivals
             ) {
-                var appLockUnlocked by remember { mutableStateOf(!AppLockStore.isEnabled(this@MainActivity)) }
                 ObserveFullScreenSetting(AllSettings.launcherFullScreen.state)
 
                 val guides = rememberAppGuides(eventViewModel)

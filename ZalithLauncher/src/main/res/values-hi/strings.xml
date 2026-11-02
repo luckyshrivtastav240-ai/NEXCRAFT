@@ -528,11 +528,8 @@
     <string name="download_assets_release_type_alpha">अल्फ़ा</string>
     <string name="download_assets_no_installed_versions">कोई Minecraft वर्ज़न इंस्टॉल नहीं है</string>
     <string name="download_assets_install_assets_for_versions">इन वर्ज़न के लिए इंस्टॉल करें</string>
-    <string name="download_assets_install_progress_downloading">ऐसेट डाउनलोड और इंस्टॉल हो रहे हैं
-%1$s
-(%2$s / %3$s)</string>
-    <string name="download_assets_install_progress_installing">ऐसेट इंस्टॉल हो रहे हैं
-%s</string>
+    <string name="download_assets_install_progress_downloading">ऐसेट डाउनलोड और इंस्टॉल हो रहे हैं\n%1$s\n(%2$s / %3$s)</string>
+    <string name="download_assets_install_progress_installing">ऐसेट इंस्टॉल हो रहे हैं\n%s</string>
     <string name="download_assets_install_failed">इंस्टॉल विफल हुआ</string>
     <string name="download_assets_dependency_no_compatible_version">निर्भरता %s के लिए कोई संगत वर्ज़न नहीं मिला</string>
     <string name="download_assets_dependency_project_unavailable">ज़रूरी प्रोजेक्ट उपलब्ध नहीं है</string>

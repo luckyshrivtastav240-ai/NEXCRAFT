@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -84,6 +85,55 @@ fun GameSettingsScreen(
                 .padding(all = 12.dp),
             isVisible = isVisible
         ) {
+            AnimatedItem { ctx ->
+                SettingsCardColumn(
+                    modifier = Modifier.fillMaxWidth().animated(ctx)
+                ) {
+                    SettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Top
+                    ) {
+                        androidx.compose.foundation.layout.Column(
+                            modifier = Modifier.fillMaxWidth().padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.nexcraft_performance_profiles_title),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                text = stringResource(R.string.nexcraft_performance_profiles_summary),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Button(onClick = {
+                                    AllSettings.resolutionRatio.save(75)
+                                    AllSettings.sustainedPerformance.save(true)
+                                }) {
+                                    Text(stringResource(R.string.nexcraft_performance_profile_performance))
+                                }
+                                Button(onClick = {
+                                    AllSettings.resolutionRatio.save(100)
+                                    AllSettings.sustainedPerformance.save(false)
+                                }) {
+                                    Text(stringResource(R.string.nexcraft_performance_profile_balanced))
+                                }
+                                Button(onClick = {
+                                    AllSettings.resolutionRatio.save(125)
+                                    AllSettings.sustainedPerformance.save(false)
+                                }) {
+                                    Text(stringResource(R.string.nexcraft_performance_profile_quality))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             AnimatedItem { ctx ->
                 SettingsCardColumn(
                     modifier = Modifier

@@ -46,7 +46,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -865,8 +864,8 @@ private fun TaskItem(
     rateBytesPerSec: Long?,
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.large,
-    color: Color = cardColor(false),
-    contentColor: Color = onCardColor(),
+    color: Color = Color(0xFF1B211E),
+    contentColor: Color = Color(0xFFFFE8D0),
     onCancelClick: () -> Unit = {}
 ) {
     Surface(
@@ -919,12 +918,16 @@ private fun TaskItem(
 
                 if (taskProgress < 0) { //负数则代表不确定
                     LinearProgressIndicator(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        color = Color(0xFFFF873D),
+                        trackColor = Color(0xFF493328)
                     )
                 } else {
                     LinearProgressIndicator(
                         progress = { taskProgress },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        color = Color(0xFFFF873D),
+                        trackColor = Color(0xFF493328)
                     )
                 }
 

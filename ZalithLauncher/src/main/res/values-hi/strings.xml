@@ -1596,7 +1596,8 @@
     <string name="nexcraft_icon_style_xbox">Minecraft Xbox Controller</string>
     <string name="nexcraft_launch_title">MINECRAFT शुरू हो रहा है</string>
         <string name="nexcraft_launch_subtitle">आपकी दुनिया तैयार हो रही है · NEXCRAFT</string>
-    <string name="nexcraft_cap_wardrobe_title">Cap और Cape वार्डरोब</string>
+    <string name="nexcraft_cap_wardrobe_title">सिर की Cap और पीठ की Cape</string>
+    <string name="nexcraft_wardrobe_apply_both">Cap + Cape दोनों लगाएँ</string>
     <string name="nexcraft_cap_wardrobe_hint">सिर के लिए Cap और पीठ के लिए Cape चुनें। दोनों एक साथ लगा सकते हैं। Confirm करने से पहले 3D Preview में दोनों दिखाई देंगे। Multiplayer में Cape/Cap दूसरों को दिखने के लिए समर्थित Skin/Cape सर्वर या अकाउंट अपलोड जरूरी है।</string>
     <string name="nexcraft_cap_none">कैप हटाएँ</string>
     <string name="nexcraft_cap_red">लाल कैप</string>

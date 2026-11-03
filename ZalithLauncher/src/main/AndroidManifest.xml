@@ -28,7 +28,7 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:networkSecurityConfig="@xml/network_security_config"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/nx_blue"
+        android:icon="@drawable/nexcraft_icon_lava_hammer"
         android:label="${launcher_name}"
         android:theme="@style/AppTheme.NEXCRAFT"
         android:appCategory="game"
@@ -104,7 +104,7 @@
             android:name=".icon.NX_BLUE"
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
-            android:icon="@mipmap/nx_blue"
+            android:icon="@drawable/nexcraft_icon_lava_hammer"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -116,7 +116,7 @@
             android:name=".icon.NX_GREEN"
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
-            android:icon="@mipmap/nx_green"
+            android:icon="@drawable/nexcraft_icon_lava_hammer"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
@@ -128,7 +128,7 @@
             android:name=".icon.NX_PURPLE"
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
-            android:icon="@mipmap/nx_purple"
+            android:icon="@drawable/nexcraft_icon_lava_hammer"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
@@ -140,7 +140,7 @@
             android:name=".icon.NX_RED"
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
-            android:icon="@mipmap/nx_red"
+            android:icon="@drawable/nexcraft_icon_lava_hammer"
             android:enabled="false"
             android:exported="true">
             <intent-filter>

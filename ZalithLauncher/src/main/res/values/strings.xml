@@ -3093,6 +3093,7 @@
     <!-- Error shown when the entered app unlock PIN is incorrect -->
     <string name="app_lock_incorrect">Incorrect PIN. Try again.</string>
     <!-- Title of the home screen app icon design selector -->
+    <string name="nexcraft_icon_apply">Apply icon</string>
     <string name="nexcraft_icon_style_title">App icon design</string>
     <!-- Description of the home screen app icon design selector -->
     <string name="nexcraft_icon_style_summary">Choose the NEXCRAFT icon shown on your home screen.</string>

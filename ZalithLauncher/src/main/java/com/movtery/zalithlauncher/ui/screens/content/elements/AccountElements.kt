@@ -1674,6 +1674,9 @@ fun ChangeSkinDialog(
                                                 MinecraftCapStyle.PURPLE_BEANIE -> stringResource(R.string.nexcraft_cap_beanie)
                                                 MinecraftCapStyle.STRAW_HAT -> stringResource(R.string.nexcraft_cap_straw)
                                                 MinecraftCapStyle.LAVA_FORGE -> stringResource(R.string.nexcraft_cap_lava)
+                                                MinecraftCapStyle.NETHERITE_HELMET -> stringResource(R.string.nexcraft_cap_netherite)
+                                                MinecraftCapStyle.DIAMOND_CROWN -> stringResource(R.string.nexcraft_cap_diamond)
+                                                MinecraftCapStyle.ENDER_HOOD -> stringResource(R.string.nexcraft_cap_ender)
                                             },
                                             style = MaterialTheme.typography.labelMedium,
                                             color = if (selected) MaterialTheme.colorScheme.onPrimaryContainer

@@ -298,11 +298,10 @@ private fun HomeDeviceStatus() {
             style = MaterialTheme.typography.labelSmall,
             maxLines = 1
         )
-        Icon(
-            painter = painterResource(R.drawable.ic_battery_full),
-            contentDescription = null,
-            modifier = Modifier.size(16.dp),
-            tint = if (batteryInfo.second) MaterialTheme.colorScheme.primary else androidx.compose.material3.LocalContentColor.current
+        Text(
+            text = if (batteryInfo.second) "⚡🔋" else "🔋",
+            style = MaterialTheme.typography.labelSmall,
+            maxLines = 1
         )
         Text(
             text = "${batteryInfo.first}%",

@@ -28,7 +28,7 @@ jobs:
     name: Capture real NEXCRAFT Android screen
     needs: Build
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 45
     steps:
       - name: Download x86_64 debug APK
         uses: actions/download-artifact@v7
@@ -50,7 +50,9 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: pixel_2
-          emulator-boot-timeout: 600
+          emulator-boot-timeout: 900
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           script: |
             adb install "$APK_PATH"
             adb shell monkey -p com.movtery.zalithlauncher.v2.debug 1

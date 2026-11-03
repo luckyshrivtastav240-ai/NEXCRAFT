@@ -3136,4 +3136,7 @@
     <string name="nexcraft_cap_beanie">Purple Beanie</string>
     <string name="nexcraft_cap_straw">Straw Hat</string>
     <string name="nexcraft_cap_lava">Lava Forge</string>
+    <string name="nexcraft_cap_netherite">Netherite Helm</string>
+    <string name="nexcraft_cap_diamond">Diamond Crown</string>
+    <string name="nexcraft_cap_ender">Ender Hood</string>
 </resources>

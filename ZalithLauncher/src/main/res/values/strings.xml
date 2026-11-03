@@ -3097,7 +3097,7 @@
     <!-- Description of the home screen app icon design selector -->
     <string name="nexcraft_icon_style_summary">Choose the NEXCRAFT icon shown on your home screen.</string>
     <!-- Classic NEXCRAFT monogram app icon style -->
-    <string name="nexcraft_icon_style_nx">NX Classic</string>
+    <string name="nexcraft_icon_style_nx">Lava Hammer</string>
     <!-- Minecraft grass block app icon style -->
     <string name="nexcraft_icon_style_grass">Grass Block</string>
     <!-- Ender eye app icon style -->

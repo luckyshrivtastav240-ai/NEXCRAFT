@@ -64,6 +64,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -86,6 +87,9 @@ import com.movtery.zalithlauncher.BuildKeys
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskSystem
+import com.movtery.zalithlauncher.game.account.AccountsManager
+import com.movtery.zalithlauncher.game.account.wardrobe.toArmModel
+import com.movtery.petlib.PetAnimation
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.path.PathManager
@@ -94,6 +98,7 @@ import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
 import com.movtery.zalithlauncher.ui.components.CardTitleLayout
+import com.movtery.zalithlauncher.ui.components.PetModelView
 import com.movtery.zalithlauncher.ui.components.TextRailItem
 import com.movtery.zalithlauncher.ui.guide.sendStartGuideOnce
 import com.movtery.zalithlauncher.ui.screens.BackStackNavKey
@@ -135,6 +140,8 @@ import com.movtery.zalithlauncher.viewmodel.ModpackImportViewModel
 import com.movtery.zalithlauncher.viewmodel.ScreenBackStackViewModel
 import com.movtery.zalithlauncher.viewmodel.sendKeepScreen
 import com.movtery.zalithlauncher.viewmodel.sendToast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun MainScreen(
@@ -773,6 +780,22 @@ private fun TaskMenu(
 
 @Composable
 private fun NexcraftGameLaunchBanner() {
+    val account by AccountsManager.currentAccountFlow.collectAsStateWithLifecycle()
+    val refreshWardrobe by AccountsManager.refreshWardrobe.collectAsStateWithLifecycle()
+    val skinStamp = account?.getSkinFile()?.lastModified()
+    val capeStamp = account?.getCapeFile()?.lastModified()
+    val skinBytes by produceState<ByteArray?>(null, account, refreshWardrobe, skinStamp) {
+        value = withContext(Dispatchers.IO) {
+            account?.getSkinFile()?.takeIf { it.exists() }
+                ?.inputStream()?.use { it.readBytes() }
+        }
+    }
+    val capeBytes by produceState<ByteArray?>(null, account, refreshWardrobe, capeStamp) {
+        value = withContext(Dispatchers.IO) {
+            account?.getCapeFile()?.takeIf { it.exists() }
+                ?.inputStream()?.use { it.readBytes() }
+        }
+    }
     val transition = rememberInfiniteTransition(label = "NEXCRAFTVoxelIntro")
     val hammerAngle by transition.animateFloat(
         initialValue = -10f,
@@ -816,9 +839,19 @@ private fun NexcraftGameLaunchBanner() {
                     shape = MaterialTheme.shapes.small,
                     color = Color(0xFFB94C24)
                 ) {}
+                PetModelView(
+                    modifier = Modifier.size(58.dp),
+                    skin = skinBytes,
+                    cape = capeBytes,
+                    arm = account?.skinModelType?.toArmModel(),
+                    animation = PetAnimation.Walking,
+                    animationSpeed = 1.0f,
+                    gazeEnabled = false
+                )
                 Image(
                     modifier = Modifier
-                        .size(54.dp)
+                        .align(Alignment.TopEnd)
+                        .size(20.dp)
                         .graphicsLayer {
                             rotationZ = hammerAngle
                             rotationY = hammerAngle * 0.45f

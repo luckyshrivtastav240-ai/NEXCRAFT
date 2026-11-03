@@ -26,6 +26,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LinearWavyProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -33,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.entryProvider
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.components.InstallableItem
@@ -147,6 +150,12 @@ private fun LoadingScreen(
                     modifier = Modifier.size(58.dp),
                     painter = painterResource(R.drawable.img_launcher),
                     contentDescription = stringResource(R.string.generic_loading)
+                )
+                Text(
+                    text = "NEXCRAFT",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    letterSpacing = 2.sp
                 )
                 LinearWavyProgressIndicator(
                     modifier = Modifier.width(128.dp),

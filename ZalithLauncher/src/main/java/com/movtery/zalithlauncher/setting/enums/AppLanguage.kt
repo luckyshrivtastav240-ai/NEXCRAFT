@@ -33,6 +33,7 @@ enum class AppLanguage(
     ENGLISH("en", R.string.language_english),
     SPANISH("es", R.string.language_spanish),
     FILIPINO("fil", R.string.language_filipino),
+    HINDI("hi", R.string.language_hindi),
     INDONESIAN("id", R.string.language_indonesian),
     ITALIAN("it", R.string.language_italian),
     JAPANESE("ja", R.string.language_japanese),

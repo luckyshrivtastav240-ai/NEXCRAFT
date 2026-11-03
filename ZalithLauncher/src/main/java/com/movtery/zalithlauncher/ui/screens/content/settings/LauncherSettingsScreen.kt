@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,6 +43,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -64,6 +68,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.materialkolor.PaletteStyle
@@ -76,6 +83,11 @@ import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskSystem
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.setting.AppLockStore
+import com.movtery.zalithlauncher.setting.AppIconManager
+import com.movtery.zalithlauncher.setting.enums.NEXCRAFTIconColor
+import com.movtery.zalithlauncher.setting.enums.NEXCRAFTIconStyle
+import com.movtery.zalithlauncher.setting.enums.nexcraftIconPreview
 import com.movtery.zalithlauncher.setting.enums.AppLanguage
 import com.movtery.zalithlauncher.setting.enums.BackgroundBlur
 import com.movtery.zalithlauncher.setting.enums.DarkMode
@@ -229,6 +241,87 @@ fun LauncherSettingsScreen(
                         unit = AllSettings.launcherFullScreen,
                         title = stringResource(R.string.settings_launcher_full_screen_title),
                         summary = stringResource(R.string.settings_launcher_full_screen_summary)
+                    )
+                }
+            }
+
+            AnimatedItem { ctx ->
+                SettingsCardColumn(
+                    modifier = Modifier.fillMaxWidth().animated(ctx)
+                ) {
+                    AppLockSettingsCard()
+                }
+            }
+
+            AnimatedItem { ctx ->
+                SettingsCardColumn(
+                    modifier = Modifier.fillMaxWidth().animated(ctx)
+                ) {
+                    SettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Top
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Surface(
+                                shape = MaterialTheme.shapes.extraLarge,
+                                color = MaterialTheme.colorScheme.surfaceContainerHighest
+                            ) {
+                                Image(
+                                    painter = painterResource(
+                                        nexcraftIconPreview(
+                                            AllSettings.launcherAppIconStyle.state,
+                                            AllSettings.launcherAppIconColor.state
+                                        )
+                                    ),
+                                    contentDescription = stringResource(R.string.nexcraft_icon_style_title),
+                                    modifier = Modifier.padding(10.dp).size(64.dp)
+                                )
+                            }
+                            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                Text(
+                                    text = stringResource(R.string.nexcraft_icon_style_title),
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                                Text(
+                                    text = stringResource(AllSettings.launcherAppIconStyle.state.textRes) +
+                                        " · " + stringResource(AllSettings.launcherAppIconColor.state.textRes),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Text(
+                                    text = stringResource(R.string.nexcraft_icon_style_summary),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                    ListSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Middle,
+                        unit = AllSettings.launcherAppIconStyle,
+                        items = NEXCRAFTIconStyle.entries,
+                        title = stringResource(R.string.nexcraft_icon_style_title),
+                        summary = stringResource(R.string.nexcraft_icon_style_summary),
+                        getItemText = { stringResource(it.textRes) },
+                        onValueChange = {
+                            AppIconManager.apply(context, it, AllSettings.launcherAppIconColor.state)
+                        }
+                    )
+                    ListSettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Bottom,
+                        unit = AllSettings.launcherAppIconColor,
+                        items = NEXCRAFTIconColor.entries,
+                        title = stringResource(R.string.nexcraft_icon_color_title),
+                        summary = stringResource(R.string.nexcraft_icon_color_summary),
+                        getItemText = { stringResource(it.textRes) },
+                        onValueChange = {
+                            AppIconManager.apply(context, AllSettings.launcherAppIconStyle.state, it)
+                        }
                     )
                 }
             }
@@ -567,7 +660,20 @@ private fun CustomThemeDialog(
                                 items(PaletteStyle.entries) { style ->
                                     RadioCard(
                                         selected = paletteStyle == style,
-                                        text = style.name,
+                                        text = if (AllSettings.launcherLanguage.state == AppLanguage.HINDI) {
+                                            when (style.name) {
+                                                "TONAL_SPOT" -> "टोनल स्पॉट"
+                                                "NEUTRAL" -> "न्यूट्रल"
+                                                "VIBRANT" -> "वाइब्रेंट"
+                                                "EXPRESSIVE" -> "एक्सप्रेसिव"
+                                                "RAINBOW" -> "इंद्रधनुष"
+                                                "FRUIT_SALAD" -> "फ्रूट सलाद"
+                                                "MONOCHROME" -> "मोनोक्रोम"
+                                                "FIDELITY" -> "फिडेलिटी"
+                                                "CONTENT" -> "कंटेंट"
+                                                else -> style.name.replace("_", " ")
+                                            }
+                                        } else style.name,
                                         onClick = {
                                             onPaletteStyleChange(style)
                                         }
@@ -811,5 +917,120 @@ private fun BackgroundOperation(
                 changeOperation(BackgroundOperation.None)
             }
         }
+    }
+}
+
+@Composable
+private fun AppLockSettingsCard() {
+    val context = LocalContext.current
+    var enabled by remember { mutableStateOf(AppLockStore.isEnabled(context)) }
+    var dialogOpen by remember { mutableStateOf(false) }
+    var currentPin by remember { mutableStateOf("") }
+    var newPin by remember { mutableStateOf("") }
+    var confirmPin by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    SettingsCard(
+        modifier = Modifier.fillMaxWidth(),
+        position = CardPosition.Top
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            TitleAndSummary(
+                title = stringResource(R.string.app_lock_title),
+                summary = stringResource(if (enabled) R.string.app_lock_summary_on else R.string.app_lock_summary_off)
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = {
+                    currentPin = ""
+                    newPin = ""
+                    confirmPin = ""
+                    error = null
+                    dialogOpen = true
+                }) {
+                    Text(stringResource(if (enabled) R.string.app_lock_new_pin else R.string.app_lock_create_pin))
+                }
+                if (enabled) {
+                    TextButton(onClick = {
+                        currentPin = ""
+                        newPin = ""
+                        confirmPin = ""
+                        error = null
+                        dialogOpen = true
+                    }) { Text(stringResource(R.string.app_lock_turn_off)) }
+                }
+            }
+        }
+    }
+
+    if (dialogOpen) {
+        AlertDialog(
+            onDismissRequest = { dialogOpen = false },
+            title = { Text(stringResource(if (enabled) R.string.app_lock_manage_title else R.string.app_lock_set_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (enabled) {
+                        OutlinedTextField(
+                            value = currentPin,
+                            onValueChange = { if (it.length <= 8 && it.all(Char::isDigit)) currentPin = it },
+                            label = { Text(stringResource(R.string.app_lock_current_pin)) },
+                            singleLine = true,
+                            visualTransformation = PasswordVisualTransformation(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
+                        )
+                    }
+                    OutlinedTextField(
+                        value = newPin,
+                        onValueChange = { if (it.length <= 8 && it.all(Char::isDigit)) newPin = it },
+                        label = { Text(stringResource(if (enabled) R.string.app_lock_new_pin else R.string.app_lock_create_pin)) },
+                        singleLine = true,
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
+                    )
+                    OutlinedTextField(
+                        value = confirmPin,
+                        onValueChange = { if (it.length <= 8 && it.all(Char::isDigit)) confirmPin = it },
+                        label = { Text(stringResource(R.string.app_lock_confirm_pin)) },
+                        singleLine = true,
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
+                    )
+                    error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    error = when {
+                        enabled && !AppLockStore.verify(context, currentPin) -> context.getString(R.string.app_lock_incorrect_current)
+                        newPin.length !in 4..8 -> context.getString(R.string.app_lock_length_error)
+                        newPin != confirmPin -> context.getString(R.string.app_lock_mismatch)
+                        else -> null
+                    }
+                    if (error == null) {
+                        AppLockStore.setPin(context, newPin)
+                        enabled = true
+                        dialogOpen = false
+                    }
+                }) { Text(stringResource(R.string.app_lock_save_pin)) }
+            },
+            dismissButton = {
+                Row {
+                    if (enabled) {
+                        TextButton(onClick = {
+                            if (AppLockStore.verify(context, currentPin)) {
+                                AppLockStore.disable(context)
+                                enabled = false
+                                dialogOpen = false
+                            } else {
+                                error = context.getString(R.string.app_lock_turn_off_error)
+                            }
+                        }) { Text(stringResource(R.string.app_lock_turn_off)) }
+                    }
+                    TextButton(onClick = { dialogOpen = false }) { Text(stringResource(R.string.app_lock_cancel)) }
+                }
+            }
+        )
     }
 }

@@ -31,6 +31,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
@@ -57,12 +60,15 @@ import com.movtery.zalithlauncher.notification.NotificationManager
 import com.movtery.zalithlauncher.path.PathManager
 import com.movtery.zalithlauncher.path.URL_SUPPORT
 import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.setting.AppLockStore
+import com.movtery.zalithlauncher.setting.AppIconManager
 import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.base.BaseAppCompatActivity
 import com.movtery.zalithlauncher.ui.base.ObserveFullScreenSetting
 import com.movtery.zalithlauncher.ui.buildAppendedText
 import com.movtery.zalithlauncher.ui.components.SimpleAlertDialog
+import com.movtery.zalithlauncher.ui.components.AppLockGate
 import com.movtery.zalithlauncher.ui.guide.GuideKeys
 import com.movtery.zalithlauncher.ui.guide.GuideProgress
 import com.movtery.zalithlauncher.ui.guide.NextTipLabel
@@ -124,6 +130,13 @@ private const val TAG = "MainActivity"
 
 @AndroidEntryPoint
 class MainActivity : BaseAppCompatActivity() {
+    private var appLockUnlocked by mutableStateOf(false)
+
+    override fun onStop() {
+        if (AppLockStore.isEnabled(this)) appLockUnlocked = false
+        super.onStop()
+    }
+
     override fun isIgnoreNotch(): Boolean = AllSettings.launcherFullScreen.getValue()
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
@@ -209,6 +222,12 @@ class MainActivity : BaseAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Restore the user's selected NEXCRAFT launcher icon after process recreation or app update.
+        AppIconManager.apply(
+            context = this,
+            style = AllSettings.launcherAppIconStyle.state,
+            color = AllSettings.launcherAppIconColor.state
+        )
         //处理外部导入
         val isImporting = handleImportIfNeeded(intent)
 
@@ -461,6 +480,10 @@ class MainActivity : BaseAppCompatActivity() {
                         modpackImportViewModel.confirmUseMobileData(use)
                     }
                 )
+
+                if (!appLockUnlocked && AppLockStore.isEnabled(this@MainActivity)) {
+                    AppLockGate(onUnlocked = { appLockUnlocked = true })
+                }
 
                 //游戏日志分享菜单
                 val logFile = logShareViewModel.currentLogFile

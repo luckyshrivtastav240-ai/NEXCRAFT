@@ -19,10 +19,15 @@
 package com.movtery.zalithlauncher.ui.screens.content.home
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,12 +35,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.movtery.cardgrid.model.CardLimits
 import com.movtery.cardgrid.model.CardType
 import com.movtery.zalithlauncher.BuildConfig
 import com.movtery.zalithlauncher.BuildKeys
+import com.movtery.zalithlauncher.game.version.installed.VersionsManager
+import com.movtery.zalithlauncher.setting.AllSettings
+import com.movtery.zalithlauncher.setting.enums.nexcraftIconPreview
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
 import com.movtery.zalithlauncher.ui.screens.content.home.server.ServerCardContent
@@ -103,29 +114,82 @@ object HomeCards {
         }
     }
 
-    /** Persistent identity and license notice for this unofficial modified build. */
+    /** NEXCRAFT dashboard hero with persistent unofficial-build notice. */
     private fun unofficialVersionCard() = SystemCard(id = "system_unofficial_version") {
-        BackgroundCard(
+        val selectedVersion by VersionsManager.currentVersion.collectAsStateWithLifecycle()
+        val iconStyle = AllSettings.launcherAppIconStyle.state
+        val iconColor = AllSettings.launcherAppIconColor.state
+        val hasValidVersion = selectedVersion?.isValid() == true
+
+        androidx.compose.material3.Surface(
             modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.extraLarge
+            shape = MaterialTheme.shapes.extraLarge,
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            tonalElevation = 2.dp
         ) {
-            Column(
-                modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
-                verticalArrangement = Arrangement.spacedBy(5.dp)
+            Row(
+                modifier = Modifier.padding(horizontal = 18.dp, vertical = 18.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(
-                    text = "NEXCRAFT",
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Text(
-                    text = "Minecraft: Java Edition for Android",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Text(
-                    text = "Unofficial Modified Version",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                androidx.compose.material3.Surface(
+                    shape = MaterialTheme.shapes.extraLarge,
+                    color = MaterialTheme.colorScheme.primaryContainer
+                ) {
+                    Image(
+                        painter = painterResource(nexcraftIconPreview(iconStyle, iconColor)),
+                        contentDescription = "NEXCRAFT",
+                        modifier = Modifier.padding(10.dp).size(58.dp)
+                    )
+                }
+
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        text = "NEXCRAFT",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "MINECRAFT: JAVA EDITION  •  ANDROID",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = stringResource(R.string.nexcraft_unofficial_modified_notice),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    androidx.compose.material3.Surface(
+                        shape = CircleShape,
+                        color = if (hasValidVersion) MaterialTheme.colorScheme.primaryContainer
+                        else MaterialTheme.colorScheme.surfaceContainerHighest,
+                        contentColor = if (hasValidVersion) MaterialTheme.colorScheme.onPrimaryContainer
+                        else MaterialTheme.colorScheme.onSurfaceVariant
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(7.dp)
+                        ) {
+                            Spacer(
+                                Modifier
+                                    .size(7.dp)
+                                    .then(
+                                        if (hasValidVersion) Modifier
+                                        else Modifier.alpha(0.55f)
+                                    )
+                            )
+                            Text(
+                                text = selectedVersion?.takeIf { it.isValid() }?.getVersionName()
+                                    ?: stringResource(R.string.versions_manage_no_versions),
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                        }
+                    }
+                }
             }
         }
     }

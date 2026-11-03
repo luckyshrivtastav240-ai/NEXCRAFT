@@ -1,0 +1,59 @@
+name: NEXCRAFT Real App Screenshot
+
+on:
+  workflow_run:
+    workflows: ["Build CI"]
+    types: [completed]
+    branches:
+      - nexcraft/security-and-hindi
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  screenshot:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Download x86_64 debug APK from completed build
+        uses: actions/download-artifact@v7
+        with:
+          name: debug apk (x86_64)
+          path: artifacts/apk
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Verify APK
+        run: |
+          APK="$(find artifacts/apk -type f -name '*.apk' | head -n 1)"
+          test -n "$APK"
+          echo "APK_PATH=$APK" >> "$GITHUB_ENV"
+          ls -lh "$APK"
+
+      - name: Run app in Android emulator and capture real screen
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-boot-timeout: 600
+          script: |
+            adb install "$APK_PATH"
+            adb shell monkey -p com.movtery.zalithlauncher.v2.debug 1
+            sleep 35
+            mkdir -p screenshots
+            adb shell screencap -p /sdcard/nexcraft-home.png
+            adb pull /sdcard/nexcraft-home.png screenshots/nexcraft-home.png
+            test -s screenshots/nexcraft-home.png
+            file screenshots/nexcraft-home.png
+
+      - name: Upload actual emulator screenshot
+        uses: actions/upload-artifact@v7
+        with:
+          name: NEXCRAFT real emulator screenshot
+          path: screenshots/nexcraft-home.png
+          if-no-files-found: error
+          retention-days: 14

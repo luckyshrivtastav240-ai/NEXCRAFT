@@ -19,7 +19,9 @@ jobs:
           java-version: "21"
       - uses: gradle/actions/setup-gradle@v4
       - name: Build Fabric mod
-        run: ./gradlew -p ai-player-mod build
+        run: |
+          chmod +x ./gradlew
+          ./gradlew -p ai-player-mod build
       - name: Upload mod JAR
         uses: actions/upload-artifact@v4
         with:

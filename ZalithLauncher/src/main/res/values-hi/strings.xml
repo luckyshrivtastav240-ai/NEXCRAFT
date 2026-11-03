@@ -463,7 +463,7 @@
     <string name="error_bad_gateway">(%s) सर्वर को दूसरे सर्वर से गलत जवाब मिला</string>
     <string name="error_service_unavailable">(%s) सर्वर अभी अनुरोध संभाल नहीं सकता</string>
     <string name="error_gateway_timeout">(%s) सर्वर को समय पर जवाब नहीं मिला</string>
-    <string name="welcome_screen_subtitle">Android के लिए Minecraft Java Edition लॉन्चर</string>
+    <string name="welcome_screen_subtitle">आपकी Minecraft दुनिया यहीं से शुरू होती है।</string>
     <string name="welcome_screen_intro_primary">%1$s में आपका स्वागत है। यह Android के लिए बनाया गया एक थर्ड-पार्टी Minecraft: Java Edition लॉन्चर है।</string>
     <string name="welcome_screen_intro_core">Minecraft Java Edition को अपने Android डिवाइस पर चलाएँ।</string>
     <string name="welcome_screen_agreement_title">लाइसेंस और उपयोग की शर्तें</string>

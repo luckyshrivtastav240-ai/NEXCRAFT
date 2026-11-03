@@ -456,7 +456,7 @@ fun LoginMenuDialog(
                 .padding(all = 16.dp)
                 .heightIn(max = rememberDialogMaxHeight())
                 .fillMaxHeight()
-                .fillMaxWidth(0.6f),
+                .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             Surface(

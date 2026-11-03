@@ -53,6 +53,54 @@
             android:screenOrientation="sensorLandscape">
         </activity>
         <activity-alias
+            android:name=".icon.XBOX_BLUE"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/xbox_blue"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".icon.XBOX_GREEN"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/xbox_green"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".icon.XBOX_PURPLE"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/xbox_purple"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".icon.XBOX_RED"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/xbox_red"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
             android:name=".icon.NX_BLUE"
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"

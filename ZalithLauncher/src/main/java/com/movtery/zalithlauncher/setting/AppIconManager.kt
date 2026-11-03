@@ -24,15 +24,19 @@ object AppIconManager {
                 // Manifest aliases are packaged under the final applicationId. This includes
                 // build-type suffixes such as .debug, so resolve from context.packageName.
                 val aliasName = "${context.packageName}.icon.${iconStyle.name}_${iconColor.name}"
-                packageManager.setComponentEnabledSetting(
-                    ComponentName(context.packageName, aliasName),
+                val component = ComponentName(context.packageName, aliasName)
+                // Ignore only aliases absent from older installed manifests; never crash startup.
+                runCatching { packageManager.getActivityInfo(component, 0) }.getOrNull()?.let {
+                    packageManager.setComponentEnabledSetting(
+                    component,
                     if (selectedName == "${iconStyle.name}_${iconColor.name}") {
                         PackageManager.COMPONENT_ENABLED_STATE_ENABLED
                     } else {
                         PackageManager.COMPONENT_ENABLED_STATE_DISABLED
                     },
                     PackageManager.DONT_KILL_APP
-                )
+                    )
+                }
             }
         }
     }

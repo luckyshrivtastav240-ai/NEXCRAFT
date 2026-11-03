@@ -63,6 +63,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -118,7 +119,7 @@ fun WelcomeScreen(
         }
 
         BoxWithConstraints(
-            modifier = modifier.background(MaterialTheme.colorScheme.background),
+            modifier = modifier.background(Color(0xFF07111F)),
             contentAlignment = Alignment.Center
         ) {
             if (maxWidth >= 800.dp && maxHeight >= 500.dp) {
@@ -270,8 +271,8 @@ private fun WelcomeTerminal(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(36.dp),
-        color = MaterialTheme.colorScheme.primaryContainer,
-        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        color = Color(0xFF0C1B2D),
+        contentColor = Color(0xFFF0F6FF)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Box(
@@ -281,7 +282,7 @@ private fun WelcomeTerminal(
                     .size(156.dp)
                     .rotate(18f)
                     .background(
-                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.16f),
+                        color = Color(0xFF28BFFF).copy(alpha = 0.12f),
                         shape = RoundedCornerShape(44.dp)
                     )
             )
@@ -315,7 +316,7 @@ private fun WelcomeTerminal(
                     .offset(x = (-30).dp, y = 30.dp)
                     .size(116.dp)
                     .background(
-                        color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.14f),
+                        color = Color(0xFF4B83FF).copy(alpha = 0.10f),
                         shape = CircleShape
                     )
             )
@@ -328,7 +329,7 @@ private fun WelcomeTerminal(
                 // 左上角标签
                 Surface(
                     shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                    color = Color(0xFF24BFFF).copy(alpha = 0.12f)
                 ) {
                     Text(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
@@ -358,7 +359,7 @@ private fun WelcomeTerminal(
                         modifier = Modifier.alpha(cursorAlpha),
                         text = "_",
                         style = MaterialTheme.typography.displayLarge,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = Color(0xFF35C8FF),
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Black,
                         fontSize = 56.sp,
@@ -378,7 +379,7 @@ private fun WelcomeTerminal(
                     ),
                     text = stringResource(R.string.welcome_screen_subtitle),
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.72f),
+                    color = Color(0xFFB9CBE0),
                     fontWeight = FontWeight.SemiBold
                 )
 

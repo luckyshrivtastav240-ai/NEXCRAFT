@@ -30,7 +30,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/nx_blue"
         android:label="${launcher_name}"
-        android:theme="@style/AppTheme.ZalithLauncher"
+        android:theme="@style/AppTheme.NEXCRAFT"
         android:appCategory="game"
         android:supportsRtl="true"
         android:isGame="true"

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "nexcraft_ai_player",
+  "version": "${version}",
+  "name": "NEXCRAFT AI Player",
+  "description": "Early single-player companion prototype for NEXCRAFT.",
+  "environment": "*",
+  "entrypoints": { "main": ["com.nexcraft.ai.NexcraftAiPlayer"] },
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "minecraft": "1.20.1",
+    "fabric-api": "*",
+    "java": ">=17"
+  }
+}

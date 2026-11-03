@@ -41,6 +41,8 @@ import com.movtery.zalithlauncher.game.account.microsoft.MINECRAFT_SERVICES_URL
 import com.movtery.zalithlauncher.game.account.microsoftLogin
 import com.movtery.zalithlauncher.game.account.refreshMicrosoft
 import com.movtery.zalithlauncher.game.account.wardrobe.EmptyCape
+import com.movtery.zalithlauncher.game.account.wardrobe.MinecraftCapStyle
+import com.movtery.zalithlauncher.game.account.wardrobe.applyMinecraftCap
 import com.movtery.zalithlauncher.game.account.wardrobe.SkinModelType
 import com.movtery.zalithlauncher.game.account.wardrobe.SkinType
 import com.movtery.zalithlauncher.game.account.wardrobe.capeLocalRes
@@ -124,6 +126,9 @@ sealed interface AccountManageIntent {
         val backToMain: () -> Unit,
         val checkIfInWebScreen: () -> Boolean
     ) : AccountManageIntent
+
+    /** Apply a cap as pixels on the Minecraft skin's outer hat layer. */
+    data class ApplyCap(val account: Account, val style: MinecraftCapStyle, val sourceSkin: File?, val model: SkinModelType) : AccountManageIntent
 
     /** 应用选中的皮肤 */
     data class ApplySkin(val account: Account, val file: File, val model: SkinModelType) : AccountManageIntent
@@ -354,6 +359,7 @@ class AccountManageViewModel @AssistedInject constructor(
             is AccountManageIntent.PerformMicrosoftLogin -> performMicrosoftLogin(intent)
             is AccountManageIntent.ApplySkin ->
                 applySkin(intent.account, intent.file, intent.model)
+            is AccountManageIntent.ApplyCap -> applyCap(intent)
 
             is AccountManageIntent.UploadMicrosoftSkin -> uploadMicrosoftSkin(intent)
             is AccountManageIntent.FetchMicrosoftCapes -> fetchMicrosoftCapes(intent.account)
@@ -460,6 +466,32 @@ class AccountManageViewModel @AssistedInject constructor(
             { emitError(it.title, it.message) }
         )
         onIntent(AccountManageIntent.UpdateMicrosoftLoginOp(MicrosoftLoginOperation.None))
+    }
+
+    /** Build a standard 64x64 skin with the selected cap and send it through the account's normal skin flow. */
+    private fun applyCap(intent: AccountManageIntent.ApplyCap) {
+        TaskSystem.submitTask(
+            Task.runTask(
+                id = intent.account.uniqueUUID,
+                dispatcher = Dispatchers.IO,
+                task = {
+                    val baseSkin = intent.sourceSkin?.takeIf { it.exists() }?.readBytes()
+                        ?: context.assets.open(
+                            if (intent.model == SkinModelType.ALEX) "skin/alex.png" else "skin/steve.png"
+                        ).use { it.readBytes() }
+                    val cappedSkin = applyMinecraftCap(baseSkin, intent.style)
+                    val output = File(PathManager.DIR_CACHE, "nexcraft_cap_${UUID.randomUUID()}.png")
+                    output.writeBytes(cappedSkin)
+                    applySkin(intent.account, output, intent.model)
+                },
+                onError = { error ->
+                    emitError(
+                        androidText(R.string.generic_error),
+                        androidText(error.getMessageOrToString())
+                    )
+                }
+            )
+        )
     }
 
     /** 应用选中的皮肤 */

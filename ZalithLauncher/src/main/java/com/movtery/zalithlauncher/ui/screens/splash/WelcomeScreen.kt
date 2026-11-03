@@ -495,7 +495,7 @@ private fun ProductBanner(
     ) {
         Image(
             modifier = Modifier.size(52.dp),
-            painter = painterResource(R.drawable.img_launcher),
+            painter = painterResource(R.drawable.nexcraft_icon_lava_hammer),
             contentDescription = null
         )
 

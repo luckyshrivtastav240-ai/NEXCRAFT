@@ -82,7 +82,7 @@ fun UpgradeDialog(
     ) {
         BoxWithConstraints(
             modifier = Modifier
-                .fillMaxWidth(0.65f)
+                .fillMaxWidth()
                 .heightIn(max = rememberDialogMaxHeight())
                 .fillMaxHeight(),
             contentAlignment = Alignment.Center

@@ -1016,7 +1016,7 @@ fun LocalLoginDialog(
                                 }
                             }
                         ) {
-                            MarqueeText(text = stringResource(R.string.generic_confirm))
+                            MarqueeText(text = stringResource(if (applyingBoth) R.string.nexcraft_wardrobe_apply_both else R.string.generic_confirm))
                         }
                     }
                 }
@@ -1423,6 +1423,7 @@ fun ChangeSkinDialog(
     var showCapeSelector by remember { mutableStateOf(false) }
     var selectedCapStyleName by rememberSaveable { mutableStateOf("") }
     val capChanged = selectedCapStyleName.isNotEmpty()
+    val applyingBoth = capChanged && capeState is ChangeCape.ChangeCapeData
     val selectedCapStyle = MinecraftCapStyle.entries.firstOrNull { it.name == selectedCapStyleName } ?: MinecraftCapStyle.NONE
 
     var isFetchingCapes by remember { mutableStateOf(false) }

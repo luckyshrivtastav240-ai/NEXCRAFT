@@ -266,8 +266,13 @@ private fun HomeDeviceStatus() {
             delay(30_000L)
         }
     }
-    val dateText = remember {
-        SimpleDateFormat("EEE, d MMM", Locale.getDefault()).format(Date())
+    val dateText by produceState(
+        initialValue = SimpleDateFormat("EEE, d MMM", Locale.getDefault()).format(Date())
+    ) {
+        while (true) {
+            value = SimpleDateFormat("EEE, d MMM", Locale.getDefault()).format(Date())
+            delay(60_000L)
+        }
     }
     val batteryInfo by produceState(initialValue = 0 to false) {
         val batteryManager = context.getSystemService(android.content.Context.BATTERY_SERVICE) as BatteryManager

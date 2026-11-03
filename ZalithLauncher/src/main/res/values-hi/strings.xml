@@ -1596,4 +1596,14 @@
     <string name="nexcraft_icon_style_xbox">Minecraft Xbox Controller</string>
     <string name="nexcraft_launch_title">MINECRAFT शुरू हो रहा है</string>
         <string name="nexcraft_launch_subtitle">आपकी दुनिया तैयार हो रही है · NEXCRAFT</string>
+    <string name="nexcraft_cap_wardrobe_title">NEXCRAFT कैप वार्डरोब</string>
+    <string name="nexcraft_cap_wardrobe_hint">कैप चुनें। यह आपकी Minecraft Skin की बाहरी Hat Layer में जुड़ेगी।</string>
+    <string name="nexcraft_cap_none">कैप हटाएँ</string>
+    <string name="nexcraft_cap_red">लाल कैप</string>
+    <string name="nexcraft_cap_blue">नीली कैप</string>
+    <string name="nexcraft_cap_creeper">क्रीपर कैप</string>
+    <string name="nexcraft_cap_crown">सुनहरा ताज</string>
+    <string name="nexcraft_cap_beanie">बैंगनी बीनी</string>
+    <string name="nexcraft_cap_straw">स्ट्रॉ हैट</string>
+    <string name="nexcraft_cap_lava">लावा फोर्ज</string>
 </resources>

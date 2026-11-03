@@ -3125,7 +3125,8 @@
     <string name="nexcraft_icon_style_xbox">Minecraft Xbox Controller</string>
     <string name="nexcraft_launch_title">MINECRAFT IS STARTING</string>
         <string name="nexcraft_launch_subtitle">Preparing your world · Powered by NEXCRAFT</string>
-    <string name="nexcraft_cap_wardrobe_title">Cap &amp; Cape Wardrobe</string>
+    <string name="nexcraft_cap_wardrobe_title">Head Cap &amp; Back Cape Wardrobe</string>
+    <string name="nexcraft_wardrobe_apply_both">Apply Cap + Cape</string>
     <string name="nexcraft_cap_wardrobe_hint">Choose a cap for the head and a cape for the back. Both can be equipped together; the 3D preview shows the cap and cape before you confirm.</string>
     <string name="nexcraft_cap_none">No Cap</string>
     <string name="nexcraft_cap_red">Red Cap</string>

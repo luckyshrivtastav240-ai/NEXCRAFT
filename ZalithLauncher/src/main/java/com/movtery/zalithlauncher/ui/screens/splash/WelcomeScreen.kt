@@ -73,11 +73,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.movtery.petlib.ArmModel
+import com.movtery.petlib.PetAnimation
 import com.movtery.zalithlauncher.BuildKeys
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.legal.AvailableAgreement
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.ScalingActionButton
+import com.movtery.zalithlauncher.ui.components.PetModelView
 import com.movtery.zalithlauncher.ui.components.fadeEdge
 import com.movtery.zalithlauncher.ui.components.swapAnimateAlphaProgressAsState
 import com.movtery.zalithlauncher.ui.components.swapAnimateProgressAsState
@@ -282,15 +285,30 @@ private fun WelcomeTerminal(
                         shape = RoundedCornerShape(44.dp)
                     )
             )
-            Image(
+            Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(top = 18.dp, end = 22.dp)
-                    .size(104.dp)
-                    .graphicsLayer { rotationZ = 8f },
-                painter = painterResource(R.drawable.nexcraft_icon_lava_hammer),
-                contentDescription = null
-            )
+                    .padding(top = 10.dp, end = 12.dp)
+                    .size(142.dp)
+            ) {
+                PetModelView(
+                    modifier = Modifier.fillMaxSize(),
+                    skin = null,
+                    cape = null,
+                    arm = ArmModel.Classic,
+                    animation = PetAnimation.Walking,
+                    animationSpeed = 0.9f,
+                    gazeEnabled = false
+                )
+                Image(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .size(34.dp)
+                        .graphicsLayer { rotationZ = 12f },
+                    painter = painterResource(R.drawable.nexcraft_icon_lava_hammer),
+                    contentDescription = null
+                )
+            }
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomStart)

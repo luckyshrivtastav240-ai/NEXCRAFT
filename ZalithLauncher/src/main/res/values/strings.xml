@@ -3123,4 +3123,6 @@
     <string name="nexcraft_performance_profile_balanced">Balanced</string>
     <string name="nexcraft_performance_profile_quality">Visual quality</string>
     <string name="nexcraft_icon_style_xbox">Minecraft Xbox Controller</string>
+    <string name="nexcraft_launch_title">MINECRAFT IS STARTING</string>
+        <string name="nexcraft_launch_subtitle">Preparing your world · Powered by NEXCRAFT</string>
 </resources>

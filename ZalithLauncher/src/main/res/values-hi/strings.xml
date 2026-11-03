@@ -1598,7 +1598,7 @@
         <string name="nexcraft_launch_subtitle">आपकी दुनिया तैयार हो रही है · NEXCRAFT</string>
     <string name="nexcraft_cap_wardrobe_title">सिर की Cap और पीठ की Cape</string>
     <string name="nexcraft_wardrobe_apply_both">Cap + Cape दोनों लगाएँ</string>
-    <string name="nexcraft_cap_wardrobe_hint">सिर के लिए Cap और पीठ के लिए Cape चुनें। दोनों एक साथ लगा सकते हैं। Confirm करने से पहले 3D Preview में दोनों दिखाई देंगे। Multiplayer में Cape/Cap दूसरों को दिखने के लिए समर्थित Skin/Cape सर्वर या अकाउंट अपलोड जरूरी है।</string>
+    <string name="nexcraft_cap_wardrobe_hint">Cap आपकी 64x64 Skin में जुड़ती है, इसलिए जहाँ यह Skin स्वीकार होगी वहाँ गेम में दिख सकती है। Cape में अभी आपके Microsoft Minecraft अकाउंट की पहले से मिली Capes चुनी जा सकती हैं। Multiplayer सर्वर पर Custom Cape दिखाने के लिए compatible client/server support जरूरी है।</string>
     <string name="nexcraft_cap_none">कैप हटाएँ</string>
     <string name="nexcraft_cap_red">लाल कैप</string>
     <string name="nexcraft_cap_blue">नीली कैप</string>

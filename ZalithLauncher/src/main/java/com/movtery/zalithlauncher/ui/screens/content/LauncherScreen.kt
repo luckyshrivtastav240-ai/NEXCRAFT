@@ -66,6 +66,7 @@ import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
@@ -321,6 +322,7 @@ private fun AccountAvatarCenter(
                 Text(
                     text = account?.username ?: stringResource(R.string.account_add_new_account),
                     maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.titleSmall
                 )
                 if (account != null) {
@@ -367,6 +369,7 @@ private fun AccountAvatarRow(
             Text(
                 text = account?.username ?: stringResource(R.string.account_add_new_account),
                 maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleSmall
             )
             if (account != null) {

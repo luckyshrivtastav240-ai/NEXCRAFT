@@ -148,7 +148,7 @@ private fun LoadingScreen(
             ) {
                 Image(
                     modifier = Modifier.size(58.dp),
-                    painter = painterResource(R.drawable.img_launcher),
+                    painter = painterResource(R.drawable.nexcraft_icon_nx_blue),
                     contentDescription = stringResource(R.string.generic_loading)
                 )
                 Text(

@@ -127,14 +127,26 @@ import java.io.File
 import java.util.Locale
 
 private const val TAG = "MainActivity"
+private const val APP_LOCK_BACKGROUND_TIMEOUT_MS = 2 * 60 * 1000L
 
 @AndroidEntryPoint
 class MainActivity : BaseAppCompatActivity() {
     private var appLockUnlocked by mutableStateOf(false)
+    private var backgroundedAtMillis: Long = 0L
 
+    // Allow short visits to Android permission/settings screens without forcing another PIN.
+    // Re-lock only after the launcher has stayed in the background for two minutes.
     override fun onStop() {
-        if (AppLockStore.isEnabled(this)) appLockUnlocked = false
+        if (AppLockStore.isEnabled(this)) backgroundedAtMillis = System.currentTimeMillis()
         super.onStop()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (AppLockStore.isEnabled(this) && backgroundedAtMillis > 0L &&
+            System.currentTimeMillis() - backgroundedAtMillis >= APP_LOCK_BACKGROUND_TIMEOUT_MS
+        ) appLockUnlocked = false
+        backgroundedAtMillis = 0L
     }
 
     override fun isIgnoreNotch(): Boolean = AllSettings.launcherFullScreen.getValue()
@@ -191,11 +203,6 @@ class MainActivity : BaseAppCompatActivity() {
     val launcherUpgradeViewModel: LauncherUpgradeViewModel by viewModels()
 
     /**
-     * 当月赞助者 ViewModel
-     */
-    private val sponsorsViewModel: SponsorsViewModel by viewModels()
-
-    /**
      * 游戏日志分享菜单 ViewModel
      */
     private val logShareViewModel: LogShareViewModel by viewModels()
@@ -247,19 +254,7 @@ class MainActivity : BaseAppCompatActivity() {
         //初始化通知管理（创建渠道）
         NotificationManager.initManager(this)
 
-        //检查更新
-        if (!isImporting && launcherUpgradeViewModel.operation == LauncherUpgradeOperation.None) {
-            lifecycleScope.launch {
-                launcherUpgradeViewModel.checkOnAppStart()
-            }
-        }
-
-        //拉取当月赞助者数据
-        lifecycleScope.launch {
-            sponsorsViewModel.loadOnStart(
-                showLastMonth = GuideProgress.isPlayed(GuideKeys.Main) && !isImporting
-            )
-        }
+        // NEXCRAFT does not show unsolicited sponsor, donation, or startup update popups.
 
         //错误信息展示
         lifecycleScope.launch {
@@ -295,7 +290,7 @@ class MainActivity : BaseAppCompatActivity() {
                         checkUpdate()
                     }
                     is EventViewModel.Event.ShowSponsors -> {
-                        sponsorsViewModel.openDialog()
+                        // Sponsor prompts are intentionally disabled in NEXCRAFT.
                     }
                     is EventViewModel.Event.KeepScreen -> {
                         keepScreen(event.on)
@@ -346,9 +341,6 @@ class MainActivity : BaseAppCompatActivity() {
                 }
             }
         }
-
-        val finishedGame = AllSettings.finishedGame
-        val showSponsorship = AllSettings.showSponsorship
 
         val festivals = getTodayFestivals(
             containsChinese = isChinese(this@MainActivity)
@@ -436,24 +428,6 @@ class MainActivity : BaseAppCompatActivity() {
                     }
                 }
 
-                //显示赞助支持的小弹窗
-                if (!isImporting && finishedGame.state >= 100 && showSponsorship.state) {
-                    SimpleAlertDialog(
-                        title = stringResource(R.string.about_sponsor),
-                        text = stringResource(R.string.game_saponsorship_finished_game, finishedGame.state),
-                        dismissText = stringResource(R.string.generic_close),
-                        onDismiss = {
-                            showSponsorship.save(false)
-                        },
-                        onConfirm = {
-                            showSponsorship.save(false)
-                            eventViewModel.sendEvent(
-                                EventViewModel.Event.OpenLink(URL_SUPPORT)
-                            )
-                        }
-                    )
-                }
-
                 ModpackImportOperation(
                     operation = modpackImportViewModel.importOperation,
                     changeOperation = { modpackImportViewModel.importOperation = it },
@@ -539,14 +513,6 @@ class MainActivity : BaseAppCompatActivity() {
                         AllSettings.lastIgnoredVersion.save(ver)
                     },
                     onLinkClick = { eventViewModel.sendEvent(EventViewModel.Event.OpenLink(it)) }
-                )
-
-                //当月赞助者对话框 / 上月赞助者结算报告
-                SponsorsDialog(
-                    viewModel = sponsorsViewModel,
-                    onSupportClick = {
-                        eventViewModel.sendEvent(EventViewModel.Event.OpenLink(URL_SUPPORT))
-                    }
                 )
 
                 //版本修改操作流程

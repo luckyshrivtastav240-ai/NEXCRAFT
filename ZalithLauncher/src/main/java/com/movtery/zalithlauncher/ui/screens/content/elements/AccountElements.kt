@@ -1016,7 +1016,7 @@ fun LocalLoginDialog(
                                 }
                             }
                         ) {
-                            MarqueeText(text = stringResource(if (applyingBoth) R.string.nexcraft_wardrobe_apply_both else R.string.generic_confirm))
+                            MarqueeText(text = stringResource(R.string.generic_confirm))
                         }
                     }
                 }

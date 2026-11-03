@@ -159,6 +159,10 @@ fun MainScreen(
             val noTasks = tasks.isEmpty()
             eventViewModel.sendKeepScreen(!noTasks)
             taskRunning = noTasks
+            if (tasks.any { it.runningIcon == R.drawable.ic_rocket_launch_filled }) {
+                // Open the NEXCRAFT voxel launch screen automatically for a real game launch.
+                AllSettings.launcherTaskMenuExpanded.save(true)
+            }
         }
     }
 

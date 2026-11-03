@@ -64,8 +64,6 @@ import com.movtery.zalithlauncher.library.libraryData
 import com.movtery.zalithlauncher.path.URL_COMMUNITY
 import com.movtery.zalithlauncher.path.URL_MCMOD
 import com.movtery.zalithlauncher.path.URL_PROJECT
-import com.movtery.zalithlauncher.path.URL_SUPPORT
-import com.movtery.zalithlauncher.path.URL_WEBLATE
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.AnimatedLazyColumn
 import com.movtery.zalithlauncher.ui.components.CardTitleLayout
@@ -167,18 +165,6 @@ fun AboutInfoScreen(
                             title = stringResource(R.string.about_acknowledgements_mcmod),
                             text = stringResource(R.string.about_acknowledgements_mcmod_text, BuildKeys.LAUNCHER_SHORT_NAME),
                             openLink = { openLink(URL_MCMOD) }
-                        )
-                        ButtonIconItem(
-                            icon = painterResource(R.drawable.img_avatar_mcim),
-                            title = "mcmod-info-mirror",
-                            text = stringResource(R.string.about_acknowledgements_mcim_text, BuildKeys.LAUNCHER_SHORT_NAME),
-                            button = {
-                                Button(
-                                    onClick = { openLink("https://www.mcimirror.top/sponsor") }
-                                ) {
-                                    Text(text = stringResource(R.string.about_sponsor))
-                                }
-                            }
                         )
                         LinkIconItem(
                             icon = painterResource(R.drawable.img_platform_modrinth),

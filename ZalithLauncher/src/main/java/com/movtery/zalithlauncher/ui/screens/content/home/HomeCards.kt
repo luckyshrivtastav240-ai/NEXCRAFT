@@ -117,8 +117,6 @@ object HomeCards {
     /** NEXCRAFT dashboard hero with persistent unofficial-build notice. */
     private fun unofficialVersionCard() = SystemCard(id = "system_unofficial_version") {
         val selectedVersion by VersionsManager.currentVersion.collectAsStateWithLifecycle()
-        val iconStyle = AllSettings.launcherAppIconStyle.state
-        val iconColor = AllSettings.launcherAppIconColor.state
         val hasValidVersion = selectedVersion?.isValid() == true
 
         androidx.compose.material3.Surface(
@@ -137,7 +135,7 @@ object HomeCards {
                     color = MaterialTheme.colorScheme.primaryContainer
                 ) {
                     Image(
-                        painter = painterResource(nexcraftIconPreview(iconStyle, iconColor)),
+                        painter = painterResource(R.drawable.nexcraft_icon_lava_hammer),
                         contentDescription = "NEXCRAFT",
                         modifier = Modifier.padding(10.dp).size(58.dp)
                     )

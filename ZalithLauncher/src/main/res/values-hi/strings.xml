@@ -39,6 +39,7 @@
     <string name="app_lock_gate_prompt">लॉन्चर खोलने के लिए अपना PIN डालें।</string>
     <string name="app_lock_unlock">अनलॉक करें</string>
     <string name="app_lock_incorrect">गलत PIN। फिर से कोशिश करें।</string>
+    <string name="nexcraft_icon_apply">आइकन लागू करें</string>
     <string name="nexcraft_icon_style_title">ऐप आइकन डिज़ाइन</string>
     <string name="nexcraft_icon_style_summary">होम स्क्रीन पर दिखने वाला NEXCRAFT आइकन चुनें।</string>
     <string name="nexcraft_icon_style_nx">लावा हैमर</string>

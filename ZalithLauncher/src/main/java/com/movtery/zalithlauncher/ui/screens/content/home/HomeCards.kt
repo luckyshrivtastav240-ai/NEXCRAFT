@@ -19,6 +19,9 @@
 package com.movtery.zalithlauncher.ui.screens.content.home
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,8 +48,6 @@ import com.movtery.cardgrid.model.CardType
 import com.movtery.zalithlauncher.BuildConfig
 import com.movtery.zalithlauncher.BuildKeys
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
-import com.movtery.zalithlauncher.setting.AllSettings
-import com.movtery.zalithlauncher.setting.enums.nexcraftIconPreview
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
 import com.movtery.zalithlauncher.ui.screens.content.home.server.ServerCardContent
@@ -122,17 +123,28 @@ object HomeCards {
         androidx.compose.material3.Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.extraLarge,
-            color = MaterialTheme.colorScheme.surfaceContainerLow,
-            tonalElevation = 2.dp
+            color = Color(0xFF171B1B),
+            contentColor = Color(0xFFF6F0E8),
+            tonalElevation = 4.dp
         ) {
             Row(
-                modifier = Modifier.padding(horizontal = 18.dp, vertical = 18.dp),
+                modifier = Modifier
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                Color(0xFF182A25),
+                                Color(0xFF29201A),
+                                Color(0xFF4A2114)
+                            )
+                        )
+                    )
+                    .padding(horizontal = 18.dp, vertical = 18.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 androidx.compose.material3.Surface(
                     shape = MaterialTheme.shapes.extraLarge,
-                    color = MaterialTheme.colorScheme.primaryContainer
+                    color = Color(0xFF30251D)
                 ) {
                     Image(
                         painter = painterResource(R.drawable.nexcraft_icon_lava_hammer),
@@ -148,17 +160,17 @@ object HomeCards {
                     Text(
                         text = "NEXCRAFT",
                         style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = Color(0xFFFFE1B8)
                     )
                     Text(
                         text = "MINECRAFT: JAVA EDITION  •  ANDROID",
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = Color(0xFFD0C4B8)
                     )
                     Text(
                         text = stringResource(R.string.nexcraft_unofficial_modified_notice),
                         style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.primary
+                        color = Color(0xFFFF9850)
                     )
                     androidx.compose.material3.Surface(
                         shape = CircleShape,

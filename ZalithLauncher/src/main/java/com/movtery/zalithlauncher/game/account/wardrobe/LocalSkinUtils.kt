@@ -215,15 +215,18 @@ fun applyMinecraftCap(skinBytes: ByteArray, style: MinecraftCapStyle): ByteArray
                 pixel(x, y, color)
             }
             for (y in 8..15) for (x in 32..63) {
-                if (x in 40..47 || x in 32..39 || x in 48..55 || x in 56..63) {
-                    val isBrim = when (style) {
-                        MinecraftCapStyle.RED_BASEBALL, MinecraftCapStyle.BLUE_BASEBALL,
-                        MinecraftCapStyle.CREEPER, MinecraftCapStyle.LAVA_FORGE -> y >= 14
-                        MinecraftCapStyle.STRAW_HAT -> y >= 13
-                        else -> false
-                    }
-                    var color = if (isBrim) dark else main
-                    if (style == MinecraftCapStyle.CREEPER && y in 10..13 && x in 42..45) color = accent
+                val facePixel = when (style) {
+                    MinecraftCapStyle.RED_BASEBALL, MinecraftCapStyle.BLUE_BASEBALL -> y <= 12
+                    MinecraftCapStyle.CREEPER -> y <= 12
+                    MinecraftCapStyle.GOLD_CROWN -> y <= 13
+                    MinecraftCapStyle.PURPLE_BEANIE -> y <= 13
+                    MinecraftCapStyle.STRAW_HAT -> y <= 12 || y == 13
+                    MinecraftCapStyle.LAVA_FORGE -> y <= 12 || y == 13
+                    MinecraftCapStyle.NONE -> false
+                }
+                if (facePixel) {
+                    var color = if (y == 13) dark else main
+                    if (style == MinecraftCapStyle.CREEPER && y in 10..12 && x in 42..45) color = accent
                     if (style == MinecraftCapStyle.GOLD_CROWN && y == 8 && x % 2 == 0) color = light
                     if (style == MinecraftCapStyle.LAVA_FORGE && (x + y) % 4 == 0) color = light
                     if (style == MinecraftCapStyle.PURPLE_BEANIE && y == 8) color = light
@@ -234,7 +237,7 @@ fun applyMinecraftCap(skinBytes: ByteArray, style: MinecraftCapStyle): ByteArray
             // Front-face emblem/patch and baseball-cap visor.
             if (style == MinecraftCapStyle.RED_BASEBALL || style == MinecraftCapStyle.BLUE_BASEBALL) {
                 for (x in 43..44) for (y in 10..11) pixel(x, y, accent)
-                for (x in 39..48) pixel(x, 15, dark)
+                for (x in 40..47) pixel(x, 14, dark)
             }
             if (style == MinecraftCapStyle.CREEPER) {
                 pixel(42, 10, accent); pixel(45, 10, accent)
@@ -246,7 +249,7 @@ fun applyMinecraftCap(skinBytes: ByteArray, style: MinecraftCapStyle): ByteArray
                 pixel(43, 10, light); pixel(44, 10, light)
             }
             if (style == MinecraftCapStyle.STRAW_HAT) {
-                for (x in 32..63) if (x !in 40..47) pixel(x, 15, dark)
+                for (x in 32..63) pixel(x, 14, dark)
                 for (x in 43..44) pixel(x, 11, accent)
             }
             if (style == MinecraftCapStyle.LAVA_FORGE) {

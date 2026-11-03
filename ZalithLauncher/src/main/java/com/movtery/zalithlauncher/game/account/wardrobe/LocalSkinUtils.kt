@@ -154,7 +154,10 @@ enum class MinecraftCapStyle(val displayName: String) {
     GOLD_CROWN("Golden Crown"),
     PURPLE_BEANIE("Purple Beanie"),
     STRAW_HAT("Straw Hat"),
-    LAVA_FORGE("Lava Forge")
+    LAVA_FORGE("Lava Forge"),
+    NETHERITE_HELMET("Netherite Helm"),
+    DIAMOND_CROWN("Diamond Crown"),
+    ENDER_HOOD("Ender Hood")
 }
 
 /**
@@ -199,6 +202,9 @@ fun applyMinecraftCap(skinBytes: ByteArray, style: MinecraftCapStyle): ByteArray
                 MinecraftCapStyle.PURPLE_BEANIE -> intArrayOf(0xFF8E44AD.toInt(), 0xFF51216D.toInt(), 0xFFC58BDB.toInt(), 0xFFFFD6F2.toInt())
                 MinecraftCapStyle.STRAW_HAT -> intArrayOf(0xFFE9C46A.toInt(), 0xFF9C702A.toInt(), 0xFFFFE7A3.toInt(), 0xFF6B8E23.toInt())
                 MinecraftCapStyle.LAVA_FORGE -> intArrayOf(0xFF4B2520.toInt(), 0xFF201615.toInt(), 0xFFFF6D24.toInt(), 0xFFFFC247.toInt())
+                MinecraftCapStyle.NETHERITE_HELMET -> intArrayOf(0xFF34313B.toInt(), 0xFF17151D.toInt(), 0xFF766A83.toInt(), 0xFFB58B48.toInt())
+                MinecraftCapStyle.DIAMOND_CROWN -> intArrayOf(0xFF35C8C2.toInt(), 0xFF147C91.toInt(), 0xFFB8FFFF.toInt(), 0xFFECFFFF.toInt())
+                MinecraftCapStyle.ENDER_HOOD -> intArrayOf(0xFF302044.toInt(), 0xFF140E22.toInt(), 0xFF7546A8.toInt(), 0xFF9BFF55.toInt())
                 MinecraftCapStyle.NONE -> intArrayOf(0, 0, 0, 0)
             }
             fun pixel(x: Int, y: Int, color: Int) { result.setPixel(x, y, color) }
@@ -208,6 +214,9 @@ fun applyMinecraftCap(skinBytes: ByteArray, style: MinecraftCapStyle): ByteArray
                 val color = when {
                     style == MinecraftCapStyle.GOLD_CROWN && (x == 40 || x == 43 || x == 47) && y == 0 -> accent
                     style == MinecraftCapStyle.LAVA_FORGE && (x + y) % 5 == 0 -> light
+                    style == MinecraftCapStyle.NETHERITE_HELMET && (x == 40 || x == 47 || y == 0) -> dark
+                    style == MinecraftCapStyle.DIAMOND_CROWN && (x + y) % 3 == 0 -> light
+                    style == MinecraftCapStyle.ENDER_HOOD && (x + y) % 4 == 0 -> dark
                     style == MinecraftCapStyle.STRAW_HAT && y >= 6 -> dark
                     (x + y) % 7 == 0 -> light
                     else -> main
@@ -222,6 +231,9 @@ fun applyMinecraftCap(skinBytes: ByteArray, style: MinecraftCapStyle): ByteArray
                     MinecraftCapStyle.PURPLE_BEANIE -> y <= 13
                     MinecraftCapStyle.STRAW_HAT -> y <= 12 || y == 13
                     MinecraftCapStyle.LAVA_FORGE -> y <= 12 || y == 13
+                    MinecraftCapStyle.NETHERITE_HELMET -> y <= 14
+                    MinecraftCapStyle.DIAMOND_CROWN -> y <= 13
+                    MinecraftCapStyle.ENDER_HOOD -> y <= 13
                     MinecraftCapStyle.NONE -> false
                 }
                 if (facePixel) {
@@ -229,6 +241,9 @@ fun applyMinecraftCap(skinBytes: ByteArray, style: MinecraftCapStyle): ByteArray
                     if (style == MinecraftCapStyle.CREEPER && y in 10..12 && x in 42..45) color = accent
                     if (style == MinecraftCapStyle.GOLD_CROWN && y == 8 && x % 2 == 0) color = light
                     if (style == MinecraftCapStyle.LAVA_FORGE && (x + y) % 4 == 0) color = light
+                    if (style == MinecraftCapStyle.NETHERITE_HELMET && (y == 13 || x == 32 || x == 63)) color = dark
+                    if (style == MinecraftCapStyle.DIAMOND_CROWN && y == 8 && x % 2 == 0) color = accent
+                    if (style == MinecraftCapStyle.ENDER_HOOD && y == 8) color = dark
                     if (style == MinecraftCapStyle.PURPLE_BEANIE && y == 8) color = light
                     if (style == MinecraftCapStyle.STRAW_HAT && y == 8) color = accent
                     pixel(x, y, color)
@@ -255,6 +270,18 @@ fun applyMinecraftCap(skinBytes: ByteArray, style: MinecraftCapStyle): ByteArray
             if (style == MinecraftCapStyle.LAVA_FORGE) {
                 pixel(42, 10, 0xFFFFC247.toInt()); pixel(45, 12, 0xFFFFC247.toInt())
                 pixel(43, 13, 0xFFFF6D24.toInt()); pixel(44, 13, 0xFFFF6D24.toInt())
+            }
+            if (style == MinecraftCapStyle.NETHERITE_HELMET) {
+                for (x in 32..63) pixel(x, 14, dark)
+                pixel(42, 11, accent); pixel(45, 11, accent)
+            }
+            if (style == MinecraftCapStyle.DIAMOND_CROWN) {
+                for (x in 40..47 step 2) { pixel(x, 8, accent); pixel(x + 1, 8, light) }
+                for (x in 41..46) pixel(x, 15, dark)
+            }
+            if (style == MinecraftCapStyle.ENDER_HOOD) {
+                pixel(42, 10, accent); pixel(45, 10, accent)
+                pixel(43, 12, dark); pixel(44, 12, dark)
             }
 
             val output = java.io.ByteArrayOutputStream()

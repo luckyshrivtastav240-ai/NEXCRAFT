@@ -24,12 +24,14 @@ enum class NEXCRAFTIconColor(val textRes: Int) {
 /** Drawable used for the in-settings preview of the selected launcher icon. */
 fun nexcraftIconPreview(style: NEXCRAFTIconStyle, color: NEXCRAFTIconColor): Int =
     when (style) {
-        NEXCRAFTIconStyle.NX -> when (color) {
+        NEXCRAFTIconStyle.NX -> R.drawable.nexcraft_icon_lava_hammer
+        /*NEXCRAFTIconStyle.NX -> when (color) {
             NEXCRAFTIconColor.BLUE -> R.drawable.nexcraft_icon_nx_blue
             NEXCRAFTIconColor.GREEN -> R.drawable.nexcraft_icon_nx_green
             NEXCRAFTIconColor.PURPLE -> R.drawable.nexcraft_icon_nx_purple
             NEXCRAFTIconColor.RED -> R.drawable.nexcraft_icon_nx_red
         }
+        */
         NEXCRAFTIconStyle.GRASS -> when (color) {
             NEXCRAFTIconColor.BLUE -> R.drawable.nexcraft_icon_grass_blue
             NEXCRAFTIconColor.GREEN -> R.drawable.nexcraft_icon_grass_green

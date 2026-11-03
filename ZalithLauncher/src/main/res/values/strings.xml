@@ -3126,7 +3126,7 @@
     <string name="nexcraft_launch_title">MINECRAFT IS STARTING</string>
         <string name="nexcraft_launch_subtitle">Preparing your world · Powered by NEXCRAFT</string>
     <string name="nexcraft_cap_wardrobe_title">NEXCRAFT Cap Wardrobe</string>
-    <string name="nexcraft_cap_wardrobe_hint">Choose a cap to add it to the outer hat layer of your Minecraft skin.</string>
+    <string name="nexcraft_cap_wardrobe_hint">Choose a cap to add it to the outer hat layer of your Minecraft skin. For multiplayer visibility, upload the updated skin through a supported account.</string>
     <string name="nexcraft_cap_none">No Cap</string>
     <string name="nexcraft_cap_red">Red Cap</string>
     <string name="nexcraft_cap_blue">Blue Cap</string>

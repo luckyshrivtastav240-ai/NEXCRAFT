@@ -1607,4 +1607,7 @@
     <string name="nexcraft_cap_beanie">बैंगनी बीनी</string>
     <string name="nexcraft_cap_straw">स्ट्रॉ हैट</string>
     <string name="nexcraft_cap_lava">लावा फोर्ज</string>
+    <string name="nexcraft_cap_netherite">नेथराइट हेल्मेट</string>
+    <string name="nexcraft_cap_diamond">हीरे का ताज</string>
+    <string name="nexcraft_cap_ender">एंडर हुड</string>
 </resources>

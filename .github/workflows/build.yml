@@ -1,9 +1,6 @@
 name: Build APK
 
 on:
-  push:
-    branches:
-      - nexcraft/mobile-layout-and-ci
   workflow_dispatch:
     inputs:
       variant:

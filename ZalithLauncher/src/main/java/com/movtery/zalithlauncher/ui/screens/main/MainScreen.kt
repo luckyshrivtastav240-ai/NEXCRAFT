@@ -20,6 +20,13 @@ package com.movtery.zalithlauncher.ui.screens.main
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -37,6 +44,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -61,6 +69,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
@@ -729,6 +738,10 @@ private fun TaskMenu(
                     }
                 }
 
+                if (tasks.any { it.runningIcon == R.drawable.ic_rocket_launch_filled }) {
+                    NexcraftGameLaunchBanner()
+                }
+
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxHeight()
@@ -753,6 +766,92 @@ private fun TaskMenu(
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun NexcraftGameLaunchBanner() {
+    val transition = rememberInfiniteTransition(label = "NEXCRAFTVoxelIntro")
+    val hammerAngle by transition.animateFloat(
+        initialValue = -10f,
+        targetValue = 10f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1350, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "NEXCRAFTHammerSwing"
+    )
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 6.dp),
+        shape = MaterialTheme.shapes.large,
+        color = Color(0xFF171D1A),
+        contentColor = Color(0xFFFFE8D0),
+        shadowElevation = 4.dp
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(62.dp)
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(Color(0xFF2A211B)),
+                contentAlignment = Alignment.Center
+            ) {
+                Surface(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .graphicsLayer {
+                            rotationX = 38f
+                            rotationY = 42f
+                        }
+                        .align(Alignment.BottomEnd),
+                    shape = MaterialTheme.shapes.small,
+                    color = Color(0xFFB94C24)
+                ) {}
+                Image(
+                    modifier = Modifier
+                        .size(54.dp)
+                        .graphicsLayer {
+                            rotationZ = hammerAngle
+                            rotationY = hammerAngle * 0.45f
+                        },
+                    painter = painterResource(R.drawable.nexcraft_icon_lava_hammer),
+                    contentDescription = null
+                )
+            }
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.nexcraft_launch_title),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = Color(0xFFFFD3A5)
+                )
+                Text(
+                    text = stringResource(R.string.nexcraft_launch_subtitle),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color(0xFFC8B9AA)
+                )
+            }
+            Surface(
+                shape = MaterialTheme.shapes.small,
+                color = Color(0xFF5B2B1C)
+            ) {
+                Text(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp),
+                    text = "3D",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color(0xFFFFB36C)
+                )
             }
         }
     }

@@ -1476,23 +1476,28 @@ fun ChangeSkinDialog(
         }
 
     // 皮肤状态变化时重载预览皮肤
-    val previewSkin by produceState<ByteArray?>(null, skinState, selectedCapStyle) {
+    val context = LocalContext.current
+    val previewSkin by produceState<ByteArray?>(null, skinState, selectedCapStyle, capChanged) {
         value = withContext(Dispatchers.IO) {
-            when (skinState) {
+            val model = when (skinState) {
+                ChangeSkin.None -> account.skinModelType
+                is ChangeSkin.ChangeSkinData -> skinState.data.getModelType()
+                ChangeSkin.ResetSkin -> SkinModelType.STEVE
+            }
+            val base = when (skinState) {
                 ChangeSkin.None -> account.getSkinFile()
                     .takeIf { it.exists() }
                     ?.inputStream()
                     ?.use { it.readBytes() }
-                    ?.let { bytes ->
-                        if (capChanged) runCatching { applyMinecraftCap(bytes, selectedCapStyle) }.getOrDefault(bytes) else bytes
-                    }
                 is ChangeSkin.ChangeSkinData -> runCatching {
-                    skinState.cacheFile
-                        .inputStream()
-                        .use { it.readBytes() }
+                    skinState.cacheFile.inputStream().use { it.readBytes() }
                 }.getOrNull()
                 ChangeSkin.ResetSkin -> null
-            }
+            } ?: context.assets.open(
+                if (model == SkinModelType.ALEX) "skin/alex.png" else "skin/steve.png"
+            ).use { it.readBytes() }
+            if (capChanged) runCatching { applyMinecraftCap(base, selectedCapStyle) }.getOrDefault(base)
+            else base
         }
     }
     val previewArm = when (skinState) {

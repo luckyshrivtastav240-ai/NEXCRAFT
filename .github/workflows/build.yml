@@ -114,7 +114,7 @@ jobs:
           path: ZalithLauncher/build/outputs/mapping/release/mapping.txt
 
       - name: Upload Debug APK for ${{ matrix.arch }}
-        if: inputs.variant == 'Debug' || github.event_name == 'push'
+        if: inputs.variant == 'Debug'
         continue-on-error: true
         uses: actions/upload-artifact@v7
         with:

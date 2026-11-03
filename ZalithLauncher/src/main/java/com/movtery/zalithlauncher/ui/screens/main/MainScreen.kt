@@ -19,6 +19,14 @@
 package com.movtery.zalithlauncher.ui.screens.main
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import android.content.Intent
+import android.os.BatteryManager
+import androidx.compose.runtime.produceState
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.delay
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.fadeIn
@@ -248,6 +256,67 @@ fun MainScreen(
 }
 
 @Composable
+private fun HomeDeviceStatus() {
+    val context = LocalContext.current
+    val clockText by produceState(
+        initialValue = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date())
+    ) {
+        while (true) {
+            value = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date())
+            delay(30_000L)
+        }
+    }
+    val dateText by produceState(
+        initialValue = SimpleDateFormat("EEE, d MMM", Locale.getDefault()).format(Date())
+    ) {
+        while (true) {
+            value = SimpleDateFormat("EEE, d MMM", Locale.getDefault()).format(Date())
+            delay(60_000L)
+        }
+    }
+    val batteryInfo by produceState(initialValue = 0 to false) {
+        val batteryManager = context.getSystemService(android.content.Context.BATTERY_SERVICE) as BatteryManager
+        while (true) {
+            val level = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+                .takeIf { it in 0..100 } ?: 0
+            val batteryIntent = context.registerReceiver(null, android.content.IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+            val status = batteryIntent?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
+            val charging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
+                status == BatteryManager.BATTERY_STATUS_FULL
+            value = level to charging
+            delay(30_000L)
+        }
+    }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        modifier = Modifier.padding(end = 4.dp)
+    ) {
+        Text(
+            text = clockText,
+            style = MaterialTheme.typography.labelMedium,
+            maxLines = 1
+        )
+        Text(
+            text = dateText,
+            style = MaterialTheme.typography.labelSmall,
+            maxLines = 1
+        )
+        Text(
+            text = if (batteryInfo.second) "⚡🔋" else "🔋",
+            style = MaterialTheme.typography.labelSmall,
+            maxLines = 1
+        )
+        Text(
+            text = "${batteryInfo.first}%",
+            style = MaterialTheme.typography.labelSmall,
+            maxLines = 1
+        )
+    }
+}
+
+@Composable
 private fun <E: TitledNavKey> TopBar(
     mainScreenKey: E?,
     inLauncherScreen: Boolean,
@@ -382,6 +451,10 @@ private fun <E: TitledNavKey> TopBar(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
+                if (inLauncherScreen) {
+                    HomeDeviceStatus()
+                }
+
                 AnimatedVisibility(
                     visible = !(isTasksExpanded || taskRunning),
                     enter = slideInVertically(

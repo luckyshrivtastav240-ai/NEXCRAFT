@@ -21,8 +21,9 @@ object AppIconManager {
         val selectedName = "${style.name}_${color.name}"
         NEXCRAFTIconStyle.entries.forEach { iconStyle ->
             NEXCRAFTIconColor.entries.forEach { iconColor ->
-                // Activity-alias names are resolved against the manifest namespace, not the debug applicationId (which has a .debug suffix).
-                val aliasName = "com.movtery.zalithlauncher.icon.${iconStyle.name}_${iconColor.name}"
+                // Manifest aliases are packaged under the final applicationId. This includes
+                // build-type suffixes such as .debug, so resolve from context.packageName.
+                val aliasName = "${context.packageName}.icon.${iconStyle.name}_${iconColor.name}"
                 packageManager.setComponentEnabledSetting(
                     ComponentName(context.packageName, aliasName),
                     if (selectedName == "${iconStyle.name}_${iconColor.name}") {

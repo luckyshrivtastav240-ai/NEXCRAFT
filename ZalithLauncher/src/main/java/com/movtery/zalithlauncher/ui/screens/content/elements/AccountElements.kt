@@ -1480,7 +1480,7 @@ fun ChangeSkinDialog(
     val previewSkin by produceState<ByteArray?>(null, skinState, selectedCapStyle, capChanged) {
         value = withContext(Dispatchers.IO) {
             val model = when (skinState) {
-                ChangeSkin.None -> account.skinModelType
+                ChangeSkin.None -> account.skinModelType.takeUnless { it == SkinModelType.NONE } ?: SkinModelType.STEVE
                 is ChangeSkin.ChangeSkinData -> skinState.data.getModelType()
                 ChangeSkin.ResetSkin -> SkinModelType.STEVE
             }
@@ -1501,7 +1501,7 @@ fun ChangeSkinDialog(
         }
     }
     val previewArm = when (skinState) {
-        ChangeSkin.None -> account.skinModelType.toArmModel()
+        ChangeSkin.None -> account.skinModelType.takeUnless { it == SkinModelType.NONE }?.toArmModel() ?: ArmModel.Classic
         is ChangeSkin.ChangeSkinData -> skinState.data.getModelType().toArmModel()
         ChangeSkin.ResetSkin -> ArmModel.Classic
     }
@@ -1755,7 +1755,7 @@ fun ChangeSkinDialog(
                                     }
                                     val model = when (skinState) {
                                         is ChangeSkin.ChangeSkinData -> skinState.data.getModelType()
-                                        ChangeSkin.None -> account.skinModelType
+                                        ChangeSkin.None -> account.skinModelType.takeUnless { it == SkinModelType.NONE } ?: SkinModelType.STEVE
                                         ChangeSkin.ResetSkin -> SkinModelType.STEVE
                                     }
                                     onApplyCap(selectedCapStyle, sourceFile, model)

@@ -249,7 +249,7 @@ private fun WelcomeTerminal(
         welcomeText = ""
         welcomeFinished = false
         delay(700.milliseconds)
-        "WEL".forEach { character ->
+        "NEX".forEach { character ->
             welcomeText += character
             delay(85.milliseconds)
         }
@@ -257,7 +257,7 @@ private fun WelcomeTerminal(
         // 中途小小休息
         delay(420.milliseconds)
 
-        "COME!".forEach { character ->
+        "CRAFT".forEach { character ->
             welcomeText += character
             delay(85.milliseconds)
         }
@@ -282,6 +282,15 @@ private fun WelcomeTerminal(
                         shape = RoundedCornerShape(44.dp)
                     )
             )
+            Image(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 18.dp, end = 22.dp)
+                    .size(104.dp)
+                    .graphicsLayer { rotationZ = 8f },
+                painter = painterResource(R.drawable.nexcraft_icon_lava_hammer),
+                contentDescription = null
+            )
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
@@ -305,7 +314,7 @@ private fun WelcomeTerminal(
                 ) {
                     Text(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
-                        text = "♥ MADE WITH HEART ♥",
+                        text = "MINECRAFT JAVA  •  NEXCRAFT",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.4.sp

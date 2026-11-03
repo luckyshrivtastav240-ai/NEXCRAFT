@@ -225,7 +225,7 @@
     <!-- Error message for HTTP 504 responses; %s is the status code -->
     <string name="error_gateway_timeout">(%s) The server did not receive a timely response</string>
     <!-- Subtitle shown below the animated welcome title -->
-    <string name="welcome_screen_subtitle">Come and experience something new.</string>
+    <string name="welcome_screen_subtitle">Your Minecraft world begins here.</string>
     <!-- First welcome introduction paragraph; %1$s is the launcher name -->
     <string name="welcome_screen_intro_primary">Welcome to %1$s, a third-party Minecraft: Java Edition launcher designed for Android devices.</string>
     <!-- Second introduction paragraph describing the PojavLauncher core -->

@@ -317,7 +317,6 @@ fun LauncherSettingsScreen(
                                 Surface(
                                     modifier = Modifier.clickable {
                                         AllSettings.launcherAppIconStyle.save(style)
-                                        AppIconManager.apply(context, style, AllSettings.launcherAppIconColor.state)
                                     },
                                     shape = MaterialTheme.shapes.large,
                                     color = if (selected) MaterialTheme.colorScheme.primaryContainer
@@ -354,9 +353,6 @@ fun LauncherSettingsScreen(
                         title = stringResource(R.string.nexcraft_icon_style_title),
                         summary = stringResource(R.string.nexcraft_icon_style_summary),
                         getItemText = { stringResource(it.textRes) },
-                        onValueChange = {
-                            AppIconManager.apply(context, it, AllSettings.launcherAppIconColor.state)
-                        }
                     )
                     ListSettingsCard(
                         modifier = Modifier.fillMaxWidth(),
@@ -366,10 +362,19 @@ fun LauncherSettingsScreen(
                         title = stringResource(R.string.nexcraft_icon_color_title),
                         summary = stringResource(R.string.nexcraft_icon_color_summary),
                         getItemText = { stringResource(it.textRes) },
-                        onValueChange = {
-                            AppIconManager.apply(context, AllSettings.launcherAppIconStyle.state, it)
-                        }
                     )
+                    Button(
+                        onClick = {
+                            AppIconManager.apply(
+                                context,
+                                AllSettings.launcherAppIconStyle.state,
+                                AllSettings.launcherAppIconColor.state
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 10.dp)
+                    ) {
+                        Text(text = stringResource(R.string.nexcraft_icon_apply))
+                    }
                 }
             }
 

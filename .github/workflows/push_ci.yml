@@ -23,6 +23,7 @@ jobs:
       OAUTH_CLIENT_ID: ${{ secrets.OAUTH_CLIENT_ID }}
       CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
 
+  # Keep screenshot validation strictly after every architecture build succeeds.
   Screenshot:
     name: Capture real NEXCRAFT Android screen
     needs: Build

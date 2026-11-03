@@ -223,11 +223,15 @@ class MainActivity : BaseAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Restore the user's selected NEXCRAFT launcher icon after process recreation or app update.
-        AppIconManager.apply(
-            context = this,
-            style = AllSettings.launcherAppIconStyle.state,
-            color = AllSettings.launcherAppIconColor.state
-        )
+        // Icon aliases can differ across build variants or older installs.
+        // Never let an unavailable launcher-icon alias prevent the main activity from opening.
+        runCatching {
+            AppIconManager.apply(
+                context = this,
+                style = AllSettings.launcherAppIconStyle.state,
+                color = AllSettings.launcherAppIconColor.state
+            )
+        }
         //处理外部导入
         val isImporting = handleImportIfNeeded(intent)
 

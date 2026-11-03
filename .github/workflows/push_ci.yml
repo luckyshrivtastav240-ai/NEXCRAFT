@@ -2,6 +2,9 @@ name: Build CI
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - nexcraft/mobile-layout-and-ci
 
 # Keep only the newest build for each branch. Rapid commits should not
 # leave dozens of obsolete Android matrix builds waiting in the runner queue.

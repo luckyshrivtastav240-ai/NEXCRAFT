@@ -53,7 +53,7 @@ const val URL_MINECRAFT_PURCHASE = "https://www.xbox.com/games/store/minecraft-j
 const val URL_PROJECT: String = "https://github.com/maxtroitofficial/NEXCRAFT"
 const val URL_PROJECT_INFO: String = "https://github.com/maxtroitofficial/NEXCRAFT/releases/latest/download"
 const val URL_COMMUNITY: String = "https://github.com/maxtroitofficial/NEXCRAFT/graphs/contributors"
-const val URL_WEBLATE: String = "https://hosted.weblate.org/projects/zalithlauncher2"
+const val URL_WEBLATE: String = "https://github.com/maxtroitofficial/NEXCRAFT"
 const val URL_SUPPORT: String = "https://www.youtube.com/@maxtroit_official"
 const val URL_EASYTIER: String = "https://easytier.cn/"
 

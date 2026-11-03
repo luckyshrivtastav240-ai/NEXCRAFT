@@ -159,10 +159,7 @@ fun MainScreen(
             val noTasks = tasks.isEmpty()
             eventViewModel.sendKeepScreen(!noTasks)
             taskRunning = noTasks
-            if (tasks.any { it.runningIcon == R.drawable.ic_rocket_launch_filled }) {
-                // Open the NEXCRAFT voxel launch screen automatically for a real game launch.
-                AllSettings.launcherTaskMenuExpanded.save(true)
-            }
+            // TaskSystem exposes plain Task objects; task icon metadata is not available here.
         }
     }
 
@@ -751,9 +748,7 @@ private fun TaskMenu(
                     }
                 }
 
-                if (tasks.any { it.runningIcon == R.drawable.ic_rocket_launch_filled }) {
-                    NexcraftGameLaunchBanner()
-                }
+                
 
                 LazyColumn(
                     modifier = Modifier
@@ -770,7 +765,7 @@ private fun TaskMenu(
                             taskProgress = taskProgress,
                             taskMessage = taskMessage,
                             rateBytesPerSec = rateBytesPerSec,
-                            taskIcon = task.runningIcon,
+                            taskIcon = null,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 6.dp)

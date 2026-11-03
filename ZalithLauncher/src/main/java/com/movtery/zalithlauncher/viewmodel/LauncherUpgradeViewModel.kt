@@ -41,7 +41,6 @@ import androidx.lifecycle.viewModelScope
 import com.movtery.zalithlauncher.BuildConfig
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.path.GLOBAL_CLIENT
-import com.movtery.zalithlauncher.path.GLOBAL_JSON
 import com.movtery.zalithlauncher.path.URL_PROJECT_INFO
 import com.movtery.zalithlauncher.setting.AllSettings
 import com.movtery.zalithlauncher.ui.components.MarqueeText
@@ -60,7 +59,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 private const val TAG = "LauncherUpgradeVM"

@@ -115,87 +115,141 @@ object HomeCards {
         }
     }
 
-    /** NEXCRAFT dashboard hero with persistent unofficial-build notice. */
+    /** Responsive NEXCRAFT dashboard header sized for Android phone screens. */
     private fun unofficialVersionCard() = SystemCard(id = "system_unofficial_version") {
         val selectedVersion by VersionsManager.currentVersion.collectAsStateWithLifecycle()
         val hasValidVersion = selectedVersion?.isValid() == true
 
         androidx.compose.material3.Surface(
             modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.extraLarge,
-            color = Color(0xFF0B1422),
-            contentColor = Color(0xFFEAF4FF),
-            tonalElevation = 4.dp
+            shape = RoundedCornerShape(24.dp),
+            color = Color(0xFF081321),
+            contentColor = Color(0xFFF0F6FF),
+            tonalElevation = 2.dp
         ) {
-            Row(
-                modifier = Modifier
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                Color(0xFF0D2036),
-                                Color(0xFF102C49),
-                                Color(0xFF123A58)
-                            )
-                        )
+            androidx.compose.foundation.layout.BoxWithConstraints(
+                modifier = Modifier.background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(Color(0xFF0B1B2E), Color(0xFF102B46), Color(0xFF071321))
                     )
-                    .padding(horizontal = 18.dp, vertical = 18.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                )
             ) {
-                androidx.compose.material3.Surface(
-                    shape = MaterialTheme.shapes.extraLarge,
-                    color = Color(0xFF142D46)
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.nexcraft_icon_lava_hammer),
-                        contentDescription = "NEXCRAFT",
-                        modifier = Modifier.padding(10.dp).size(58.dp)
-                    )
-                }
-
+                val compact = maxWidth < 520.dp
                 Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                    modifier = Modifier.padding(
+                        horizontal = if (compact) 14.dp else 20.dp,
+                        vertical = if (compact) 14.dp else 18.dp
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(if (compact) 12.dp else 16.dp)
                 ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        androidx.compose.material3.Surface(
+                            shape = RoundedCornerShape(16.dp),
+                            color = Color(0xFF12324D)
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.nexcraft_icon_lava_hammer),
+                                contentDescription = "NEXCRAFT app icon",
+                                modifier = Modifier.padding(8.dp).size(if (compact) 42.dp else 54.dp)
+                            )
+                        }
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(3.dp)
+                        ) {
+                            Text(
+                                text = "NEXCRAFT",
+                                style = if (compact) MaterialTheme.typography.titleLarge
+                                    else MaterialTheme.typography.headlineSmall,
+                                color = Color(0xFFF4F8FF),
+                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                            )
+                            Text(
+                                text = "MINECRAFT: JAVA EDITION  •  ANDROID",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color(0xFFB7CBE0)
+                            )
+                        }
+                        androidx.compose.material3.Surface(
+                            shape = CircleShape,
+                            color = if (hasValidVersion) Color(0xFF123A32) else Color(0xFF34313A),
+                            contentColor = if (hasValidVersion) Color(0xFF8CF0C3) else Color(0xFFE1D9E8)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 9.dp, vertical = 6.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                androidx.compose.foundation.layout.Box(
+                                    Modifier.size(6.dp).background(
+                                        if (hasValidVersion) Color(0xFF65E6A8) else Color(0xFFB7A9C4),
+                                        CircleShape
+                                    )
+                                )
+                                Text(
+                                    text = selectedVersion?.takeIf { it.isValid() }?.getVersionName()
+                                        ?: stringResource(R.string.versions_manage_no_versions),
+                                    style = MaterialTheme.typography.labelMedium
+                                )
+                            }
+                        }
+                    }
+
+                    androidx.compose.material3.HorizontalDivider(color = Color(0xFF29445D))
+
                     Text(
-                        text = "NEXCRAFT",
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = Color(0xFFF2F7FF)
-                    )
-                    Text(
-                        text = "MINECRAFT: JAVA EDITION  •  ANDROID",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Color(0xFFB6C9DE)
+                        text = "Your Minecraft, your world.",
+                        style = if (compact) MaterialTheme.typography.titleMedium
+                            else MaterialTheme.typography.titleLarge,
+                        color = Color(0xFFEAF4FF),
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
                     )
                     Text(
                         text = stringResource(R.string.nexcraft_unofficial_modified_notice),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Color(0xFF58D8FF)
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFF9DB7CE)
                     )
-                    androidx.compose.material3.Surface(
-                        shape = CircleShape,
-                        color = if (hasValidVersion) MaterialTheme.colorScheme.primaryContainer
-                        else MaterialTheme.colorScheme.surfaceContainerHighest,
-                        contentColor = if (hasValidVersion) MaterialTheme.colorScheme.onPrimaryContainer
-                        else MaterialTheme.colorScheme.onSurfaceVariant
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(7.dp)
+                        androidx.compose.material3.Surface(
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp),
+                            color = Color(0xFF0E2237)
                         ) {
-                            Spacer(
-                                Modifier
-                                    .size(7.dp)
-                                    .then(
-                                        if (hasValidVersion) Modifier
-                                        else Modifier.alpha(0.55f)
-                                    )
-                            )
+                            Column(
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+                                verticalArrangement = Arrangement.spacedBy(3.dp)
+                            ) {
+                                Text(
+                                    text = "SELECTED VERSION",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = Color(0xFF79DFFF)
+                                )
+                                Text(
+                                    text = selectedVersion?.takeIf { it.isValid() }?.getVersionName()
+                                        ?: stringResource(R.string.versions_manage_no_versions),
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = Color(0xFFF1F6FF),
+                                    maxLines = 1
+                                )
+                            }
+                        }
+                        androidx.compose.material3.Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = Color(0xFF123A58)
+                        ) {
                             Text(
-                                text = selectedVersion?.takeIf { it.isValid() }?.getVersionName()
-                                    ?: stringResource(R.string.versions_manage_no_versions),
-                                style = MaterialTheme.typography.labelMedium
+                                text = if (hasValidVersion) "READY" else "SET UP",
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 13.dp),
+                                style = MaterialTheme.typography.labelLarge,
+                                color = Color(0xFFBFEFFF),
+                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                             )
                         }
                     }

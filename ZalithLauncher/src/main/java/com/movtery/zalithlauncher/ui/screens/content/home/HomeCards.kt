@@ -123,8 +123,8 @@ object HomeCards {
         androidx.compose.material3.Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.extraLarge,
-            color = Color(0xFF171B1B),
-            contentColor = Color(0xFFF6F0E8),
+            color = Color(0xFF0B1422),
+            contentColor = Color(0xFFEAF4FF),
             tonalElevation = 4.dp
         ) {
             Row(
@@ -132,9 +132,9 @@ object HomeCards {
                     .background(
                         brush = Brush.linearGradient(
                             colors = listOf(
-                                Color(0xFF182A25),
-                                Color(0xFF29201A),
-                                Color(0xFF4A2114)
+                                Color(0xFF0D2036),
+                                Color(0xFF102C49),
+                                Color(0xFF123A58)
                             )
                         )
                     )
@@ -144,7 +144,7 @@ object HomeCards {
             ) {
                 androidx.compose.material3.Surface(
                     shape = MaterialTheme.shapes.extraLarge,
-                    color = Color(0xFF30251D)
+                    color = Color(0xFF142D46)
                 ) {
                     Image(
                         painter = painterResource(R.drawable.nexcraft_icon_lava_hammer),
@@ -160,17 +160,17 @@ object HomeCards {
                     Text(
                         text = "NEXCRAFT",
                         style = MaterialTheme.typography.headlineSmall,
-                        color = Color(0xFFFFE1B8)
+                        color = Color(0xFFF2F7FF)
                     )
                     Text(
                         text = "MINECRAFT: JAVA EDITION  •  ANDROID",
                         style = MaterialTheme.typography.labelSmall,
-                        color = Color(0xFFD0C4B8)
+                        color = Color(0xFFB6C9DE)
                     )
                     Text(
                         text = stringResource(R.string.nexcraft_unofficial_modified_notice),
                         style = MaterialTheme.typography.labelMedium,
-                        color = Color(0xFFFF9850)
+                        color = Color(0xFF58D8FF)
                     )
                     androidx.compose.material3.Surface(
                         shape = CircleShape,

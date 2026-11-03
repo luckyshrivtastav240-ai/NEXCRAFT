@@ -68,6 +68,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -334,6 +335,8 @@ private fun <E: TitledNavKey> TopBar(
                 modifier = Modifier.constrainAs(title) {
                     centerVerticallyTo(parent)
                     start.linkTo(backCenter.end, margin = 16.dp)
+                    end.linkTo(endButtons.start, margin = 8.dp)
+                    width = androidx.constraintlayout.compose.Dimension.fillToConstraints
                 },
                 targetState = parentRes to childRes
             ) { (parent, child) ->
@@ -347,7 +350,8 @@ private fun <E: TitledNavKey> TopBar(
                             text = BuildKeys.LAUNCHER_IDENTIFIER,
                             style = style,
                             softWrap = softWarp,
-                            maxLines = maxLines
+                            maxLines = maxLines,
+                            overflow = TextOverflow.Ellipsis
                         )
                     } else {
                         FestivalTitleText(
@@ -367,7 +371,8 @@ private fun <E: TitledNavKey> TopBar(
                         text = titleText,
                         style = style,
                         softWrap = softWarp,
-                        maxLines = maxLines
+                        maxLines = maxLines,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
@@ -414,7 +419,7 @@ private fun <E: TitledNavKey> TopBar(
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_folder_filled),
-                        contentDescription = null
+                        contentDescription = "Open file manager"
                     )
                 }
 

@@ -181,7 +181,7 @@ class SponsorsViewModel : ViewModel() {
 
             val newData = toDataOperation(ensureData())
             _data.update { newData }
-            if (showLastMonth) checkLastMonthReport(newData)
+            // NEXCRAFT: suppress the upstream Zalith monthly sponsor report at startup.
         }
     }
 

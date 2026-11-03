@@ -481,6 +481,7 @@ class AccountManageViewModel @AssistedInject constructor(
                         ).use { it.readBytes() }
                     val cappedSkin = applyMinecraftCap(baseSkin, intent.style)
                     val output = File(PathManager.DIR_CACHE, "nexcraft_cap_${UUID.randomUUID()}.png")
+                    output.parentFile?.mkdirs()
                     output.writeBytes(cappedSkin)
                     applySkin(intent.account, output, intent.model)
                 },

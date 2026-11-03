@@ -766,6 +766,7 @@ private fun TaskMenu(
                             taskProgress = taskProgress,
                             taskMessage = taskMessage,
                             rateBytesPerSec = rateBytesPerSec,
+                            taskIcon = task.runningIcon,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 6.dp)
@@ -897,6 +898,7 @@ private fun TaskItem(
     taskProgress: Float,
     taskMessage: AndroidStringText?,
     rateBytesPerSec: Long?,
+    taskIcon: Int?,
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.large,
     color: Color = Color(0xFF1B211E),
@@ -922,8 +924,8 @@ private fun TaskItem(
             ) {
                 Icon(
                     modifier = Modifier.padding(4.dp),
-                    painter = painterResource(R.drawable.nexcraft_icon_lava_hammer),
-                    contentDescription = "NEXCRAFT"
+                    painter = painterResource(taskIcon ?: R.drawable.nexcraft_icon_lava_hammer),
+                    contentDescription = null
                 )
             }
             IconButton(

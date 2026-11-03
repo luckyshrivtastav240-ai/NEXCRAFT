@@ -160,16 +160,22 @@ fun LauncherScreen(
                     dragState.parentOrigin = coordinates.positionInRoot()
                 }
         ) {
+            // Give the main content more room on phones while preserving the
+            // original dock proportions on tablets and larger screens.
+            val isCompactPhone = maxWidth < 600.dp
+            val contentWeight = if (isCompactPhone) 7.5f else ContentWeight
+            val actionMenuWeight = if (isCompactPhone) 2.5f else ActionMenuWeight
+
             val parentWidthPx = constraints.maxWidth.toFloat()
             dragState.parentWidthPx = parentWidthPx
             dragState.outerPaddingPx = with(LocalDensity.current) { ActionMenuOuterPadding.toPx() }
-            dragState.menuSpanPx = parentWidthPx * (ActionMenuWeight / (ActionMenuWeight + ContentWeight))
+            dragState.menuSpanPx = parentWidthPx * (actionMenuWeight / (actionMenuWeight + contentWeight))
 
             //拖拽期间以预览侧为准
             val effectiveSide = dragState.previewSide ?: dockedSide
 
             //卡片尺寸与停泊槽内容区保持一致
-            val cardWidth = maxWidth * (ActionMenuWeight / (ActionMenuWeight + ContentWeight)) - ActionMenuOuterPadding
+            val cardWidth = maxWidth * (actionMenuWeight / (actionMenuWeight + contentWeight)) - ActionMenuOuterPadding
             val cardHeight = maxHeight - ActionMenuOuterPadding * 2
 
             val toAccountManageScreen: () -> Unit = {
@@ -193,7 +199,7 @@ fun LauncherScreen(
             Row(modifier = Modifier.fillMaxSize()) {
                 // ActionMenu 对接到了 Start，留出空位
                 if (dockedSide == ActionMenuSide.START) {
-                    Spacer(modifier = Modifier.weight(ActionMenuWeight))
+                    Spacer(modifier = Modifier.weight(actionMenuWeight))
                 }
 
                 CompositionLocalProvider(
@@ -209,7 +215,7 @@ fun LauncherScreen(
                             key = GuideKeys.Main.Step.CardTip,
                             holeRadius = 0.dp
                         )
-                        .weight(ContentWeight)
+                        .weight(contentWeight)
                         .offset { IntOffset(x = dragState.previewShift.value.roundToInt(), y = 0) },
                     isVisible = isVisible,
                     onLaunchGame = { version ->

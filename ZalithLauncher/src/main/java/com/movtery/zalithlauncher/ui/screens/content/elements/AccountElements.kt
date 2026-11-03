@@ -127,6 +127,8 @@ import com.movtery.zalithlauncher.game.account.isLocalAccount
 import com.movtery.zalithlauncher.game.account.isMicrosoftAccount
 import com.movtery.zalithlauncher.game.account.isSkinChangeAllowed
 import com.movtery.zalithlauncher.game.account.wardrobe.EmptyCape
+import com.movtery.zalithlauncher.game.account.wardrobe.MinecraftCapStyle
+import com.movtery.zalithlauncher.game.account.wardrobe.applyMinecraftCap
 import com.movtery.zalithlauncher.game.account.wardrobe.SkinModelType
 import com.movtery.zalithlauncher.game.account.wardrobe.capeLocalRes
 import com.movtery.zalithlauncher.game.account.wardrobe.toArmModel
@@ -1415,9 +1417,12 @@ fun ChangeSkinDialog(
     onResetSkin: () -> Unit,
     onApplySkin: (File, SkinModelType) -> Unit,
     onApplyCape: (PlayerProfile.Cape) -> Unit,
+    onApplyCap: (MinecraftCapStyle) -> Unit,
     onFetchCapes: () -> Unit
 ) {
     var showCapeSelector by remember { mutableStateOf(false) }
+    var selectedCapStyleName by rememberSaveable { mutableStateOf(MinecraftCapStyle.NONE.name) }
+    val selectedCapStyle = MinecraftCapStyle.entries.firstOrNull { it.name == selectedCapStyleName } ?: MinecraftCapStyle.NONE
 
     var isFetchingCapes by remember { mutableStateOf(false) }
 
@@ -1470,13 +1475,16 @@ fun ChangeSkinDialog(
         }
 
     // 皮肤状态变化时重载预览皮肤
-    val previewSkin by produceState<ByteArray?>(null, skinState) {
+    val previewSkin by produceState<ByteArray?>(null, skinState, selectedCapStyle) {
         value = withContext(Dispatchers.IO) {
             when (skinState) {
                 ChangeSkin.None -> account.getSkinFile()
                     .takeIf { it.exists() }
                     ?.inputStream()
                     ?.use { it.readBytes() }
+                    ?.let { bytes ->
+                        runCatching { applyMinecraftCap(bytes, selectedCapStyle) }.getOrDefault(bytes)
+                    }
                 is ChangeSkin.ChangeSkinData -> runCatching {
                     skinState.cacheFile
                         .inputStream()
@@ -1626,6 +1634,48 @@ fun ChangeSkinDialog(
                                 }
                             }
 
+                            Text(
+                                text = stringResource(R.string.nexcraft_cap_wardrobe_title),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                text = stringResource(R.string.nexcraft_cap_wardrobe_hint),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            FlowRow(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                MinecraftCapStyle.entries.forEach { style ->
+                                    val selected = selectedCapStyle == style
+                                    Surface(
+                                        modifier = Modifier.clickable { selectedCapStyleName = style.name },
+                                        shape = MaterialTheme.shapes.large,
+                                        color = if (selected) MaterialTheme.colorScheme.primaryContainer
+                                        else MaterialTheme.colorScheme.surfaceContainerHighest
+                                    ) {
+                                        Text(
+                                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+                                            text = when (style) {
+                                                MinecraftCapStyle.NONE -> stringResource(R.string.nexcraft_cap_none)
+                                                MinecraftCapStyle.RED_BASEBALL -> stringResource(R.string.nexcraft_cap_red)
+                                                MinecraftCapStyle.BLUE_BASEBALL -> stringResource(R.string.nexcraft_cap_blue)
+                                                MinecraftCapStyle.CREEPER -> stringResource(R.string.nexcraft_cap_creeper)
+                                                MinecraftCapStyle.GOLD_CROWN -> stringResource(R.string.nexcraft_cap_crown)
+                                                MinecraftCapStyle.PURPLE_BEANIE -> stringResource(R.string.nexcraft_cap_beanie)
+                                                MinecraftCapStyle.STRAW_HAT -> stringResource(R.string.nexcraft_cap_straw)
+                                                MinecraftCapStyle.LAVA_FORGE -> stringResource(R.string.nexcraft_cap_lava)
+                                            },
+                                            style = MaterialTheme.typography.labelMedium,
+                                            color = if (selected) MaterialTheme.colorScheme.onPrimaryContainer
+                                            else MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
+                                }
+                            }
+
                             //仅微软账号支持更改披风
                             if (account.isMicrosoftAccount()) {
                                 InfoLayoutTextItem(
@@ -1689,7 +1739,7 @@ fun ChangeSkinDialog(
 
                         Button(
                             modifier = Modifier.weight(1f),
-                            enabled = skinState != ChangeSkin.None || capeState != ChangeCape.None,
+                            enabled = skinState != ChangeSkin.None || capeState != ChangeCape.None || selectedCapStyle != MinecraftCapStyle.NONE,
                             onClick = {
                                 when (skinState) {
                                     is ChangeSkin.ChangeSkinData -> {
@@ -1705,6 +1755,9 @@ fun ChangeSkinDialog(
 
                                 if (capeState is ChangeCape.ChangeCapeData) {
                                     onApplyCape(capeState.cape)
+                                }
+                                if (selectedCapStyle != MinecraftCapStyle.NONE) {
+                                    onApplyCap(selectedCapStyle)
                                 }
 
                                 onDismissRequest()

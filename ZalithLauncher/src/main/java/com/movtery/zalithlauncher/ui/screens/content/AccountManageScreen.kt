@@ -65,6 +65,7 @@ import com.movtery.zalithlauncher.game.account.auth_server.data.AuthServer
 import com.movtery.zalithlauncher.game.account.isAuthServerAccount
 import com.movtery.zalithlauncher.game.account.isMicrosoftAccount
 import com.movtery.zalithlauncher.game.account.isMicrosoftLogging
+import com.movtery.zalithlauncher.game.account.wardrobe.MinecraftCapStyle
 import com.movtery.zalithlauncher.game.account.wardrobe.toArmModel
 import com.movtery.zalithlauncher.game.account.yggdrasil.PlayerProfile
 import com.movtery.zalithlauncher.ui.AndroidStringText
@@ -831,6 +832,9 @@ private fun AccountSkinOperation(
                 },
                 onApplyCape = { cape ->
                     actions.onIntent(AccountManageIntent.ApplyMicrosoftCape(account, cape))
+                },
+                onApplyCap = { style, sourceSkin, model ->
+                    actions.onIntent(AccountManageIntent.ApplyCap(account, style, sourceSkin, model))
                 }
             )
         }

@@ -1417,11 +1417,12 @@ fun ChangeSkinDialog(
     onResetSkin: () -> Unit,
     onApplySkin: (File, SkinModelType) -> Unit,
     onApplyCape: (PlayerProfile.Cape) -> Unit,
-    onApplyCap: (MinecraftCapStyle) -> Unit,
+    onApplyCap: (MinecraftCapStyle, File?, SkinModelType) -> Unit,
     onFetchCapes: () -> Unit
 ) {
     var showCapeSelector by remember { mutableStateOf(false) }
-    var selectedCapStyleName by rememberSaveable { mutableStateOf(MinecraftCapStyle.NONE.name) }
+    var selectedCapStyleName by rememberSaveable { mutableStateOf("") }
+    val capChanged = selectedCapStyleName.isNotEmpty()
     val selectedCapStyle = MinecraftCapStyle.entries.firstOrNull { it.name == selectedCapStyleName } ?: MinecraftCapStyle.NONE
 
     var isFetchingCapes by remember { mutableStateOf(false) }
@@ -1483,7 +1484,7 @@ fun ChangeSkinDialog(
                     ?.inputStream()
                     ?.use { it.readBytes() }
                     ?.let { bytes ->
-                        runCatching { applyMinecraftCap(bytes, selectedCapStyle) }.getOrDefault(bytes)
+                        if (capChanged) runCatching { applyMinecraftCap(bytes, selectedCapStyle) }.getOrDefault(bytes) else bytes
                     }
                 is ChangeSkin.ChangeSkinData -> runCatching {
                     skinState.cacheFile
@@ -1649,7 +1650,7 @@ fun ChangeSkinDialog(
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 MinecraftCapStyle.entries.forEach { style ->
-                                    val selected = selectedCapStyle == style
+                                    val selected = capChanged && selectedCapStyle == style
                                     Surface(
                                         modifier = Modifier.clickable { selectedCapStyleName = style.name },
                                         shape = MaterialTheme.shapes.large,
@@ -1739,25 +1740,30 @@ fun ChangeSkinDialog(
 
                         Button(
                             modifier = Modifier.weight(1f),
-                            enabled = skinState != ChangeSkin.None || capeState != ChangeCape.None || selectedCapStyle != MinecraftCapStyle.NONE,
+                            enabled = skinState != ChangeSkin.None || capeState != ChangeCape.None || capChanged,
                             onClick = {
-                                when (skinState) {
-                                    is ChangeSkin.ChangeSkinData -> {
-                                        onApplySkin(skinState.cacheFile, skinState.data.getModelType())
+                                if (capChanged) {
+                                    val sourceFile = when (skinState) {
+                                        is ChangeSkin.ChangeSkinData -> skinState.cacheFile
+                                        ChangeSkin.None -> account.getSkinFile().takeIf { it.exists() }
+                                        ChangeSkin.ResetSkin -> null
                                     }
-
-                                    is ChangeSkin.ResetSkin -> {
-                                        onResetSkin()
+                                    val model = when (skinState) {
+                                        is ChangeSkin.ChangeSkinData -> skinState.data.getModelType()
+                                        ChangeSkin.None -> account.skinModelType
+                                        ChangeSkin.ResetSkin -> SkinModelType.STEVE
                                     }
-
-                                    ChangeSkin.None -> {}
+                                    onApplyCap(selectedCapStyle, sourceFile, model)
+                                } else {
+                                    when (skinState) {
+                                        is ChangeSkin.ChangeSkinData -> onApplySkin(skinState.cacheFile, skinState.data.getModelType())
+                                        is ChangeSkin.ResetSkin -> onResetSkin()
+                                        ChangeSkin.None -> {}
+                                    }
                                 }
 
                                 if (capeState is ChangeCape.ChangeCapeData) {
                                     onApplyCape(capeState.cape)
-                                }
-                                if (selectedCapStyle != MinecraftCapStyle.NONE) {
-                                    onApplyCap(selectedCapStyle)
                                 }
 
                                 onDismissRequest()

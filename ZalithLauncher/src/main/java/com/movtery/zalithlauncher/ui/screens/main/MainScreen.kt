@@ -779,6 +779,19 @@ private fun TaskItem(
             modifier = Modifier.padding(all = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            Surface(
+                modifier = Modifier
+                    .size(38.dp)
+                    .align(Alignment.CenterVertically),
+                shape = MaterialTheme.shapes.medium,
+                color = MaterialTheme.colorScheme.primaryContainer
+            ) {
+                Icon(
+                    modifier = Modifier.padding(4.dp),
+                    painter = painterResource(R.drawable.nexcraft_icon_lava_hammer),
+                    contentDescription = "NEXCRAFT"
+                )
+            }
             IconButton(
                 modifier = Modifier
                     .size(24.dp)

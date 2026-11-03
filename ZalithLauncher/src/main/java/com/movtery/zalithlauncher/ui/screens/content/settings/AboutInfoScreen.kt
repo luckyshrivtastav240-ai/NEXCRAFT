@@ -125,14 +125,14 @@ fun AboutInfoScreen(
                         )
 
                         ButtonIconItem(
-                            icon = painterResource(R.drawable.img_avatar_movtery),
-                            title = stringResource(R.string.about_launcher_author_movtery_title),
-                            text = stringResource(R.string.about_launcher_author_movtery_text, launcherName),
+                            icon = painterResource(R.drawable.ic_link),
+                            title = "NEXCRAFT Creator",
+                            text = "Official YouTube channel: @maxtroit_official",
                             button = {
                                 Button(
-                                    onClick = { openLink(URL_SUPPORT) }
+                                    onClick = { openLink("https://www.youtube.com/@maxtroit_official") }
                                 ) {
-                                    Text(text = stringResource(R.string.about_sponsor))
+                                    Text(text = "Visit YouTube")
                                 }
                             }
                         )
@@ -148,31 +148,6 @@ fun AboutInfoScreen(
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         val launcherName = remember { launcherName() }
 
-                        ButtonIconItem(
-                            icon = painterResource(R.drawable.img_sponsor),
-                            title = stringResource(R.string.about_sponsors_title),
-                            text = stringResource(R.string.about_sponsors_summary, launcherName),
-                            button = {
-                                Button(
-                                    onClick = onViewSponsors
-                                ) {
-                                    Text(text = stringResource(R.string.generic_view))
-                                }
-                            }
-                        )
-
-                        ButtonIconItem(
-                            icon = painterResource(R.drawable.img_avatar_bangbang93),
-                            title = "bangbang93",
-                            text = stringResource(R.string.about_acknowledgements_bangbang93_text, BuildKeys.LAUNCHER_SHORT_NAME),
-                            button = {
-                                Button(
-                                    onClick = { openLink("https://ifdian.net/a/bangbang93") }
-                                ) {
-                                    Text(text = stringResource(R.string.about_sponsor))
-                                }
-                            }
-                        )
                         LinkIconItem(
                             icon = painterResource(R.drawable.img_launcher_fcl),
                             title = "Fold Craft Launcher",
@@ -231,12 +206,6 @@ fun AboutInfoScreen(
                             text = stringResource(R.string.about_acknowledgements_github_community_text),
                             openLink = { openLink(URL_COMMUNITY) },
                             useImage = false
-                        )
-                        LinkIconItem(
-                            icon = painterResource(R.drawable.img_platform_weblate),
-                            title = stringResource(R.string.about_acknowledgements_weblate_community),
-                            text = stringResource(R.string.about_acknowledgements_weblate_community_text),
-                            openLink = { openLink(URL_WEBLATE) }
                         )
                     }
                 }

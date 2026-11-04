@@ -1,3 +1,5 @@
+import { handleMcp } from "./mcp";
+
 interface D1Statement {
   bind(...values: unknown[]): D1Statement;
   first<T = Record<string, unknown>>(): Promise<T | null>;
@@ -85,6 +87,7 @@ export default {
       if (!env.PAIRING_SIGNING_SECRET || env.PAIRING_SIGNING_SECRET.length < 32) return json({ error: "Relay secret is not configured" }, 503);
       const url = new URL(request.url);
       const path = url.pathname;
+      if (path === "/mcp") return handleMcp(request);
       if (request.method === "GET" && path === "/health") return json({ ok: true, service: "nexcraft-connector-relay", api: "v1", storage: "D1" });
 
       if (request.method === "POST" && (path === "/v1/pairings" || path === "/v1/pairings/complete")) {

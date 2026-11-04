@@ -218,7 +218,7 @@ class ConnectorScreenCaptureService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("NEXCRAFT screen sharing is active")
-            .setContentText("Your screen is being captured. Tap Stop to end sharing.")
+            .setContentText("Screen capture is active. Frames upload only while paired; tap Stop to end.")
             .setOngoing(true)
             .addAction(0, "Stop", stopPending)
             .build()

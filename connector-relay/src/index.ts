@@ -82,9 +82,7 @@ app.get("/v1/pairings/status", (req,res) => {
   if (p.status === "paired") {
     if (!p.device_token_cipher) return res.json({ status:"paired", pairingId:id, tokenDelivered:true });
     const deviceToken = unseal(p.device_token_cipher);
-    const consumed = db.prepare("UPDATE pairings SET device_token_cipher=NULL WHERE id=? AND device_token_cipher=?").run(id,p.device_token_cipher);
-    if (consumed.changes === 1) return res.json({ status:"paired", pairingId:id, deviceToken });
-    return res.json({ status:"paired", pairingId:id, tokenDelivered:true });
+    return res.json({ status:"paired", pairingId:id, deviceToken });
   }
   return res.json({ status:p.status, expiresAt:new Date(p.expires_at).toISOString() });
 });
@@ -102,16 +100,13 @@ app.post("/v1/pairings/complete", pairingLimiter, (req,res) => {
   res.json({ pairingId:p.id, assistantToken, deviceLabel:p.device_label, permissions:["read_diagnostics","read_screen_stream"], note:"Store this token securely. It is shown only once." });
 });
 
-app.post("/v1/pairings/:id/device-token", (req,res) => {
+app.post("/v1/pairings/:id/device-token/ack", (req,res) => {
   const secret = String(req.header("x-device-pairing-secret") ?? "");
   const p = pairingById.get(req.params.id) as Pairing | undefined;
   if (!p || !secret || !safeEqual(p.device_secret_hash,hash(secret))) return res.status(404).json({ error:"Pairing not found" });
   if (p.status !== "paired") return res.status(409).json({ error:"Pairing is not approved yet" });
-  if (!p.device_token_cipher) return res.status(410).json({ error:"Device token was already delivered" });
-  const deviceToken = unseal(p.device_token_cipher);
-  const consumed = db.prepare("UPDATE pairings SET device_token_cipher=NULL WHERE id=? AND device_token_cipher=?").run(p.id,p.device_token_cipher);
-  if (consumed.changes !== 1) return res.status(409).json({ error:"Device token handoff already consumed" });
-  return res.json({ deviceToken });
+  if (p.device_token_cipher) db.prepare("UPDATE pairings SET device_token_cipher=NULL WHERE id=? AND status='paired'").run(p.id);
+  return res.json({ acknowledged:true });
 });
 
 app.post("/v1/diagnostics", authenticate("device"), (req,res) => {

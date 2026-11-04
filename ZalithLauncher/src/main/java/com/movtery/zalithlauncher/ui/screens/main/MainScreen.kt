@@ -82,10 +82,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.LayoutDirection
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.net.Uri
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import androidx.core.content.FileProvider
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -161,6 +170,10 @@ fun MainScreen(
 ) {
     val context = LocalContext.current
     var diagnosticsReport by remember { mutableStateOf<String?>(null) }
+    var diagnosticsScreenshotUri by remember { mutableStateOf<Uri?>(null) }
+    var diagnosticsScreenshotPreparing by remember { mutableStateOf(false) }
+    val diagnosticsScope = rememberCoroutineScope()
+    val diagnosticsView = LocalView.current
     //监控当前是否有任务正在进行
     var taskRunning by remember { mutableStateOf(true) }
     LaunchedEffect(Unit) {
@@ -313,6 +326,36 @@ fun MainScreen(
                                 appendLine(context.getString(R.string.nexcraft_diagnostics_privacy_notice))
                             }
                             diagnosticsReport = report
+                            diagnosticsScreenshotUri = null
+                            diagnosticsScreenshotPreparing = diagnosticsView.width > 0 && diagnosticsView.height > 0
+                            if (diagnosticsScreenshotPreparing) {
+                                val screenBitmap = Bitmap.createBitmap(
+                                    diagnosticsView.width,
+                                    diagnosticsView.height,
+                                    Bitmap.Config.ARGB_8888
+                                )
+                                diagnosticsView.draw(Canvas(screenBitmap))
+                                diagnosticsScope.launch {
+                                    val screenshotUri = withContext(Dispatchers.IO) {
+                                        val directory = File(context.cacheDir, "ai_bridge").apply { mkdirs() }
+                                        directory.listFiles()?.filter { it.isFile && it.extension == "png" }?.forEach { it.delete() }
+                                        val screenshotFile = File(directory, "nexcraft_screen.png")
+                                        FileOutputStream(screenshotFile).use { output ->
+                                            check(screenBitmap.compress(Bitmap.CompressFormat.PNG, 100, output)) {
+                                                "Could not encode launcher screenshot"
+                                            }
+                                        }
+                                        FileProvider.getUriForFile(
+                                            context,
+                                            "${context.packageName}.provider",
+                                            screenshotFile
+                                        )
+                                    }
+                                    diagnosticsScreenshotUri = screenshotUri
+                                    diagnosticsScreenshotPreparing = false
+                                    screenBitmap.recycle()
+                                }
+                            }
                         })
                         .padding(horizontal = 10.dp, vertical = 10.dp),
                     color = Color(0xFFFFB36B),
@@ -423,11 +466,21 @@ fun MainScreen(
             },
             confirmButton = {
                 TextButton(
+                    enabled = !diagnosticsScreenshotPreparing,
                     onClick = {
                         val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/plain"
-                            putExtra(Intent.EXTRA_SUBJECT, "NEXCRAFT diagnostics")
+                            type = if (diagnosticsScreenshotUri != null) "image/png" else "text/plain"
+                            putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.nexcraft_diagnostics_subject))
                             putExtra(Intent.EXTRA_TEXT, report)
+                            diagnosticsScreenshotUri?.let { screenshotUri ->
+                                putExtra(Intent.EXTRA_STREAM, screenshotUri)
+                                clipData = android.content.ClipData.newUri(
+                                    context.contentResolver,
+                                    context.getString(R.string.nexcraft_diagnostics_screenshot_label),
+                                    screenshotUri
+                                )
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            }
                         }
                         diagnosticsReport = null
                         context.startActivity(

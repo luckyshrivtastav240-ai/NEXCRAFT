@@ -45,7 +45,7 @@ export const insertPairing = db.prepare(`INSERT INTO pairings
 VALUES (@id,@device_id,@device_label,@code_hash,@device_secret_hash,@device_token_hash,@device_token_cipher,'pending',@created_at,@expires_at)`);
 export const completePairing = db.prepare("UPDATE pairings SET status='paired', assistant_token_hash=?, paired_at=? WHERE id=? AND status='pending'");
 export const expirePairing = db.prepare("UPDATE pairings SET status='expired' WHERE status='pending' AND expires_at < ?");
-export const takeDeviceToken = db.prepare('UPDATE pairings SET device_token_cipher=NULL WHERE id=? AND device_token_cipher=?');
+export const acknowledgeDeviceToken = db.prepare("UPDATE pairings SET device_token_cipher=NULL WHERE id=? AND status='paired'");
 export const revokePairing = db.prepare("UPDATE pairings SET status='revoked' WHERE id=?");
 export const insertDiagnostic = db.prepare("INSERT INTO diagnostics(pairing_id,kind,payload,created_at) VALUES (?,?,?,?)");
 export const listDiagnostics = db.prepare("SELECT id,kind,payload,created_at FROM diagnostics WHERE pairing_id=? AND kind <> 'screen' ORDER BY created_at DESC LIMIT ?");

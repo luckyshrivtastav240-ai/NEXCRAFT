@@ -38,7 +38,7 @@
         android:allowBackup="true"
         android:hasFragileUserData="true"
         android:resizeableActivity="true"
-        android:usesCleartextTraffic="true"
+        android:usesCleartextTraffic="false"
         android:preserveLegacyExternalStorage="true"
         android:requestLegacyExternalStorage="true"
         android:allowNativeHeapPointerTagging="false"

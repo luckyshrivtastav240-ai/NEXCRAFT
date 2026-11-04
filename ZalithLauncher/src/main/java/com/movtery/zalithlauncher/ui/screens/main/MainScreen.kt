@@ -636,7 +636,7 @@ fun MainScreen(
                             onClick = {
                                 val code = connectorPairing?.pairingCode ?: return@TextButton
                                 val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                                clipboard.setPrimaryClip(android.content.ClipData.newPlainText("NEXCRAFT pairing code", code))
+                                clipboard.setPrimaryClip(android.content.ClipData.newPlainText("INDOCRAFT pairing code", code))
                             }
                         ) { Text(stringResource(R.string.nexcraft_connector_copy_code)) }
                         TextButton(

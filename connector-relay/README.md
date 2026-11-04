@@ -28,6 +28,17 @@ This service is the secure relay component for NEXCRAFT's Main Connector. It is 
 
 This is a relay API scaffold, not yet a production-ready ChatGPT connector. The device-token handoff is deliberately not enabled until its one-time encrypted delivery is implemented. The Android MediaProjection foreground service, app-side secure pairing client, reconnect lifecycle, and ChatGPT MCP tool adapter still need to be integrated and tested before this is called complete. The SQLite store must use persistent storage in deployment.
 
+## Deploy on Render
+
+1. Push this branch to GitHub and create a Render Blueprint using `connector-relay/render.yaml`.
+2. Confirm the persistent disk is mounted at `/var/data`; do not use an ephemeral filesystem for the SQLite database.
+3. After deployment, copy the HTTPS service URL into NEXCRAFT → ChatGPT Connector.
+4. Import `openapi.yaml` into a ChatGPT GPT Action and replace the example server URL with the deployed HTTPS URL.
+5. Create a pairing code in NEXCRAFT, then call `pairNexcraftDevice` from the Action with that code. Copy the one-time `assistantToken` from the result and configure the Action's API-key authentication as Bearer. The Android app will obtain its separate device token after you tap Check Pairing.
+6. The Action can call `readNexcraftDiagnostics` and `viewNexcraftScreen`. Revoke access from the app's Disconnect control or the Action's revoke operation.
+
+The OpenAPI file describes a GPT Action integration. It does not automatically attach this device to an arbitrary existing ChatGPT conversation. The Action must be created/configured in ChatGPT after the relay is deployed.
+
 ## Local development
 
 1. Copy `.env.example` to `.env` and set a random signing secret.

@@ -3201,7 +3201,7 @@
     <string name="nexcraft_diagnostics_share_notice">This report is shared only after you choose a sharing target.</string>
     <!-- Privacy warning shown in the exported diagnostics report -->
     <string name="nexcraft_diagnostics_privacy_notice">Review it before sending; logs may contain personal file paths or server details.</string>
-    <string name="nexcraft_connector_start_share">Start live screen share</string>
+    <string name="nexcraft_connector_start_share">Start screen sharing</string>
     <string name="nexcraft_connector_stop_share">Stop screen share</string>
     <string name="nexcraft_connector_open">ChatGPT Connector</string>
     <string name="nexcraft_connector_title">NEXCRAFT Main Connector</string>

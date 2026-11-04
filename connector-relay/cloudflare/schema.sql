@@ -23,6 +23,6 @@ CREATE TABLE IF NOT EXISTS diagnostics (
 CREATE INDEX IF NOT EXISTS diagnostics_pairing_created ON diagnostics(pairing_id,created_at DESC);
 CREATE TABLE IF NOT EXISTS rate_limits (
   bucket TEXT PRIMARY KEY,
-  window INTEGER NOT NULL,
+  window_id INTEGER NOT NULL,
   hits INTEGER NOT NULL
 );

@@ -140,7 +140,7 @@ export default {
         const input = await bodyJson(request);
         if (!["status","log","crash","screen","feature_snapshot"].includes(input.kind) || input.payload === undefined) return json({ error:"Invalid diagnostic payload" },400);
         const payload = JSON.stringify(input.payload ?? null);
-        if (new TextEncoder().encode(payload).length > 1_000_000) return json({ error:"Diagnostic payload too large" },413);
+        if (new TextEncoder().encode(payload).length > 500_000) return json({ error:"Diagnostic payload too large" },413);
         const now = Date.now();
         const result = await env.DB.prepare("INSERT INTO diagnostics(pairing_id,kind,payload,created_at) VALUES (?,?,?,?)")
           .bind(p.id,input.kind,payload,now).run();

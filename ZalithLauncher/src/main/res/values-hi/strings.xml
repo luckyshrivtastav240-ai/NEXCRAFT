@@ -1642,4 +1642,6 @@
     <string name="nexcraft_diagnostics_no_crash">क्रैश रिपोर्ट उपलब्ध नहीं है।</string>
     <string name="nexcraft_diagnostics_share_notice">यह रिपोर्ट तभी साझा होगी जब आप साझा करने का विकल्प चुनेंगे।</string>
     <string name="nexcraft_diagnostics_privacy_notice">भेजने से पहले जाँच लें; लॉग में निजी फ़ाइल पथ या सर्वर की जानकारी हो सकती है।</string>
+    <string name="nexcraft_connector_start_share">लाइव स्क्रीन शेयर शुरू करें</string>
+    <string name="nexcraft_connector_stop_share">स्क्रीन शेयर बंद करें</string>
 </resources>

@@ -19,6 +19,8 @@
 package com.movtery.zalithlauncher.ui.screens.main
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -85,11 +87,14 @@ import androidx.compose.ui.unit.LayoutDirection
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
+import android.app.Activity
 import android.app.ActivityManager
+import android.media.projection.MediaProjectionManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.content.FileProvider
+import androidx.core.content.ContextCompat
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
@@ -101,6 +106,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import com.movtery.zalithlauncher.BuildKeys
+import com.movtery.zalithlauncher.connector.ConnectorScreenCaptureService
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskSystem
@@ -172,6 +178,18 @@ fun MainScreen(
     var diagnosticsReport by remember { mutableStateOf<String?>(null) }
     var diagnosticsScreenshotUri by remember { mutableStateOf<Uri?>(null) }
     var diagnosticsScreenshotPreparing by remember { mutableStateOf(false) }
+    var screenCaptureActive by remember { mutableStateOf(false) }
+    val screenCaptureLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+            val captureIntent = Intent(context, ConnectorScreenCaptureService::class.java).apply {
+                action = ConnectorScreenCaptureService.ACTION_START
+                putExtra(ConnectorScreenCaptureService.EXTRA_RESULT_CODE, result.resultCode)
+                putExtra(ConnectorScreenCaptureService.EXTRA_RESULT_DATA, result.data)
+            }
+            ContextCompat.startForegroundService(context, captureIntent)
+            screenCaptureActive = true
+        }
+    }
     val diagnosticsScope = rememberCoroutineScope()
     val diagnosticsView = LocalView.current
     //监控当前是否有任务正在进行
@@ -479,6 +497,18 @@ fun MainScreen(
                 }
             },
             confirmButton = {
+                Row {
+                TextButton(
+                    onClick = {
+                        if (screenCaptureActive) {
+                            context.startService(Intent(context, ConnectorScreenCaptureService::class.java).setAction(ConnectorScreenCaptureService.ACTION_STOP))
+                            screenCaptureActive = false
+                        } else {
+                            val manager = context.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+                            screenCaptureLauncher.launch(manager.createScreenCaptureIntent())
+                        }
+                    }
+                ) { Text(stringResource(if (screenCaptureActive) R.string.nexcraft_connector_stop_share else R.string.nexcraft_connector_start_share)) }
                 TextButton(
                     enabled = !diagnosticsScreenshotPreparing,
                     onClick = {
@@ -502,6 +532,7 @@ fun MainScreen(
                         )
                     }
                 ) { Text(stringResource(R.string.nexcraft_diagnostics_share)) }
+                }
             },
             dismissButton = {
                 TextButton(onClick = { diagnosticsReport = null }) {

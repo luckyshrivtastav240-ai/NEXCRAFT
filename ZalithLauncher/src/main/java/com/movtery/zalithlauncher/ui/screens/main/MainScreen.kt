@@ -563,6 +563,8 @@ fun MainScreen(
                                 connectorError = null
                                 try {
                                     connectorClient.disconnect()
+                                    context.startService(Intent(context, ConnectorScreenCaptureService::class.java).setAction(ConnectorScreenCaptureService.ACTION_STOP))
+                                    screenCaptureActive = false
                                     connectorPairing = null
                                     connectorStatus = "Disconnected"
                                 } catch (error: Exception) {
@@ -574,11 +576,11 @@ fun MainScreen(
                         }) { Text(stringResource(R.string.nexcraft_connector_disconnect)) }
                     }
                     Row {
-                        TextButton(onClick = {
+                        TextButton(enabled = ConnectorTokenStore(context).read() != null, onClick = {
                             val manager = context.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
                             screenCaptureLauncher.launch(manager.createScreenCaptureIntent())
                         }) { Text(stringResource(R.string.nexcraft_connector_start_share)) }
-                        TextButton(onClick = {
+                        TextButton(enabled = screenCaptureActive, onClick = {
                             context.startService(Intent(context, ConnectorScreenCaptureService::class.java).setAction(ConnectorScreenCaptureService.ACTION_STOP))
                             screenCaptureActive = false
                         }) { Text(stringResource(R.string.nexcraft_connector_stop_share)) }
@@ -616,6 +618,7 @@ fun MainScreen(
             confirmButton = {
                 Row {
                 TextButton(
+                    enabled = screenCaptureActive || ConnectorTokenStore(context).read() != null,
                     onClick = {
                         if (screenCaptureActive) {
                             context.startService(Intent(context, ConnectorScreenCaptureService::class.java).setAction(ConnectorScreenCaptureService.ACTION_STOP))

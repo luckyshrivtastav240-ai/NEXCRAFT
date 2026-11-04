@@ -53,6 +53,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -158,6 +160,7 @@ fun MainScreen(
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit
 ) {
     val context = LocalContext.current
+    var diagnosticsReport by remember { mutableStateOf<String?>(null) }
     //监控当前是否有任务正在进行
     var taskRunning by remember { mutableStateOf(true) }
     LaunchedEffect(Unit) {
@@ -314,7 +317,7 @@ fun MainScreen(
                                 putExtra(Intent.EXTRA_SUBJECT, "NEXCRAFT diagnostics")
                                 putExtra(Intent.EXTRA_TEXT, report)
                             }
-                            context.startActivity(Intent.createChooser(shareIntent, "Send diagnostics to ChatGPT"))
+                            diagnosticsReport = report
                         })
                         .padding(horizontal = 10.dp, vertical = 10.dp),
                     color = Color(0xFFFFB36B),
@@ -411,6 +414,39 @@ fun MainScreen(
             }
             }
         }
+    }
+
+    diagnosticsReport?.let { report ->
+        AlertDialog(
+            onDismissRequest = { diagnosticsReport = null },
+            title = { Text("NEXCRAFT diagnostics") },
+            text = {
+                Text(
+                    text = report.take(7_000),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_SUBJECT, "NEXCRAFT diagnostics")
+                            putExtra(Intent.EXTRA_TEXT, report)
+                        }
+                        diagnosticsReport = null
+                        context.startActivity(
+                            Intent.createChooser(shareIntent, "Choose where to share diagnostics")
+                        )
+                    }
+                ) { Text("Share report") }
+            },
+            dismissButton = {
+                TextButton(onClick = { diagnosticsReport = null }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
 

@@ -219,6 +219,11 @@ fun MainScreen(
                     return@LaunchedEffect
                 }
             } catch (error: Exception) {
+                if (error.message?.contains("expired", ignoreCase = true) == true) {
+                    connectorStatus = "Pairing expired"
+                    connectorError = error.message
+                    return@LaunchedEffect
+                }
                 connectorError = error.message ?: "Waiting for pairing approval"
             }
             delay(3_000L)

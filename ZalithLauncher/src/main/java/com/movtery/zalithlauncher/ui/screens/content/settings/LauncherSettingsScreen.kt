@@ -188,6 +188,7 @@ fun LauncherSettingsScreen(
                             var connectorBusy by remember { mutableStateOf(false) }
                             var connectorStatus by remember { mutableStateOf(if (connected) "Connected securely" else "Not connected") }
                             var connectorError by remember { mutableStateOf<String?>(null) }
+                            var disconnectRequested by remember { mutableStateOf(false) }
 
                             TitleAndSummary(
                                 title = "NEXCRAFT • ChatGPT connection",
@@ -222,6 +223,23 @@ fun LauncherSettingsScreen(
                                     } finally {
                                         connectorBusy = false
                                         pairingRequested = false
+                                    }
+                                }
+                            }
+
+                            LaunchedEffect(disconnectRequested) {
+                                if (disconnectRequested) {
+                                    connectorBusy = true
+                                    try {
+                                        relayClient.disconnect()
+                                        connected = false
+                                        pairing = null
+                                        connectorStatus = "Disconnected"
+                                    } catch (error: Exception) {
+                                        connectorError = error.message ?: "Could not disconnect"
+                                    } finally {
+                                        connectorBusy = false
+                                        disconnectRequested = false
                                     }
                                 }
                             }
@@ -272,9 +290,8 @@ fun LauncherSettingsScreen(
                                 TextButton(
                                     enabled = !connectorBusy,
                                     onClick = {
-                                        connectorBusy = true
                                         connectorError = null
-                                        pairingRequested = false
+                                        disconnectRequested = true
                                     }
                                 ) {
                                     Text("Disconnect")

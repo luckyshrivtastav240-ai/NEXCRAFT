@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Allow the launcher to detect and open the official ChatGPT app on Android 11+. -->
+    <queries>
+        <package android:name="com.openai.chatgpt" />
+    </queries>
+
     <uses-feature android:glEsVersion="0x00020000" />
     <uses-feature
         android:name="android.hardware.type.pc"

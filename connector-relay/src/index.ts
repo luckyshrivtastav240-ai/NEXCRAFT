@@ -4,7 +4,7 @@ import helmet from "helmet";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 import { randomUUID } from "node:crypto";
-import { WebSocketServer } from "ws";
+import { WebSocket, WebSocketServer } from "ws";
 import { createServer } from "node:http";
 import { z } from "zod";
 import {
@@ -56,7 +56,7 @@ function publish(pairingId: string, event: unknown) {
   const set = clients.get(pairingId);
   if (!set) return;
   const data = JSON.stringify(event);
-  for (const ws of set) if (ws.readyState === ws.OPEN) ws.send(data);
+  for (const ws of set) if (ws.readyState === WebSocket.OPEN) ws.send(data);
 }
 
 app.post("/v1/pairings", pairingLimiter, (req,res) => {
@@ -117,7 +117,7 @@ app.post("/v1/pairings/:id/device-token", (req,res) => {
 app.post("/v1/diagnostics", authenticate("device"), (req,res) => {
   const parsed = diagnosticInput.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error:"Invalid diagnostic payload" });
-  const payload = JSON.stringify(parsed.data.payload);
+  const payload = JSON.stringify(parsed.data.payload ?? null);
   if (Buffer.byteLength(payload) > MAX_PAYLOAD) return res.status(413).json({ error:"Diagnostic payload too large" });
   const auth = req as Authenticated;
   const result = insertDiagnostic.run(auth.pairing.id, parsed.data.kind, payload, Date.now());

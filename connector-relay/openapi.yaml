@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: NEXCRAFT Main Connector
-  version: 1.4.0
+  version: 1.4.1
   description: >-
     Assistant-facing API for pairing with a NEXCRAFT Android launcher and
     reading diagnostics explicitly shared by the device owner. Pairing codes
@@ -116,7 +116,7 @@ paths:
         '401': { description: Missing, invalid, or revoked assistant token }
   /v1/pairings/{id}/revoke:
     post:
-      operationId: revokeNexcraftAssistantPairing
+      operationId: revokeNexcraftPairing
       summary: Revoke the assistant's access to the paired device
       security: []
       parameters:

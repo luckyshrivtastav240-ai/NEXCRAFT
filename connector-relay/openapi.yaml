@@ -100,7 +100,10 @@ paths:
     get:
       operationId: viewNexcraftScreen
       security:
-        - bearerAuth: []
+        - in: header
+          name: X-Assistant-Token
+          required: true
+          schema: { type: string }
       summary: View the latest user-approved NEXCRAFT screen frame
       description: Returns the most recent JPEG snapshot. Android MediaProjection permission and active foreground service are required.
       responses:
@@ -119,7 +122,10 @@ paths:
     post:
       operationId: disconnectNexcraftDevice
       security:
-        - bearerAuth: []
+        - in: header
+          name: X-Assistant-Token
+          required: true
+          schema: { type: string }
       summary: Revoke and disconnect this paired device
       parameters:
         - in: path

@@ -61,11 +61,11 @@ paths:
   /v1/diagnostics:
     get:
       operationId: readNexcraftDiagnostics
-      security:
+      parameters:
         - in: header
-          name: Authorization
+          name: X-Assistant-Token
           required: true
-          description: Use the assistantToken returned by pairNexcraftDevice, prefixed with Bearer.
+          description: Use the assistantToken returned by pairNexcraftDevice. Keep it private.
           schema: { type: string }
       summary: Read recent redacted diagnostics
       parameters:
@@ -100,11 +100,11 @@ paths:
   /v1/diagnostics/screen:
     get:
       operationId: viewNexcraftScreen
-      security:
+      parameters:
         - in: header
-          name: Authorization
+          name: X-Assistant-Token
           required: true
-          description: Use the assistantToken returned by pairNexcraftDevice, prefixed with Bearer.
+          description: Use the assistantToken returned by pairNexcraftDevice. Keep it private.
           schema: { type: string }
       summary: View the latest user-approved NEXCRAFT screen frame
       description: Returns the most recent JPEG snapshot. Android MediaProjection permission and active foreground service are required.
@@ -123,11 +123,11 @@ paths:
   /v1/pairings/{id}/revoke:
     post:
       operationId: disconnectNexcraftDevice
-      security:
+      parameters:
         - in: header
-          name: Authorization
+          name: X-Assistant-Token
           required: true
-          description: Use the assistantToken returned by pairNexcraftDevice, prefixed with Bearer.
+          description: Use the assistantToken returned by pairNexcraftDevice. Keep it private.
           schema: { type: string }
       summary: Revoke and disconnect this paired device
       parameters:

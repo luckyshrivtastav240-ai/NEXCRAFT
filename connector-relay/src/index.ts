@@ -41,7 +41,9 @@ app.get("/health", (_req,res) => res.json({ ok:true, service:"nexcraft-connector
 type Authenticated = express.Request & { pairing: Pairing; role: "device" | "assistant" };
 function authenticate(role: "device" | "assistant"): express.RequestHandler {
   return (req,res,next) => {
-    const token = bearer(req.header("authorization"));
+    const token = role === "assistant"
+      ? (req.header("x-assistant-token") ?? bearer(req.header("authorization")))
+      : bearer(req.header("authorization"));
     if (!token) return res.status(401).json({ error:"Bearer token required" });
     const digest = hash(token);
     const rows = db.prepare("SELECT * FROM pairings WHERE status='paired'").all() as Pairing[];

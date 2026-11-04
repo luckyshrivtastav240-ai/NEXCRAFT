@@ -2580,7 +2580,7 @@
     <!-- Line under the launcher name on the About page; %s is the version number -->
     <string name="about_launcher_version">Launcher Version: %s</string>
     <!-- Name of the launcher author shown as an item title on the About page -->
-    <string name="about_launcher_author_movtery_title">NEXCRAFT Team</string>
+    <string name="about_launcher_author_movtery_title">INDOCRAFT Team</string>
     <!-- Description under the author name on the About page; %s is the launcher name -->
     <string name="about_launcher_author_movtery_text">Author of %s</string>
     <!-- Button on the About page opening the project website -->
@@ -3055,9 +3055,9 @@
     <!-- Title of the optional NEXCRAFT PIN protection setting -->
     <string name="app_lock_title">App Lock</string>
     <!-- Summary shown when the NEXCRAFT app lock is enabled -->
-    <string name="app_lock_summary_on">PIN lock is ON. NEXCRAFT asks for your PIN when it opens.</string>
+    <string name="app_lock_summary_on">PIN lock is ON. INDOCRAFT asks for your PIN when it opens.</string>
     <!-- Summary shown when the NEXCRAFT app lock is disabled -->
-    <string name="app_lock_summary_off">PIN lock is OFF. Set a 4–8 digit PIN to protect NEXCRAFT.</string>
+    <string name="app_lock_summary_off">PIN lock is OFF. Set a 4–8 digit PIN to protect INDOCRAFT.</string>
     <!-- Dialog title for changing or disabling the app PIN -->
     <string name="app_lock_manage_title">Manage app lock</string>
     <!-- Dialog title shown when creating the first app PIN -->
@@ -3085,7 +3085,7 @@
     <!-- Validation error shown when disabling the lock without the current PIN -->
     <string name="app_lock_turn_off_error">Enter your current PIN to turn off the lock.</string>
     <!-- Title shown on the NEXCRAFT app lock screen -->
-    <string name="app_lock_gate_title">NEXCRAFT locked</string>
+    <string name="app_lock_gate_title">INDOCRAFT locked</string>
     <!-- Instruction shown on the NEXCRAFT app lock screen -->
     <string name="app_lock_gate_prompt">Enter your PIN to open the launcher.</string>
     <!-- Button that unlocks NEXCRAFT after PIN verification -->
@@ -3096,7 +3096,7 @@
     <string name="nexcraft_icon_apply">Apply icon</string>
     <string name="nexcraft_icon_style_title">App icon design</string>
     <!-- Description of the home screen app icon design selector -->
-    <string name="nexcraft_icon_style_summary">Choose the NEXCRAFT icon shown on your home screen.</string>
+    <string name="nexcraft_icon_style_summary">Choose the INDOCRAFT icon shown on your home screen.</string>
     <!-- Classic NEXCRAFT monogram app icon style -->
     <string name="nexcraft_icon_style_nx">Lava Hammer</string>
     <!-- Minecraft grass block app icon style -->
@@ -3125,7 +3125,7 @@
     <string name="nexcraft_performance_profile_quality">Visual quality</string>
     <string name="nexcraft_icon_style_xbox">Minecraft Xbox Controller</string>
     <string name="nexcraft_launch_title">MINECRAFT IS STARTING</string>
-        <string name="nexcraft_launch_subtitle">Preparing your world · Powered by NEXCRAFT</string>
+        <string name="nexcraft_launch_subtitle">Preparing your world · Powered by INDOCRAFT</string>
     <string name="nexcraft_cap_wardrobe_title">Head Cap &amp; Back Cape Wardrobe</string>
     <string name="nexcraft_wardrobe_apply_both">Apply Cap + Cape</string>
     <string name="nexcraft_cap_wardrobe_hint">The cap is painted onto your 64x64 skin, so it can appear in-game wherever that skin is accepted. The cape selector currently equips capes already owned by your Microsoft Minecraft account. Custom capes on multiplayer servers need compatible client/server support.</string>
@@ -3154,9 +3154,9 @@
     <!-- Settings navigation label in the NEXCRAFT landscape sidebar -->
     <string name="nexcraft_nav_settings">Settings</string>
     <!-- Title of the diagnostics preview dialog -->
-    <string name="nexcraft_diagnostics_title">NEXCRAFT diagnostics</string>
+    <string name="nexcraft_diagnostics_title">INDOCRAFT diagnostics</string>
     <!-- Subject used when sharing a diagnostics report -->
-    <string name="nexcraft_diagnostics_subject">NEXCRAFT diagnostics</string>
+    <string name="nexcraft_diagnostics_subject">INDOCRAFT diagnostics</string>
     <!-- Chooser title shown before the user shares diagnostics -->
     <string name="nexcraft_diagnostics_chooser">Choose where to share diagnostics</string>
     <!-- Status while the AI Bridge screen capture is being saved -->
@@ -3166,13 +3166,13 @@
     <!-- Status when only the diagnostics text report can be shared -->
     <string name="nexcraft_diagnostics_screenshot_unavailable">Screenshot unavailable; the text report can still be shared.</string>
     <!-- Accessible label for the screenshot attached to a diagnostics report -->
-    <string name="nexcraft_diagnostics_screenshot_label">NEXCRAFT screen</string>
+    <string name="nexcraft_diagnostics_screenshot_label">INDOCRAFT screen</string>
     <!-- Button that shares the reviewed diagnostics report -->
     <string name="nexcraft_diagnostics_share">Share report</string>
     <!-- Button that closes the diagnostics preview without sharing -->
     <string name="nexcraft_diagnostics_cancel">Cancel</string>
     <!-- Heading at the start of an exported diagnostics report -->
-    <string name="nexcraft_diagnostics_report_title">NEXCRAFT Diagnostics</string>
+    <string name="nexcraft_diagnostics_report_title">INDOCRAFT Diagnostics</string>
     <!-- App version line in an exported diagnostics report -->
     <string name="nexcraft_diagnostics_app">App: %1$s</string>
     <!-- Device model line in an exported diagnostics report -->
@@ -3204,7 +3204,7 @@
     <string name="nexcraft_connector_start_share">Start screen sharing</string>
     <string name="nexcraft_connector_stop_share">Stop screen share</string>
     <string name="nexcraft_connector_open">Diagnostics</string>
-    <string name="nexcraft_connector_title">NEXCRAFT Main Connector</string>
+    <string name="nexcraft_connector_title">INDOCRAFT Main Connector</string>
     <string name="nexcraft_connector_description">Enter your HTTPS relay URL. Use the pairing code in the ChatGPT Action to pair this device.</string>
     <string name="nexcraft_connector_relay_url">HTTPS Relay URL</string>
     <string name="nexcraft_connector_status">Status: %1$s</string>

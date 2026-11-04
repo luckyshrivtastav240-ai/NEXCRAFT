@@ -24,7 +24,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ZalithLauncher"
+rootProject.name = "INDOCRAFT"
 include(":ZalithLauncher")
 include(":LWJGL")
 include(":LWJGL:patches")

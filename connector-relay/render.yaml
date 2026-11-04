@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: nexcraft-connector-relay
+    runtime: docker
+    rootDir: connector-relay
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "8080"
+      - key: DATABASE_PATH
+        value: /var/data/nexcraft-connector.sqlite
+      - key: PAIRING_SIGNING_SECRET
+        generateValue: true
+      - key: TRUST_PROXY
+        value: "true"
+    disk:
+      name: nexcraft-connector-data
+      mountPath: /var/data
+      sizeGB: 1

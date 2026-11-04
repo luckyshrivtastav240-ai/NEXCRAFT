@@ -1,0 +1,79 @@
+name: Deploy NEXCRAFT Connector to Cloudflare
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out connector source
+        uses: actions/checkout@v4
+        with:
+          ref: nexcraft/mobile-layout-and-ci
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Worker dependencies
+        working-directory: connector-relay/cloudflare
+        run: npm install
+
+      - name: Create or reuse Cloudflare D1 database
+        working-directory: connector-relay/cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          DB_LIST="$(npx wrangler d1 list --json)"
+          DB_ID="$(printf '%s' "$DB_LIST" | node -e '
+            let s=""; process.stdin.on("data",d=>s+=d).on("end",()=>{
+              const parsed=JSON.parse(s);
+              const rows=Array.isArray(parsed)?parsed:(parsed.result||parsed.databases||[]);
+              const db=rows.find(x=>x.name==="nexcraft-connector");
+              process.stdout.write(db?(db.uuid||db.database_id||""):"");
+            });')"
+          if [ -z "$DB_ID" ]; then
+            npx wrangler d1 create nexcraft-connector
+            DB_LIST="$(npx wrangler d1 list --json)"
+            DB_ID="$(printf '%s' "$DB_LIST" | node -e '
+              let s=""; process.stdin.on("data",d=>s+=d).on("end",()=>{
+                const parsed=JSON.parse(s);
+                const rows=Array.isArray(parsed)?parsed:(parsed.result||parsed.databases||[]);
+                const db=rows.find(x=>x.name==="nexcraft-connector");
+                process.stdout.write(db?(db.uuid||db.database_id||""):"");
+              });')"
+          fi
+          test -n "$DB_ID"
+          sed -i "s/REPLACE_WITH_CLOUDFLARE_D1_DATABASE_ID/$DB_ID/" wrangler.toml
+
+      - name: Initialize D1 tables
+        working-directory: connector-relay/cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npm run db:init
+
+      - name: Generate and set private pairing secret
+        working-directory: connector-relay/cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          openssl rand -hex 32 | npx wrangler secret put PAIRING_SIGNING_SECRET
+
+      - name: Deploy Worker
+        working-directory: connector-relay/cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npm run deploy

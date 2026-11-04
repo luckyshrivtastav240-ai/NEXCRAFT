@@ -1621,6 +1621,9 @@
     <string name="nexcraft_diagnostics_title">NEXCRAFT जाँच रिपोर्ट</string>
     <string name="nexcraft_diagnostics_subject">NEXCRAFT जाँच रिपोर्ट</string>
     <string name="nexcraft_diagnostics_chooser">रिपोर्ट कहाँ साझा करनी है</string>
+    <string name="nexcraft_diagnostics_screenshot_preparing">Launcher का स्क्रीनशॉट तैयार हो रहा है…</string>
+    <string name="nexcraft_diagnostics_screenshot_ready">Launcher का स्क्रीनशॉट रिपोर्ट के साथ भेजा जाएगा।</string>
+    <string name="nexcraft_diagnostics_screenshot_unavailable">स्क्रीनशॉट उपलब्ध नहीं है; टेक्स्ट रिपोर्ट फिर भी साझा कर सकते हैं।</string>
     <string name="nexcraft_diagnostics_screenshot_label">NEXCRAFT स्क्रीन</string>
     <string name="nexcraft_diagnostics_share">रिपोर्ट साझा करें</string>
     <string name="nexcraft_diagnostics_cancel">रद्द करें</string>

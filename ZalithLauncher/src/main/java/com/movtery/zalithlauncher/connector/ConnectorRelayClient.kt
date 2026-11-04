@@ -101,6 +101,15 @@ class ConnectorRelayClient(context: Context) {
         }
     }
 
+    suspend fun clearScreenFrames() = withContext(Dispatchers.IO) {
+        val base = relayUrl() ?: return@withContext
+        val token = ConnectorTokenStore(appContext).read() ?: return@withContext
+        val request = Request.Builder().url("$base/v1/diagnostics/screen/clear")
+            .header("Authorization", "Bearer $token")
+            .post("{}".toRequestBody(jsonType)).build()
+        execute(request) { Unit }
+    }
+
     suspend fun disconnect() = withContext(Dispatchers.IO) {
         val store = ConnectorTokenStore(appContext)
         val token = store.read()

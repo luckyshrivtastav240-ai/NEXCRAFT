@@ -1621,6 +1621,7 @@
     <string name="nexcraft_diagnostics_title">NEXCRAFT जाँच रिपोर्ट</string>
     <string name="nexcraft_diagnostics_subject">NEXCRAFT जाँच रिपोर्ट</string>
     <string name="nexcraft_diagnostics_chooser">रिपोर्ट कहाँ साझा करनी है</string>
+    <string name="nexcraft_diagnostics_screenshot_label">NEXCRAFT स्क्रीन</string>
     <string name="nexcraft_diagnostics_share">रिपोर्ट साझा करें</string>
     <string name="nexcraft_diagnostics_cancel">रद्द करें</string>
     <string name="nexcraft_diagnostics_report_title">NEXCRAFT जाँच रिपोर्ट</string>

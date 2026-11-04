@@ -3159,6 +3159,12 @@
     <string name="nexcraft_diagnostics_subject">NEXCRAFT diagnostics</string>
     <!-- Chooser title shown before the user shares diagnostics -->
     <string name="nexcraft_diagnostics_chooser">Choose where to share diagnostics</string>
+    <!-- Status while the AI Bridge screen capture is being saved -->
+    <string name="nexcraft_diagnostics_screenshot_preparing">Preparing launcher screenshot…</string>
+    <!-- Status when the AI Bridge screenshot is ready to share -->
+    <string name="nexcraft_diagnostics_screenshot_ready">Launcher screenshot will be included.</string>
+    <!-- Status when only the diagnostics text report can be shared -->
+    <string name="nexcraft_diagnostics_screenshot_unavailable">Screenshot unavailable; the text report can still be shared.</string>
     <!-- Accessible label for the screenshot attached to a diagnostics report -->
     <string name="nexcraft_diagnostics_screenshot_label">NEXCRAFT screen</string>
     <!-- Button that shares the reviewed diagnostics report -->

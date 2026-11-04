@@ -62,7 +62,10 @@ paths:
     get:
       operationId: readNexcraftDiagnostics
       security:
-        - bearerAuth: []
+        - in: header
+          name: X-Assistant-Token
+          required: true
+          schema: { type: string }
       summary: Read recent redacted diagnostics
       parameters:
         - in: query
@@ -134,9 +137,4 @@ paths:
                   revoked: { type: boolean }
         '401':
           description: Invalid or revoked token
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: opaque
+components: {}

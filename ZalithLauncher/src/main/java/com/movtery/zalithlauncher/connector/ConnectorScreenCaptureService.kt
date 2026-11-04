@@ -30,6 +30,7 @@ import com.movtery.zalithlauncher.R
 import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicLong
 
 class ConnectorScreenCaptureService : Service() {
     companion object {
@@ -48,6 +49,7 @@ class ConnectorScreenCaptureService : Service() {
     private var worker: HandlerThread? = null
     private var workerHandler: Handler? = null
     private val stopping = AtomicBoolean(false)
+    private val lastFrameSavedAt = AtomicLong(0L)
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -105,7 +107,9 @@ class ConnectorScreenCaptureService : Service() {
         imageReader?.setOnImageAvailableListener({ reader ->
             val image = runCatching { reader.acquireLatestImage() }.getOrNull() ?: return@setOnImageAvailableListener
             image.use {
-                if (stopping.get()) return@setOnImageAvailableListener
+                val now = System.currentTimeMillis()
+                if (stopping.get() || now - lastFrameSavedAt.get() < 1_000L) return@setOnImageAvailableListener
+                lastFrameSavedAt.set(now)
                 val plane = it.planes.firstOrNull() ?: return@setOnImageAvailableListener
                 val pixelStride = plane.pixelStride
                 val rowStride = plane.rowStride

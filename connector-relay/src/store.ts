@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS pairings (
   code_hash TEXT NOT NULL UNIQUE,
   device_secret_hash TEXT NOT NULL,
   device_token_hash TEXT NOT NULL,
+  device_token_cipher TEXT,
   assistant_token_hash TEXT,
   status TEXT NOT NULL CHECK(status IN ('pending','paired','revoked','expired')),
   created_at INTEGER NOT NULL,
@@ -30,19 +31,21 @@ CREATE TABLE IF NOT EXISTS diagnostics (
 );
 CREATE INDEX IF NOT EXISTS diagnostics_pairing_created ON diagnostics(pairing_id, created_at DESC);
 `);
+try { db.exec('ALTER TABLE pairings ADD COLUMN device_token_cipher TEXT'); } catch { /* already migrated */ }
 export type Pairing = {
   id: string; device_id: string; device_label: string; code_hash: string;
-  device_secret_hash: string; device_token_hash: string; assistant_token_hash: string | null;
+  device_secret_hash: string; device_token_hash: string; device_token_cipher: string | null; assistant_token_hash: string | null;
   status: "pending" | "paired" | "revoked" | "expired";
   created_at: number; expires_at: number; paired_at: number | null;
 };
 export const pairingByCode = db.prepare("SELECT * FROM pairings WHERE code_hash = ?");
 export const pairingById = db.prepare("SELECT * FROM pairings WHERE id = ?");
 export const insertPairing = db.prepare(`INSERT INTO pairings
-(id,device_id,device_label,code_hash,device_secret_hash,device_token_hash,status,created_at,expires_at)
-VALUES (@id,@device_id,@device_label,@code_hash,@device_secret_hash,@device_token_hash,'pending',@created_at,@expires_at)`);
+(id,device_id,device_label,code_hash,device_secret_hash,device_token_hash,device_token_cipher,status,created_at,expires_at)
+VALUES (@id,@device_id,@device_label,@code_hash,@device_secret_hash,@device_token_hash,@device_token_cipher,'pending',@created_at,@expires_at)`);
 export const completePairing = db.prepare("UPDATE pairings SET status='paired', assistant_token_hash=?, paired_at=? WHERE id=? AND status='pending'");
 export const expirePairing = db.prepare("UPDATE pairings SET status='expired' WHERE status='pending' AND expires_at < ?");
+export const takeDeviceToken = db.prepare('UPDATE pairings SET device_token_cipher=NULL WHERE id=? AND device_token_cipher=?');
 export const revokePairing = db.prepare("UPDATE pairings SET status='revoked' WHERE id=?");
 export const insertDiagnostic = db.prepare("INSERT INTO diagnostics(pairing_id,kind,payload,created_at) VALUES (?,?,?,?)");
 export const listDiagnostics = db.prepare("SELECT id,kind,payload,created_at FROM diagnostics WHERE pairing_id=? ORDER BY created_at DESC LIMIT ?");

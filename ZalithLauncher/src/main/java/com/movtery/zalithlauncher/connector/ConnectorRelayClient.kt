@@ -91,7 +91,14 @@ class ConnectorRelayClient(context: Context) {
             .toString().toRequestBody(jsonType)
         val request = Request.Builder().url("$base/v1/diagnostics")
             .header("Authorization", "Bearer $token").post(body).build()
-        execute(request) { it.getLong("id") }
+        try {
+            execute(request) { it.getLong("id") }
+        } catch (error: IOException) {
+            if (error.message?.contains("Invalid or revoked connector token", ignoreCase = true) == true) {
+                ConnectorTokenStore(appContext).clear()
+            }
+            throw error
+        }
     }
 
     suspend fun disconnect() = withContext(Dispatchers.IO) {

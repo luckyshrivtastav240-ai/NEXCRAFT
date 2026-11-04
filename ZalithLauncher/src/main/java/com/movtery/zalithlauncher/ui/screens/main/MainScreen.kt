@@ -277,11 +277,11 @@ fun MainScreen(
             // NEXCRAFT landscape navigation rail: real destinations, not demo buttons.
             Column(
                 modifier = Modifier
-                    .width(116.dp)
+                    .width(148.dp)
                     .fillMaxHeight()
-                    .background(Color(0xFF151923))
-                    .padding(horizontal = 8.dp, vertical = 10.dp),
-                verticalArrangement = Arrangement.spacedBy(7.dp)
+                    .background(Color(0xFF111A25))
+                    .padding(horizontal = 10.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(9.dp)
             ) {
                 Text(
                     text = "INDOCRAFT",

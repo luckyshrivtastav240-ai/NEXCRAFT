@@ -98,6 +98,7 @@ import androidx.core.content.FileProvider
 import androidx.core.content.ContextCompat
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
@@ -203,6 +204,27 @@ fun MainScreen(
     var connectorStatus by remember { mutableStateOf(if (ConnectorTokenStore(context).read() != null) "Connected" else "Not connected") }
     var connectorError by remember { mutableStateOf<String?>(null) }
     var connectorBusy by remember { mutableStateOf(false) }
+    LaunchedEffect(connectorPairing?.pairingId) {
+        val pairing = connectorPairing ?: return@LaunchedEffect
+        repeat(100) {
+            try {
+                val status = connectorClient.pairingStatus(pairing)
+                if (status.status == "paired" && ConnectorTokenStore(context).read() != null) {
+                    connectorStatus = "Connected"
+                    connectorError = null
+                    return@LaunchedEffect
+                }
+                if (status.status == "expired" || status.status == "revoked") {
+                    connectorStatus = status.status.replaceFirstChar { it.uppercase() }
+                    return@LaunchedEffect
+                }
+            } catch (error: Exception) {
+                connectorError = error.message ?: "Waiting for pairing approval"
+            }
+            delay(3_000L)
+        }
+        connectorStatus = "Pairing expired"
+    }
     //监控当前是否有任务正在进行
     var taskRunning by remember { mutableStateOf(true) }
     LaunchedEffect(Unit) {

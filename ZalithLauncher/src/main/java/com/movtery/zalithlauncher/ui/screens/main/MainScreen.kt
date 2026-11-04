@@ -463,10 +463,20 @@ fun MainScreen(
             onDismissRequest = { diagnosticsReport = null },
             title = { Text(stringResource(R.string.nexcraft_diagnostics_title)) },
             text = {
-                Text(
-                    text = report.take(7_000),
-                    style = MaterialTheme.typography.bodySmall
-                )
+                Column {
+                    Text(
+                        text = report.take(7_000),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(
+                        text = when {
+                            diagnosticsScreenshotPreparing -> stringResource(R.string.nexcraft_diagnostics_screenshot_preparing)
+                            diagnosticsScreenshotUri != null -> stringResource(R.string.nexcraft_diagnostics_screenshot_ready)
+                            else -> stringResource(R.string.nexcraft_diagnostics_screenshot_unavailable)
+                        },
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
             },
             confirmButton = {
                 TextButton(

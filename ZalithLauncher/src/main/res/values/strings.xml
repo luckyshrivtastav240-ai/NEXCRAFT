@@ -3140,4 +3140,25 @@
     <string name="nexcraft_cap_netherite">Netherite Helm</string>
     <string name="nexcraft_cap_diamond">Diamond Crown</string>
     <string name="nexcraft_cap_ender">Ender Hood</string>
+
+    <!-- Home navigation label in the NEXCRAFT landscape sidebar -->
+    <string name="nexcraft_nav_home">Home</string>
+    <!-- Versions navigation label in the NEXCRAFT landscape sidebar -->
+    <string name="nexcraft_nav_versions">Versions</string>
+    <!-- Multiplayer navigation label in the NEXCRAFT landscape sidebar -->
+    <string name="nexcraft_nav_servers">Servers</string>
+    <!-- File browser navigation label in the NEXCRAFT landscape sidebar -->
+    <string name="nexcraft_nav_files">Files</string>
+    <!-- Diagnostics navigation label in the NEXCRAFT landscape sidebar -->
+    <string name="nexcraft_nav_ai_bridge">AI Bridge</string>
+    <!-- Settings navigation label in the NEXCRAFT landscape sidebar -->
+    <string name="nexcraft_nav_settings">Settings</string>
+    <!-- Title of the diagnostics preview dialog -->
+    <string name="nexcraft_diagnostics_title">NEXCRAFT diagnostics</string>
+    <!-- Subject used when sharing a diagnostics report -->
+    <string name="nexcraft_diagnostics_subject">NEXCRAFT diagnostics</string>
+    <!-- Chooser title shown before the user shares diagnostics -->
+    <string name="nexcraft_diagnostics_chooser">Choose where to share diagnostics</string>
+    <!-- Button that shares the reviewed diagnostics report -->
+    <string name="nexcraft_diagnostics_share">Share report</string>
 </resources>

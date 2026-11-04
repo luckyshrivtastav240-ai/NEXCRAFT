@@ -231,6 +231,12 @@ class ConnectorScreenCaptureService : Service() {
 
     private fun stopCapture() {
         if (!stopping.compareAndSet(false, true)) return
+        if (ConnectorTokenStore(this).read() != null) {
+            CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+                runCatching { ConnectorRelayClient(this@ConnectorScreenCaptureService).clearScreenFrames() }
+            }
+        }
+        runCatching { File(File(cacheDir, "nexcraft_connector"), FRAME_FILE).delete() }
         virtualDisplay?.release()
         virtualDisplay = null
         imageReader?.setOnImageAvailableListener(null, null)

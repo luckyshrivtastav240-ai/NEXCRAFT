@@ -3203,4 +3203,16 @@
     <string name="nexcraft_diagnostics_privacy_notice">Review it before sending; logs may contain personal file paths or server details.</string>
     <string name="nexcraft_connector_start_share">Start live screen share</string>
     <string name="nexcraft_connector_stop_share">Stop screen share</string>
+    <string name="nexcraft_connector_open">ChatGPT Connector</string>
+    <string name="nexcraft_connector_title">NEXCRAFT Main Connector</string>
+    <string name="nexcraft_connector_description">Enter your HTTPS relay URL. Use the pairing code in the ChatGPT Action to pair this device.</string>
+    <string name="nexcraft_connector_relay_url">HTTPS Relay URL</string>
+    <string name="nexcraft_connector_status">Status: %1$s</string>
+    <string name="nexcraft_connector_pair_code">Pairing Code: %1$s</string>
+    <string name="nexcraft_connector_pair_instructions">Run pairNexcraftDevice in the ChatGPT Action with this code, then tap Check Pairing here.</string>
+    <string name="nexcraft_connector_privacy">Screen sharing starts only after Android permission. Capture continues until you press Stop.</string>
+    <string name="nexcraft_connector_pair">Create Pairing</string>
+    <string name="nexcraft_connector_check">Check Pairing</string>
+    <string name="nexcraft_connector_copy_code">Copy Code</string>
+    <string name="nexcraft_connector_disconnect">Disconnect</string>
 </resources>

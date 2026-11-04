@@ -27,7 +27,7 @@ paths:
       operationId: pairNexcraftDevice
       security: []
       summary: Pair using the one-time code displayed in NEXCRAFT
-      description: The returned assistantToken is a secret. Store it in this Action's secure runtime and use it as a Bearer token for subsequent calls. Never expose it in ordinary user-facing text.
+      description: The returned assistantToken is a secret. Pass it in the X-Assistant-Token header for subsequent calls. Never expose it in ordinary user-facing text.
       requestBody:
         required: true
         content:

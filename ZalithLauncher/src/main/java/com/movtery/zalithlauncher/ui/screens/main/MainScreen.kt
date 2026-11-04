@@ -493,6 +493,105 @@ fun MainScreen(
         }
     }
 
+    if (connectorDialogVisible) {
+        AlertDialog(
+            onDismissRequest = { if (!connectorBusy) connectorDialogVisible = false },
+            title = { Text(stringResource(R.string.nexcraft_connector_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(R.string.nexcraft_connector_description), style = MaterialTheme.typography.bodySmall)
+                    OutlinedTextField(
+                        value = connectorRelayUrl,
+                        onValueChange = { connectorRelayUrl = it },
+                        label = { Text(stringResource(R.string.nexcraft_connector_relay_url)) },
+                        placeholder = { Text("https://your-relay.example") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Text(stringResource(R.string.nexcraft_connector_status, connectorStatus), style = MaterialTheme.typography.labelLarge)
+                    connectorPairing?.let { pairing ->
+                        Text(stringResource(R.string.nexcraft_connector_pair_code, pairing.pairingCode), style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.nexcraft_connector_pair_instructions), style = MaterialTheme.typography.bodySmall)
+                    }
+                    connectorError?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
+                    Text(stringResource(R.string.nexcraft_connector_privacy), style = MaterialTheme.typography.bodySmall)
+                }
+            },
+            confirmButton = {
+                Column(horizontalAlignment = Alignment.End) {
+                    Row {
+                        TextButton(enabled = !connectorBusy, onClick = {
+                            diagnosticsScope.launch {
+                                connectorBusy = true
+                                connectorError = null
+                                try {
+                                    connectorClient.setRelayUrl(connectorRelayUrl)
+                                    connectorPairing = connectorClient.createPairing(Build.MANUFACTURER + " " + Build.MODEL)
+                                    connectorStatus = "Waiting for ChatGPT pairing approval"
+                                } catch (error: Exception) {
+                                    connectorError = error.message ?: "Could not create pairing"
+                                } finally {
+                                    connectorBusy = false
+                                }
+                            }
+                        }) { Text(stringResource(R.string.nexcraft_connector_pair)) }
+                        TextButton(enabled = !connectorBusy && connectorPairing != null, onClick = {
+                            diagnosticsScope.launch {
+                                connectorBusy = true
+                                connectorError = null
+                                try {
+                                    val status = connectorClient.pairingStatus(connectorPairing!!)
+                                    connectorStatus = if (status.deviceToken != null) "Connected" else status.status
+                                } catch (error: Exception) {
+                                    connectorError = error.message ?: "Could not check pairing"
+                                } finally {
+                                    connectorBusy = false
+                                }
+                            }
+                        }) { Text(stringResource(R.string.nexcraft_connector_check)) }
+                    }
+                    Row {
+                        TextButton(enabled = connectorPairing != null, onClick = {
+                            val code = connectorPairing?.pairingCode ?: return@TextButton
+                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                            clipboard.setPrimaryClip(android.content.ClipData.newPlainText("NEXCRAFT pairing code", code))
+                        }) { Text(stringResource(R.string.nexcraft_connector_copy_code)) }
+                        TextButton(enabled = !connectorBusy, onClick = {
+                            diagnosticsScope.launch {
+                                connectorBusy = true
+                                connectorError = null
+                                try {
+                                    connectorClient.disconnect()
+                                    connectorPairing = null
+                                    connectorStatus = "Disconnected"
+                                } catch (error: Exception) {
+                                    connectorError = error.message ?: "Could not disconnect"
+                                } finally {
+                                    connectorBusy = false
+                                }
+                            }
+                        }) { Text(stringResource(R.string.nexcraft_connector_disconnect)) }
+                    }
+                    Row {
+                        TextButton(onClick = {
+                            val manager = context.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+                            screenCaptureLauncher.launch(manager.createScreenCaptureIntent())
+                        }) { Text(stringResource(R.string.nexcraft_connector_start_share)) }
+                        TextButton(onClick = {
+                            context.startService(Intent(context, ConnectorScreenCaptureService::class.java).setAction(ConnectorScreenCaptureService.ACTION_STOP))
+                            screenCaptureActive = false
+                        }) { Text(stringResource(R.string.nexcraft_connector_stop_share)) }
+                    }
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { connectorDialogVisible = false }) {
+                    Text(stringResource(R.string.nexcraft_diagnostics_cancel))
+                }
+            }
+        )
+    }
+
     diagnosticsReport?.let { report ->
         AlertDialog(
             onDismissRequest = { diagnosticsReport = null },

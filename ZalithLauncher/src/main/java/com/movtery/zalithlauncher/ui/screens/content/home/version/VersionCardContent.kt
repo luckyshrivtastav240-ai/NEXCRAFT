@@ -35,6 +35,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -423,7 +424,15 @@ private fun CardTexts(
 @Composable
 private fun TextLaunchButton(version: Version, modifier: Modifier = Modifier) {
     val onLaunch = LocalHomeCardLauncher.current
-    Button(onClick = { onLaunch(version) }, modifier = modifier) {
+    Button(
+        onClick = { onLaunch(version) },
+        modifier = modifier,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = androidx.compose.ui.graphics.Color(0xFFB87932),
+            contentColor = androidx.compose.ui.graphics.Color(0xFFFFF4DF)
+        ),
+        shape = MaterialTheme.shapes.medium
+    ) {
         Icon(
             modifier = Modifier.size(16.dp),
             painter = painterResource(R.drawable.ic_play_arrow_filled),
@@ -443,6 +452,10 @@ private fun CompactLaunchButton(version: Version, modifier: Modifier = Modifier)
     Button(
         onClick = { onLaunch(version) },
         modifier = modifier,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = androidx.compose.ui.graphics.Color(0xFFB87932),
+            contentColor = androidx.compose.ui.graphics.Color(0xFFFFF4DF)
+        ),
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
     ) {
         Icon(
@@ -466,6 +479,10 @@ private fun IconLaunchButton(version: Version, modifier: Modifier = Modifier) {
         onClick = { onLaunch(version) },
         modifier = modifier,
         shape = CircleShape,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = androidx.compose.ui.graphics.Color(0xFFB87932),
+            contentColor = androidx.compose.ui.graphics.Color(0xFFFFF4DF)
+        ),
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
     ) {
         Icon(

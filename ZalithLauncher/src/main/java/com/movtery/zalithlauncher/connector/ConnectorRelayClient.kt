@@ -133,7 +133,7 @@ class ConnectorRelayClient(context: Context) {
             val text = response.body?.string().orEmpty()
             if (!response.isSuccessful) {
                 val reason = runCatching { JSONObject(text).optString("error") }.getOrNull()
-                throw IOException(reason?.takeIf { it.isNotBlank() } ?: "Relay request failed (${response.code})")
+                throw IOException(reason?.takeIf { it.isNotBlank() } ?: if (response.code == 410) "Pairing expired" else "Relay request failed (${response.code})")
             }
             return parse(JSONObject(text))
         }

@@ -322,14 +322,33 @@ fun MainScreen(
                     .padding(horizontal = 10.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(9.dp)
             ) {
-                Text(
-                    text = "INDOCRAFT",
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 7.dp, top = 5.dp, bottom = 12.dp),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = Color(0xFFFF9A4A)
-                )
+                        .padding(start = 5.dp, top = 5.dp, bottom = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(7.dp)
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.indocraft_mark),
+                        contentDescription = "INDOCRAFT",
+                        modifier = Modifier.size(30.dp)
+                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
+                        Text(
+                            text = "INDOCRAFT",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = Color(0xFFFFB45E),
+                            maxLines = 1
+                        )
+                        Text(
+                            text = "FANTASY LAUNCHER",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color(0xFF8DA5B7),
+                            maxLines = 1
+                        )
+                    }
+                }
                 IndocraftNavItem(
                     label = stringResource(R.string.nexcraft_nav_home),
                     accent = Color(0xFF63D69A),

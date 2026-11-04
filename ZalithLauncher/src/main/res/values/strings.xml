@@ -3159,23 +3159,40 @@
     <string name="nexcraft_diagnostics_subject">NEXCRAFT diagnostics</string>
     <!-- Chooser title shown before the user shares diagnostics -->
     <string name="nexcraft_diagnostics_chooser">Choose where to share diagnostics</string>
-    <!-- Button that shares the reviewed diagnostics report -->
+    <!-- Accessible label for the screenshot attached to a diagnostics report -->
     <string name="nexcraft_diagnostics_screenshot_label">NEXCRAFT screen</string>
+    <!-- Button that shares the reviewed diagnostics report -->
     <string name="nexcraft_diagnostics_share">Share report</string>
+    <!-- Button that closes the diagnostics preview without sharing -->
     <string name="nexcraft_diagnostics_cancel">Cancel</string>
+    <!-- Heading at the start of an exported diagnostics report -->
     <string name="nexcraft_diagnostics_report_title">NEXCRAFT Diagnostics</string>
+    <!-- App version line in an exported diagnostics report -->
     <string name="nexcraft_diagnostics_app">App: %1$s</string>
+    <!-- Device model line in an exported diagnostics report -->
     <string name="nexcraft_diagnostics_device">Device: %1$s %2$s</string>
+    <!-- Android version line in an exported diagnostics report -->
     <string name="nexcraft_diagnostics_android">Android: %1$s (SDK %2$d)</string>
+    <!-- Available memory line in an exported diagnostics report -->
     <string name="nexcraft_diagnostics_ram">Available RAM: %1$d MB</string>
+    <!-- Low-memory status line in an exported diagnostics report -->
     <string name="nexcraft_diagnostics_low_memory">Low memory: %1$b</string>
+    <!-- Application package line in an exported diagnostics report -->
     <string name="nexcraft_diagnostics_package">Package: %1$s</string>
+    <!-- Latest launcher log filename in an exported diagnostics report -->
     <string name="nexcraft_diagnostics_log_file">Log file: %1$s</string>
+    <!-- Fallback text when the latest launcher log is unavailable -->
     <string name="nexcraft_diagnostics_not_found">not found</string>
+    <!-- Heading above the recent launcher log excerpt -->
     <string name="nexcraft_diagnostics_recent_log">Recent launcher log (last 60 KB):</string>
+    <!-- Fallback text when no launcher log can be read -->
     <string name="nexcraft_diagnostics_no_log">No launcher log available.</string>
+    <!-- Heading above the most recent crash report -->
     <string name="nexcraft_diagnostics_last_crash">Last crash report:</string>
+    <!-- Fallback text when no crash report can be read -->
     <string name="nexcraft_diagnostics_no_crash">No crash report available.</string>
+    <!-- Notice that sharing requires an explicit destination choice -->
     <string name="nexcraft_diagnostics_share_notice">This report is shared only after you choose a sharing target.</string>
+    <!-- Privacy warning shown in the exported diagnostics report -->
     <string name="nexcraft_diagnostics_privacy_notice">Review it before sending; logs may contain personal file paths or server details.</string>
 </resources>

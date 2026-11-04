@@ -70,7 +70,14 @@ class ConnectorRelayClient(context: Context) {
             .get().build()
         execute(request) { json ->
             val token = json.optString("deviceToken").takeIf { it.isNotBlank() }
-            if (token != null) ConnectorTokenStore(appContext).save(token)
+            if (token != null) {
+                ConnectorTokenStore(appContext).save(token)
+                val ack = Request.Builder()
+                    .url("$base/v1/pairings/\${Uri.encode(pairing.pairingId)}/device-token/ack")
+                    .header("X-Device-Pairing-Secret", pairing.deviceSecret)
+                    .post("{}".toRequestBody(jsonType)).build()
+                execute(ack) { Unit }
+            }
             ConnectorPairingStatus(json.optString("status", "unknown"), token)
         }
     }

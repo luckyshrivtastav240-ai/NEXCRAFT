@@ -167,7 +167,7 @@ fun MainScreen(
         TaskSystem.tasksFlow.collect { tasks ->
             val noTasks = tasks.isEmpty()
             eventViewModel.sendKeepScreen(!noTasks)
-            taskRunning = noTasks
+            taskRunning = !noTasks
             // TaskSystem exposes plain Task objects; task icon metadata is not available here.
         }
     }

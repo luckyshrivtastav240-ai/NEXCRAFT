@@ -336,24 +336,28 @@ fun MainScreen(
                                 )
                                 diagnosticsView.draw(Canvas(screenBitmap))
                                 diagnosticsScope.launch {
-                                    val screenshotUri = withContext(Dispatchers.IO) {
-                                        val directory = File(context.cacheDir, "ai_bridge").apply { mkdirs() }
-                                        directory.listFiles()?.filter { it.isFile && it.extension == "png" }?.forEach { it.delete() }
-                                        val screenshotFile = File(directory, "nexcraft_screen.png")
-                                        FileOutputStream(screenshotFile).use { output ->
-                                            check(screenBitmap.compress(Bitmap.CompressFormat.PNG, 100, output)) {
-                                                "Could not encode launcher screenshot"
+                                    try {
+                                        diagnosticsScreenshotUri = withContext(Dispatchers.IO) {
+                                            val directory = File(context.cacheDir, "ai_bridge").apply { mkdirs() }
+                                            directory.listFiles()?.filter { it.isFile && it.extension == "png" }?.forEach { it.delete() }
+                                            val screenshotFile = File(directory, "nexcraft_screen.png")
+                                            FileOutputStream(screenshotFile).use { output ->
+                                                check(screenBitmap.compress(Bitmap.CompressFormat.PNG, 100, output)) {
+                                                    "Could not encode launcher screenshot"
+                                                }
                                             }
+                                            FileProvider.getUriForFile(
+                                                context,
+                                                "${context.packageName}.provider",
+                                                screenshotFile
+                                            )
                                         }
-                                        FileProvider.getUriForFile(
-                                            context,
-                                            "${context.packageName}.provider",
-                                            screenshotFile
-                                        )
+                                    } catch (_: Exception) {
+                                        diagnosticsScreenshotUri = null
+                                    } finally {
+                                        diagnosticsScreenshotPreparing = false
+                                        screenBitmap.recycle()
                                     }
-                                    diagnosticsScreenshotUri = screenshotUri
-                                    diagnosticsScreenshotPreparing = false
-                                    screenBitmap.recycle()
                                 }
                             }
                         })

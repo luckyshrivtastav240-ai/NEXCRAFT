@@ -122,6 +122,12 @@ app.post("/v1/diagnostics", authenticate("device"), (req,res) => {
   publish(auth.pairing.id,{ type:"diagnostic", id:Number(result.lastInsertRowid), kind:parsed.data.kind, createdAt:Date.now(), payload:parsed.data.payload });
   res.status(202).json({ accepted:true, id:Number(result.lastInsertRowid) });
 });
+app.post("/v1/device/disconnect", authenticate("device"), (req,res) => {
+  const auth = req as Authenticated;
+  revokePairing.run(auth.pairing.id);
+  publish(auth.pairing.id,{type:"revoked",at:Date.now()});
+  res.json({revoked:true});
+});
 app.get("/v1/diagnostics", authenticate("assistant"), (req,res) => {
   const auth = req as Authenticated;
   const limit = Math.min(100,Math.max(1,Number(req.query.limit ?? 30)));

@@ -277,14 +277,14 @@ fun MainScreen(
             // NEXCRAFT landscape navigation rail: real destinations, not demo buttons.
             Column(
                 modifier = Modifier
-                    .width(104.dp)
+                    .width(116.dp)
                     .fillMaxHeight()
-                    .background(Color(0xFF171D1A))
+                    .background(Color(0xFF151923))
                     .padding(horizontal = 8.dp, vertical = 10.dp),
                 verticalArrangement = Arrangement.spacedBy(7.dp)
             ) {
                 Text(
-                    text = "NEX\nCRAFT",
+                    text = "INDOCRAFT",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 7.dp, top = 5.dp, bottom = 12.dp),
@@ -296,10 +296,10 @@ fun MainScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(MaterialTheme.shapes.medium)
-                        .background(if (inLauncherScreen) Color(0xFF493021) else Color.Transparent)
+                        .background(if (inLauncherScreen) Color(0xFF245B43) else Color(0x33245B43))
                         .clickable(onClick = toMainScreen)
                         .padding(horizontal = 10.dp, vertical = 10.dp),
-                    color = Color(0xFFFFE8D0),
+                    color = Color(0xFFC8F7D8),
                     style = MaterialTheme.typography.labelLarge
                 )
                 Text(
@@ -307,9 +307,10 @@ fun MainScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(MaterialTheme.shapes.medium)
+                        .background(Color(0x333E78C7))
                         .clickable(onClick = { screenBackStackModel.navigateToDownload() })
                         .padding(horizontal = 10.dp, vertical = 10.dp),
-                    color = Color(0xFFE2E7E3),
+                    color = Color(0xFFFFD29B),
                     style = MaterialTheme.typography.labelLarge
                 )
                 Text(
@@ -317,6 +318,7 @@ fun MainScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(MaterialTheme.shapes.medium)
+                        .background(Color(0x334F2D75))
                         .clickable(onClick = {
                             screenBackStackModel.mainScreen.removeAndNavigateTo(
                                 removes = screenBackStackModel.clearBeforeNavKeys,
@@ -324,7 +326,7 @@ fun MainScreen(
                             )
                         })
                         .padding(horizontal = 10.dp, vertical = 10.dp),
-                    color = Color(0xFFE2E7E3),
+                    color = Color(0xFFD8C9FF),
                     style = MaterialTheme.typography.labelLarge
                 )
                 Text(
@@ -332,6 +334,7 @@ fun MainScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(MaterialTheme.shapes.medium)
+                        .background(Color(0x33318A9A))
                         .clickable(onClick = {
                             eventViewModel.sendEvent(
                                 EventViewModel.Event.OpenFileManager(
@@ -340,7 +343,7 @@ fun MainScreen(
                             )
                         })
                         .padding(horizontal = 10.dp, vertical = 10.dp),
-                    color = Color(0xFFE2E7E3),
+                    color = Color(0xFFB8F0F4),
                     style = MaterialTheme.typography.labelLarge
                 )
                 Spacer(modifier = Modifier.weight(1f))
@@ -349,14 +352,16 @@ fun MainScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(MaterialTheme.shapes.medium)
+                        .background(Color(0x334D8B42))
                         .clickable(onClick = { connectorDialogVisible = true })
                         .padding(horizontal = 10.dp, vertical = 10.dp),
-                    color = Color(0xFFFFB36B),
+                    color = Color(0xFFC5F29C),
                     style = MaterialTheme.typography.labelLarge
                 )
                 Text(
                     text = stringResource(R.string.nexcraft_connector_open),
                     modifier = Modifier.fillMaxWidth().clip(MaterialTheme.shapes.medium)
+                        .background(Color(0x334C62B8))
                         .clickable(onClick = {
                             val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
                             val memoryInfo = ActivityManager.MemoryInfo()
@@ -430,13 +435,14 @@ fun MainScreen(
                             }
                         })
                         .padding(horizontal = 10.dp, vertical = 10.dp),
-                    color = Color(0xFF8DD8FF), style = MaterialTheme.typography.labelLarge
+                    color = Color(0xFFB8CAFF), style = MaterialTheme.typography.labelLarge
                 )
                 Text(
                     text = stringResource(R.string.nexcraft_nav_settings),
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(MaterialTheme.shapes.medium)
+                        .background(Color(0x336F4865))
                         .clickable(onClick = {
                             screenBackStackModel.mainScreen.removeAndNavigateTo(
                                 removes = screenBackStackModel.clearBeforeNavKeys,

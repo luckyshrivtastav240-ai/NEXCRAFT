@@ -81,6 +81,9 @@ import com.movtery.colorpicker.ColorPickerController
 import com.movtery.colorpicker.components.HueBarPicker
 import com.movtery.colorpicker.rememberColorPickerController
 import com.movtery.zalithlauncher.R
+import com.movtery.zalithlauncher.connector.ConnectorPairing
+import com.movtery.zalithlauncher.connector.ConnectorRelayClient
+import com.movtery.zalithlauncher.connector.ConnectorTokenStore
 import com.movtery.zalithlauncher.contract.MediaPickerContract
 import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskSystem
@@ -135,6 +138,7 @@ import com.movtery.zalithlauncher.viewmodel.BackgroundViewModel
 import com.movtery.zalithlauncher.viewmodel.ErrorViewModel
 import com.movtery.zalithlauncher.viewmodel.LocalBackgroundViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import java.io.File
 
 private const val TAG = "LauncherSettingsScreen"
@@ -177,21 +181,104 @@ fun LauncherSettingsScreen(
                             modifier = Modifier.fillMaxWidth().padding(16.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
+                            val relayClient = remember(context) { ConnectorRelayClient(context) }
+                            var pairing by remember { mutableStateOf<ConnectorPairing?>(null) }
+                            var pairingRequested by remember { mutableStateOf(false) }
+                            var connected by remember { mutableStateOf(ConnectorTokenStore(context).read() != null) }
+                            var connectorBusy by remember { mutableStateOf(false) }
+                            var connectorStatus by remember { mutableStateOf(if (connected) "Connected securely" else "Not connected") }
+                            var connectorError by remember { mutableStateOf<String?>(null) }
+
                             TitleAndSummary(
-                                title = "ChatGPT",
-                                summary = "Open the official ChatGPT app. NEXCRAFT connector authorization is a separate one-time step in ChatGPT."
+                                title = "NEXCRAFT • ChatGPT connection",
+                                summary = "Securely pair this INDOCRAFT Launcher with your authorized ChatGPT connector. Pairing codes expire after 5 minutes."
                             )
-                            Button(
-                                onClick = {
-                                    val launchIntent = context.packageManager.getLaunchIntentForPackage("com.openai.chatgpt")
-                                    val intent = launchIntent ?: Intent(
-                                        Intent.ACTION_VIEW,
-                                        Uri.parse("https://chatgpt.com/")
-                                    )
-                                    runCatching { context.startActivity(intent) }
+
+                            LaunchedEffect(pairingRequested) {
+                                if (pairingRequested) {
+                                    connectorBusy = true
+                                    connectorError = null
+                                    pairing = null
+                                    try {
+                                        val created = relayClient.createPairing("INDOCRAFT Launcher")
+                                        pairing = created
+                                        connectorStatus = "Waiting for approval in ChatGPT"
+                                        for (attempt in 0 until 150) {
+                                            delay(2000)
+                                            val result = relayClient.pairingStatus(created)
+                                            if (result.deviceToken != null || result.status == "paired") {
+                                                connected = ConnectorTokenStore(context).read() != null
+                                                connectorStatus = if (connected) "Connected securely" else "Approval received; finalizing connection"
+                                                if (connected) break
+                                            }
+                                            if (result.status == "expired" || result.status == "revoked") {
+                                                connectorStatus = "Pairing expired. Generate a new code."
+                                                break
+                                            }
+                                        }
+                                    } catch (error: Exception) {
+                                        connectorError = error.message ?: "Could not reach NEXCRAFT relay"
+                                        connectorStatus = "Connection failed"
+                                    } finally {
+                                        connectorBusy = false
+                                        pairingRequested = false
+                                    }
                                 }
-                            ) {
-                                Text("Open ChatGPT")
+                            }
+
+                            Text(
+                                text = connectorStatus,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = if (connected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            pairing?.let { activePairing ->
+                                Surface(
+                                    color = MaterialTheme.colorScheme.surfaceVariant,
+                                    shape = MaterialTheme.shapes.large
+                                ) {
+                                    Column(
+                                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                                    ) {
+                                        Text("Your temporary pairing code", style = MaterialTheme.typography.labelLarge)
+                                        Text(
+                                            activePairing.pairingCode.chunked(5).joinToString(" "),
+                                            style = MaterialTheme.typography.headlineMedium,
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                        Text("Enter this code using the NEXCRAFT pairing tool in ChatGPT. It expires in 5 minutes.")
+                                    }
+                                }
+                            }
+                            connectorError?.let {
+                                Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                            }
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Button(
+                                    enabled = !connectorBusy,
+                                    onClick = { pairingRequested = true }
+                                ) {
+                                    Text(if (connectorBusy) "Connecting…" else if (connected) "Pair another device" else "Generate pairing code")
+                                }
+                                FilledTonalButton(
+                                    onClick = {
+                                        val launchIntent = context.packageManager.getLaunchIntentForPackage("com.openai.chatgpt")
+                                        val intent = launchIntent ?: Intent(Intent.ACTION_VIEW, Uri.parse("https://chatgpt.com/"))
+                                        runCatching { context.startActivity(intent) }
+                                    }
+                                ) { Text("Open ChatGPT") }
+                            }
+                            if (connected) {
+                                TextButton(
+                                    enabled = !connectorBusy,
+                                    onClick = {
+                                        connectorBusy = true
+                                        connectorError = null
+                                        pairingRequested = false
+                                    }
+                                ) {
+                                    Text("Disconnect")
+                                }
                             }
                         }
                     }

@@ -88,7 +88,11 @@ export default {
       const url = new URL(request.url);
       const path = url.pathname;
       if (path === "/mcp") return handleMcp(request);
-      if (request.method === "GET" && path === "/health") return json({ ok: true, service: "nexcraft-connector-relay", api: "v1", storage: "D1" });
+      if (request.method === "GET" && path === "/health") {
+        const dbCheck = await env.DB.prepare("SELECT 1 AS ok").first<{ ok: number }>();
+        if (dbCheck?.ok !== 1) return json({ ok: false, service: "nexcraft-connector-relay", api: "v1", storage: "D1", error: "Database health check failed" }, 503);
+        return json({ ok: true, service: "nexcraft-connector-relay", api: "v1", storage: "D1", database: "connected" });
+      }
 
       if (request.method === "POST" && (path === "/v1/pairings" || path === "/v1/pairings/complete")) {
         if (await rateLimited(env, request)) return json({ error: "Too many pairing attempts. Try again shortly." }, 429);

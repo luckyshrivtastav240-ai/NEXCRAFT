@@ -1,0 +1,80 @@
+openapi: 3.1.0
+info:
+  title: NEXCRAFT Main Connector
+  version: 1.0.0
+  description: Secure assistant-side API for reading diagnostics and revoking a paired NEXCRAFT launcher device. Configure this as a ChatGPT GPT Action after deploying the relay over HTTPS.
+servers:
+  - url: https://YOUR-DEPLOYED-RELAY-HOST
+security:
+  - bearerAuth: []
+paths:
+  /health:
+    get:
+      operationId: checkRelayHealth
+      security: []
+      summary: Check whether the NEXCRAFT relay is online
+      responses:
+        '200':
+          description: Relay status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  service: { type: string }
+                  api: { type: string }
+  /v1/diagnostics:
+    get:
+      operationId: readNexcraftDiagnostics
+      summary: Read recent diagnostics from the paired NEXCRAFT launcher
+      description: Returns recent launcher diagnostics, log excerpts, crash reports or screen frames uploaded by the paired device. Only returns data from the device paired to this bearer token.
+      parameters:
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 100, default: 30 }
+      responses:
+        '200':
+          description: Recent diagnostics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pairingId: { type: string }
+                  device: { type: string }
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: integer }
+                        kind: { type: string }
+                        createdAt: { type: string, format: date-time }
+                        payload: {}
+        '401': { description: Invalid or revoked assistant token }
+  /v1/pairings/{id}/revoke:
+    post:
+      operationId: disconnectNexcraftDevice
+      summary: Disconnect and revoke the paired NEXCRAFT device
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: Pairing revoked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  revoked: { type: boolean }
+        '401': { description: Invalid or revoked assistant token }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: NEXCRAFT assistant pairing token

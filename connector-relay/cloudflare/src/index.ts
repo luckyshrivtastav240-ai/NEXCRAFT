@@ -64,10 +64,10 @@ async function rateLimited(env: Env, r: Request) {
   const key = await digest(env, ip);
   const now = Date.now();
   const window = Math.floor(now / 60_000);
-  await env.DB.prepare("DELETE FROM rate_limits WHERE window < ?").bind(window - 10).run();
-  await env.DB.prepare(`INSERT INTO rate_limits (bucket, window, hits) VALUES (?, ?, 1)
-    ON CONFLICT(bucket) DO UPDATE SET window=excluded.window, hits=CASE WHEN window=excluded.window THEN hits+1 ELSE 1 END`).bind(key, window).run();
-  const row = await env.DB.prepare("SELECT hits FROM rate_limits WHERE bucket=? AND window=?").bind(key, window).first<{ hits: number }>();
+  await env.DB.prepare("DELETE FROM rate_limits WHERE window_id < ?").bind(window - 10).run();
+  await env.DB.prepare(`INSERT INTO rate_limits (bucket, window_id, hits) VALUES (?, ?, 1)
+    ON CONFLICT(bucket) DO UPDATE SET window_id=excluded.window_id, hits=CASE WHEN rate_limits.window_id=excluded.window_id THEN rate_limits.hits+1 ELSE 1 END`).bind(key, window).run();
+  const row = await env.DB.prepare("SELECT hits FROM rate_limits WHERE bucket=? AND window_id=?").bind(key, window).first<{ hits: number }>();
   return (row?.hits ?? 0) > 8;
 }
 async function prune(env: Env, pairingId: string, kind: string, keep: number) {

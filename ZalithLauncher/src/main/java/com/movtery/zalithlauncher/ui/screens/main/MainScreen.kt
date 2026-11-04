@@ -23,6 +23,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateColorAsState
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -176,6 +177,44 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
+private fun IndocraftNavItem(
+    label: String,
+    accent: Color,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    val tileColor by animateColorAsState(
+        targetValue = if (selected) accent.copy(alpha = 0.23f) else accent.copy(alpha = 0.07f),
+        animationSpec = tween(220),
+        label = "indocraft-nav-tile"
+    )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(MaterialTheme.shapes.medium)
+            .background(tileColor)
+            .clickable(onClick = onClick)
+            .padding(horizontal = 9.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .width(3.dp)
+                .height(22.dp)
+                .clip(MaterialTheme.shapes.small)
+                .background(accent)
+        )
+        Spacer(modifier = Modifier.width(9.dp))
+        Text(
+            text = label,
+            color = accent,
+            style = MaterialTheme.typography.labelLarge,
+            maxLines = 1
+        )
+    }
+}
+
+@Composable
 fun MainScreen(
     screenBackStackModel: ScreenBackStackViewModel,
     eventViewModel: EventViewModel,
@@ -291,16 +330,11 @@ fun MainScreen(
                     style = MaterialTheme.typography.titleSmall,
                     color = Color(0xFFFF9A4A)
                 )
-                Text(
-                    text = stringResource(R.string.nexcraft_nav_home),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(MaterialTheme.shapes.medium)
-                        .background(if (inLauncherScreen) Color(0xFF245B43) else Color(0x33245B43))
-                        .clickable(onClick = toMainScreen)
-                        .padding(horizontal = 10.dp, vertical = 10.dp),
-                    color = Color(0xFFC8F7D8),
-                    style = MaterialTheme.typography.labelLarge
+                IndocraftNavItem(
+                    label = stringResource(R.string.nexcraft_nav_home),
+                    accent = Color(0xFF63D69A),
+                    selected = inLauncherScreen,
+                    onClick = toMainScreen
                 )
                 Text(
                     text = stringResource(R.string.nexcraft_nav_versions),

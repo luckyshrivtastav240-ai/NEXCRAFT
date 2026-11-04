@@ -542,7 +542,7 @@ fun MainScreen(
                                 connectorError = null
                                 try {
                                     val status = connectorClient.pairingStatus(connectorPairing!!)
-                                    connectorStatus = if (status.deviceToken != null) "Connected" else status.status
+                                    connectorStatus = if (status.deviceToken != null || (status.status == "paired" && ConnectorTokenStore(context).read() != null)) "Connected" else status.status
                                 } catch (error: Exception) {
                                     connectorError = error.message ?: "Could not check pairing"
                                 } finally {

@@ -189,10 +189,99 @@ fun MainScreen(
         color = backgroundColor,
         contentColor = onBackgroundColor()
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
+        Row(
+            modifier = Modifier.fillMaxSize()
         ) {
+            // NEXCRAFT landscape navigation rail: real destinations, not demo buttons.
+            Column(
+                modifier = Modifier
+                    .width(104.dp)
+                    .fillMaxHeight()
+                    .background(Color(0xFF171D1A))
+                    .padding(horizontal = 8.dp, vertical = 10.dp),
+                verticalArrangement = Arrangement.spacedBy(7.dp)
+            ) {
+                Text(
+                    text = "NEX\nCRAFT",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 7.dp, top = 5.dp, bottom = 12.dp),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = Color(0xFFFF9A4A)
+                )
+                Text(
+                    text = "Home",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(if (inLauncherScreen) Color(0xFF493021) else Color.Transparent)
+                        .clickable(onClick = toMainScreen)
+                        .padding(horizontal = 10.dp, vertical = 10.dp),
+                    color = Color(0xFFFFE8D0),
+                    style = MaterialTheme.typography.labelLarge
+                )
+                Text(
+                    text = "Versions",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .clickable(onClick = { screenBackStackModel.navigateToDownload() })
+                        .padding(horizontal = 10.dp, vertical = 10.dp),
+                    color = Color(0xFFE2E7E3),
+                    style = MaterialTheme.typography.labelLarge
+                )
+                Text(
+                    text = "Servers",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .clickable(onClick = {
+                            screenBackStackModel.mainScreen.removeAndNavigateTo(
+                                removes = screenBackStackModel.clearBeforeNavKeys,
+                                screenKey = NormalNavKey.Multiplayer
+                            )
+                        })
+                        .padding(horizontal = 10.dp, vertical = 10.dp),
+                    color = Color(0xFFE2E7E3),
+                    style = MaterialTheme.typography.labelLarge
+                )
+                Text(
+                    text = "Files",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .clickable(onClick = {
+                            eventViewModel.sendEvent(
+                                EventViewModel.Event.OpenFileManager(
+                                    rootPath = PathManager.DIR_FILES_EXTERNAL.absolutePath
+                                )
+                            )
+                        })
+                        .padding(horizontal = 10.dp, vertical = 10.dp),
+                    color = Color(0xFFE2E7E3),
+                    style = MaterialTheme.typography.labelLarge
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "Settings",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .clickable(onClick = {
+                            screenBackStackModel.mainScreen.removeAndNavigateTo(
+                                removes = screenBackStackModel.clearBeforeNavKeys,
+                                screenKey = screenBackStackModel.settingsScreen
+                            )
+                        })
+                        .padding(horizontal = 10.dp, vertical = 10.dp),
+                    color = Color(0xFFE2E7E3),
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
             TopBar(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -261,6 +350,7 @@ fun MainScreen(
                 ) {
                     changeTasksExpandedState()
                 }
+            }
             }
         }
     }

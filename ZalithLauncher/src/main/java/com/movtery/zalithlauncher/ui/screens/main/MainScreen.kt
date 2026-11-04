@@ -110,6 +110,7 @@ import com.movtery.zalithlauncher.BuildKeys
 import com.movtery.zalithlauncher.connector.ConnectorScreenCaptureService
 import com.movtery.zalithlauncher.connector.ConnectorRelayClient
 import com.movtery.zalithlauncher.connector.ConnectorPairing
+import com.movtery.zalithlauncher.connector.ConnectorTokenStore
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskSystem
@@ -199,7 +200,7 @@ fun MainScreen(
     var connectorDialogVisible by remember { mutableStateOf(false) }
     var connectorRelayUrl by remember { mutableStateOf(connectorClient.relayUrl().orEmpty()) }
     var connectorPairing by remember { mutableStateOf<ConnectorPairing?>(null) }
-    var connectorStatus by remember { mutableStateOf("Not connected") }
+    var connectorStatus by remember { mutableStateOf(if (ConnectorTokenStore(context).read() != null) "Connected" else "Not connected") }
     var connectorError by remember { mutableStateOf<String?>(null) }
     var connectorBusy by remember { mutableStateOf(false) }
     //监控当前是否有任务正在进行

@@ -19,6 +19,8 @@
 package com.movtery.zalithlauncher.ui.screens.splash
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,12 +32,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
+import kotlinx.coroutines.delay
 import androidx.navigation3.runtime.entryProvider
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.components.InstallableItem
@@ -135,30 +146,83 @@ private fun LoadingScreen(
         currentKey = screenViewModel.splashScreen.currentKey
     ) { isVisible ->
         val ctx = rememberAnimatedContext(isVisible = isVisible)
+        val brand = "INDOCRAFT"
+        var shownLetters by remember { mutableIntStateOf(0) }
+
+        LaunchedEffect(isVisible) {
+            shownLetters = 0
+            if (isVisible) {
+                delay(280)
+                brand.indices.forEach { index ->
+                    shownLetters = index + 1
+                    delay(115)
+                }
+            }
+        }
 
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(Color(0xFF070B12))
                 .animated(ctx, from = AnimatedDirection.Bottom),
             contentAlignment = Alignment.Center
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
                 Image(
-                    modifier = Modifier.size(58.dp),
+                    modifier = Modifier.size(76.dp),
                     painter = painterResource(R.drawable.nexcraft_icon_lava_hammer),
                     contentDescription = stringResource(R.string.generic_loading)
                 )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(1.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    brand.forEachIndexed { index, letter ->
+                        val visible = index < shownLetters
+                        val letterAlpha by androidx.compose.animation.core.animateFloatAsState(
+                            targetValue = if (visible) 1f else 0f,
+                            animationSpec = androidx.compose.animation.core.tween(260),
+                            label = "indocraft-letter-alpha-$index"
+                        )
+                        val letterScale by androidx.compose.animation.core.animateFloatAsState(
+                            targetValue = if (visible) 1f else 0.72f,
+                            animationSpec = androidx.compose.animation.core.spring(
+                                dampingRatio = 0.58f,
+                                stiffness = 360f
+                            ),
+                            label = "indocraft-letter-scale-$index"
+                        )
+                        val letterColor = when (index) {
+                            in 0..2 -> Color(0xFFFF9933)
+                            in 3..5 -> Color(0xFFF4F5F7)
+                            else -> Color(0xFF31C46C)
+                        }
+                        Text(
+                            text = letter.toString(),
+                            modifier = Modifier
+                                .alpha(letterAlpha)
+                                .scale(letterScale),
+                            color = letterColor,
+                            fontSize = 29.sp,
+                            fontWeight = FontWeight.Black,
+                            letterSpacing = 0.sp
+                        )
+                    }
+                }
                 Text(
-                    text = "NEXCRAFT",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    letterSpacing = 2.sp
+                    text = "INDIA  •  GAMING  •  CREATIVITY",
+                    color = Color(0xFF9AA7B8),
+                    fontSize = 10.sp,
+                    letterSpacing = 2.2.sp,
+                    fontWeight = FontWeight.SemiBold
                 )
                 LinearWavyProgressIndicator(
-                    modifier = Modifier.width(128.dp),
+                    modifier = Modifier.width(156.dp),
+                    color = Color(0xFFFF9933),
+                    trackColor = Color(0xFF26313D),
                     wavelength = 32.dp
                 )
             }

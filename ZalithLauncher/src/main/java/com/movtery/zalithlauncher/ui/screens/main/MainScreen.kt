@@ -57,6 +57,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -107,6 +108,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import com.movtery.zalithlauncher.BuildKeys
 import com.movtery.zalithlauncher.connector.ConnectorScreenCaptureService
+import com.movtery.zalithlauncher.connector.ConnectorRelayClient
+import com.movtery.zalithlauncher.connector.ConnectorPairing
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskSystem
@@ -192,6 +195,13 @@ fun MainScreen(
     }
     val diagnosticsScope = rememberCoroutineScope()
     val diagnosticsView = LocalView.current
+    val connectorClient = remember(context) { ConnectorRelayClient(context) }
+    var connectorDialogVisible by remember { mutableStateOf(false) }
+    var connectorRelayUrl by remember { mutableStateOf(connectorClient.relayUrl().orEmpty()) }
+    var connectorPairing by remember { mutableStateOf<ConnectorPairing?>(null) }
+    var connectorStatus by remember { mutableStateOf("Not connected") }
+    var connectorError by remember { mutableStateOf<String?>(null) }
+    var connectorBusy by remember { mutableStateOf(false) }
     //监控当前是否有任务正在进行
     var taskRunning by remember { mutableStateOf(true) }
     LaunchedEffect(Unit) {
@@ -382,6 +392,13 @@ fun MainScreen(
                         .padding(horizontal = 10.dp, vertical = 10.dp),
                     color = Color(0xFFFFB36B),
                     style = MaterialTheme.typography.labelLarge
+                )
+                Text(
+                    text = stringResource(R.string.nexcraft_connector_open),
+                    modifier = Modifier.fillMaxWidth().clip(MaterialTheme.shapes.medium)
+                        .clickable(onClick = { connectorDialogVisible = true })
+                        .padding(horizontal = 10.dp, vertical = 10.dp),
+                    color = Color(0xFF8DD8FF), style = MaterialTheme.typography.labelLarge
                 )
                 Text(
                     text = stringResource(R.string.nexcraft_nav_settings),

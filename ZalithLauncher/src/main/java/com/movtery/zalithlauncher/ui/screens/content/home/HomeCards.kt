@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -220,71 +221,24 @@ object HomeCards {
                     )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(14.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        androidx.compose.material3.Surface(
+                        Column(
                             modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(12.dp),
-                            color = Color(0xFF0E2237)
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-                                verticalArrangement = Arrangement.spacedBy(3.dp)
-                            ) {
-                                Text(
-                                    text = "SELECTED VERSION",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = Color(0xFF79DFFF)
-                                )
-                                Text(
-                                    text = selectedVersion?.takeIf { it.isValid() }?.getVersionName()
-                                        ?: stringResource(R.string.versions_manage_no_versions),
-                                    style = MaterialTheme.typography.titleSmall,
-                                    color = Color(0xFFF1F6FF),
-                                    maxLines = 1
-                                )
-                            }
-                        }
-                        androidx.compose.material3.Surface(
-                            shape = RoundedCornerShape(12.dp),
-                            color = Color(0xFF123A58)
+                            verticalArrangement = Arrangement.spacedBy(3.dp)
                         ) {
                             Text(
-                                text = if (hasValidVersion) "READY" else "SET UP",
-                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 13.dp),
-                                style = MaterialTheme.typography.labelLarge,
-                                color = Color(0xFFBFEFFF),
-                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                text = "PLAYER",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color(0xFF83DDB2)
                             )
-                        }
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        androidx.compose.material3.Surface(
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(12.dp),
-                            color = Color(0xFF142B2A)
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 9.dp),
-                                verticalArrangement = Arrangement.spacedBy(2.dp)
-                            ) {
-                                Text(
-                                    text = "PLAYER ACCOUNT",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = Color(0xFF83DDB2)
-                                )
-                                Text(
-                                    text = currentAccount?.username ?: "No account selected",
-                                    style = MaterialTheme.typography.titleSmall,
-                                    color = Color(0xFFF0FFF6),
-                                    maxLines = 1
-                                )
-                            }
+                            Text(
+                                text = currentAccount?.username ?: "No account selected",
+                                style = MaterialTheme.typography.titleSmall,
+                                color = Color(0xFFF0FFF6),
+                                maxLines = 1
+                            )
                         }
                         Button(
                             onClick = { selectedVersion?.takeIf { it.isValid() }?.let(launchVersion) },

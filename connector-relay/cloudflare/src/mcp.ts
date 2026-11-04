@@ -1,10 +1,15 @@
 const json = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
-    headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" },
-  });
-
-type Rpc = { jsonrpc?: string; id?: string | number | null; method?: string; params?: any };
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store",
+      "access-control-allow-origin": "*",
+      "access-control-allow-methods": "GET, POST, OPTIONS",
+      "access-control-allow-headers": "content-type, accept, authorization, mcp-session-id, mcp-protocol-version, last-event-id",
+      "access-control-expose-headers": "mcp-session-id, mcp-protocol-version",
+    },
+  });type Rpc = { jsonrpc?: string; id?: string | number | null; method?: string; params?: any };
 
 const tools = [
   {
@@ -71,15 +76,32 @@ function textResult(value: unknown) {
 }
 
 export async function handleMcp(request: Request): Promise<Response> {
-  if (request.method === "GET") {
-    return new Response("NEXCRAFT MCP endpoint. Send MCP JSON-RPC requests with POST.", {
-      headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" },
+  if (request.method === "OPTIONS") {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, POST, OPTIONS",
+        "access-control-allow-headers": "content-type, accept, authorization, mcp-session-id, mcp-protocol-version, last-event-id",
+        "access-control-max-age": "86400",
+      },
     });
   }
-  if (request.method !== "POST") return new Response("Method not allowed", { status: 405 });
-  const origin = request.headers.get("Origin");
-  if (origin && !/^https:\/\/(chatgpt\.com|www\.chatgpt\.com)$/.test(origin)) {
-    return new Response("Origin not allowed", { status: 403 });
+  if (request.method === "GET") {
+    return new Response(null, {
+      status: 405,
+      headers: {
+        "allow": "POST, OPTIONS",
+        "access-control-allow-origin": "*",
+        "cache-control": "no-store",
+      },
+    });
+  }
+  if (request.method !== "POST") {
+    return new Response("Method not allowed", {
+      status: 405,
+      headers: { "allow": "POST, OPTIONS", "access-control-allow-origin": "*" },
+    });
   }
 
   let rpc: Rpc;

@@ -2,56 +2,59 @@
 
 This folder contains the relay service and ChatGPT GPT Action schema for the NEXCRAFT Android launcher's Main Connector.
 
-## What is implemented in this branch
+## Current implementation
 
-- Five-minute, single-use pairing codes with rate-limited creation/completion.
-- Separate device and assistant bearer credentials. The assistant token is returned once; device token is encrypted at rest in SQLite and delivered to the paired app after approval.
-- HTTPS-only Android client configuration, with device token encrypted using Android Keystore.
+- Five-minute single-use pairing codes with rate-limited creation/completion.
+- Separate device and assistant credentials. The assistant token is returned once; the device token is encrypted at rest in SQLite and delivered to the paired app after approval.
+- Android stores its device token encrypted using Android Keystore.
 - Authenticated diagnostics ingestion and assistant-side diagnostics retrieval.
-- User-approved Android MediaProjection foreground service. While active, it uploads a JPEG screen snapshot about once per second and redacted status/log/crash diagnostics about every 30 seconds.
-- Assistant-side latest-screen endpoint returning JPEG, plus token revocation.
-- WebSocket event stream endpoint for assistant-side clients.
-- Persistent SQLite storage and Render/Docker deployment configuration.
+- User-approved Android MediaProjection foreground service. While active, it uploads sampled JPEG screen frames and bounded app diagnostics.
+- Assistant-side latest-screen endpoint and token revocation.
+- WebSocket event stream for assistant-side clients.
 
-This is sampled screen sharing, not a continuous high-frame-rate video call. The user must grant Android's system screen-capture permission and can stop capture from the app or the persistent notification.
+This is sampled screen sharing, not a continuous high-frame-rate video call. Android system permission is required, and the user can stop capture from the app or persistent notification.
+
+## Important hosting status
+
+**No paid hosting is configured or deployed.** The user declined recurring hosting charges. The prior paid Render Blueprint has been removed. Do not deploy this SQLite relay on an ephemeral free filesystem: pairing records and credentials would be lost on restart/redeploy.
+
+A genuinely free hosted version needs a persistent free database/runtime combination and must be adapted and tested for that platform. Until then, the relay is local-development/self-hosted only; there is no live relay URL.
 
 ## API endpoints
 
-- `GET /health` — health check.
-- `POST /v1/pairings` — create a five-minute pairing request.
-- `POST /v1/pairings/complete` — consume the pairing code and issue a one-time assistant token.
-- `GET /v1/pairings/status` — device-side pairing status and one-time device-token delivery.
-- `POST /v1/diagnostics` — authenticated device diagnostics/screen-frame upload.
-- `GET /v1/diagnostics` — authenticated assistant diagnostics read.
-- `GET /v1/diagnostics/screen` — authenticated latest JPEG frame.
-- `POST /v1/device/disconnect` — revoke from the device.
-- `POST /v1/pairings/:id/revoke` — revoke from the assistant.
-- `WS /v1/stream` — assistant event stream; first frame must be `{"token":"..."}`.
+- `GET /health`
+- `POST /v1/pairings`
+- `POST /v1/pairings/complete`
+- `GET /v1/pairings/status`
+- `POST /v1/pairings/:id/device-token/ack`
+- `POST /v1/diagnostics`
+- `GET /v1/diagnostics`
+- `GET /v1/diagnostics/screen`
+- `POST /v1/device/disconnect`
+- `POST /v1/pairings/:id/revoke`
+- `WS /v1/stream`
 
-## Security
+## Security and privacy
 
-- Deploy behind HTTPS only.
-- Generate `PAIRING_SIGNING_SECRET` as at least 32 random bytes in hex.
-- Pairing codes expire after five minutes and can be used once; pairing endpoints are rate-limited.
-- Device and assistant credentials are different. The database stores keyed hashes; the device token's one-time handoff is AES-GCM encrypted at rest.
-- Android stores its device token encrypted with a non-exportable Android Keystore key.
+- Android relay URLs must use HTTPS.
+- Set `PAIRING_SIGNING_SECRET` to at least 32 random bytes in hex.
+- Pairing codes expire after five minutes and can be used once.
+- Device and assistant credentials are different; only hashes are stored for authentication. Device token handoff is encrypted at rest.
 - CORS denies browser origins unless explicitly listed in `CORS_ORIGINS`.
-- Screen frames are uploaded only while the user-approved capture service is active and the device is paired.
-- Logs/crash excerpts are bounded and redact common token/password patterns before upload.
+- Screen frames are uploaded only while user-approved capture is active and the device is paired.
+- Log/crash excerpts are bounded and common credential patterns are redacted. Logs can still contain personal information; sharing must remain opt-in.
 - Never put ChatGPT cookies, account passwords, or personal API keys in the relay or APK.
 
-## Deploy
+## ChatGPT GPT Action setup (once a persistent HTTPS host exists)
 
-1. Push the branch to GitHub.
-2. In Render, create a Blueprint from the repository's root `render.yaml`. It points to `connector-relay/` and provisions a persistent disk for SQLite.
-3. Wait for the Render service to become healthy and copy its HTTPS URL.
-4. In NEXCRAFT → ChatGPT Connector, enter that HTTPS URL and tap Create Pairing.
-5. Import `connector-relay/openapi.yaml` into a ChatGPT GPT Action. Replace `https://YOUR-DEPLOYED-RELAY-HOST` with the real relay URL.
-6. Call `pairNexcraftDevice` with the code shown in NEXCRAFT. Copy the returned one-time `assistantToken` and configure the GPT Action's API-key authentication as Bearer.
-7. Return to NEXCRAFT and tap Check Pairing. The Android app receives and stores its separate device token.
-8. Use `readNexcraftDiagnostics` and `viewNexcraftScreen` in the GPT Action. Call the screen action again to refresh the latest frame.
+1. Set the server URL in `openapi.yaml` to the real relay URL and import it into a ChatGPT GPT Action.
+2. In NEXCRAFT → ChatGPT Connector, enter the relay URL and create a pairing.
+3. Call `pairNexcraftDevice` with the one-time code shown in NEXCRAFT.
+4. Reuse the returned `assistantToken` as the `X-Assistant-Token` header for diagnostics, screen, and revoke actions.
+5. Return to NEXCRAFT and tap Check Pairing.
+6. Use diagnostics/screen actions only while the user has approved sharing.
 
-The OpenAPI file configures a GPT Action. It does not silently attach the device to an arbitrary existing ChatGPT conversation; the Action must be configured in ChatGPT after deployment.
+The Action does not silently attach the device to an arbitrary existing ChatGPT conversation; it must be configured separately. Treat the assistant token as a secret.
 
 ## Local development
 
@@ -61,4 +64,4 @@ The OpenAPI file configures a GPT Action. It does not silently attach the device
 
 ## Verification status
 
-Source code has been added to the NEXCRAFT branch. The relay has not yet been deployed, the Android app has not yet been built or run on a device, and the full end-to-end ChatGPT Action pairing has not yet been tested. Do not treat this as production-ready until those checks pass.
+The source has not yet been built or run on a device. The relay is not deployed and end-to-end GPT Action pairing has not been tested. Do not treat this as production-ready.

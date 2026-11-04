@@ -39,6 +39,8 @@ This is a relay API scaffold, not yet a production-ready ChatGPT connector. The 
 
 The OpenAPI file describes a GPT Action integration. It does not automatically attach this device to an arbitrary existing ChatGPT conversation. The Action must be created/configured in ChatGPT after the relay is deployed.
 
+While the Android screen-capture foreground service is active, NEXCRAFT uploads a JPEG snapshot at approximately one frame per second and sends a redacted diagnostics snapshot every 30 seconds. This is sampled screen sharing, not a continuous high-frame-rate video call. Use \`viewNexcraftScreen\` again to refresh the displayed frame. The user can stop capture at any time from the in-app control or persistent Android notification.
+
 ## Local development
 
 1. Copy `.env.example` to `.env` and set a random signing secret.

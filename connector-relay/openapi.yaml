@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: NEXCRAFT Main Connector
-  version: 1.2.2
-  description: Pair a NEXCRAFT Android launcher and read user-approved diagnostics and sampled screen frames.
+  version: 1.3.0
+  description: Pair the NEXCRAFT Android launcher with a user-configured assistant. Pairing codes are short-lived; screen sharing requires explicit Android permission.
 servers:
   - url: https://nexcraft-connector-relay.luckyshrivastav240.workers.dev
 paths:
@@ -10,15 +10,13 @@ paths:
     get:
       operationId: checkRelayHealth
       security: []
-      summary: Check relay health
       responses:
         '200':
-          description: Relay health
+          description: Healthy
           content:
             application/json:
               schema:
                 type: object
-                required: [ok, service, api, storage]
                 properties:
                   ok: { type: boolean }
                   service: { type: string }
@@ -28,8 +26,8 @@ paths:
     post:
       operationId: pairNexcraftDevice
       security: []
-      summary: Pair using the one-time code displayed in NEXCRAFT
-      description: The returned assistantToken is a secret. Keep it private and pass it in the X-Assistant-Token header for subsequent calls. Never expose it in ordinary user-facing text.
+      summary: Complete pairing using the 10-character code displayed in NEXCRAFT
+      description: Ask the user for the temporary code shown by their launcher. The assistantToken is a secret; never reveal it in user-facing messages.
       requestBody:
         required: true
         content:
@@ -38,48 +36,39 @@ paths:
               type: object
               required: [pairingCode]
               properties:
-                pairingCode:
-                  type: string
-                  pattern: '^[A-F0-9]{10}$'
+                pairingCode: { type: string, pattern: '^[A-F0-9]{10}$' }
       responses:
         '200':
-          description: Pairing approved
+          description: Paired
           content:
             application/json:
               schema:
                 type: object
-                required: [pairingId, assistantToken, deviceLabel]
                 properties:
-                  pairingId: { type: string, format: uuid }
+                  pairingId: { type: string }
                   assistantToken: { type: string }
                   deviceLabel: { type: string }
                   permissions:
                     type: array
                     items: { type: string }
-        '404':
-          description: Code expired or not found
-        '409':
-          description: Code already consumed
+        '404': { description: Code expired or not found }
+        '409': { description: Code already used }
+        '429': { description: Rate limit exceeded }
   /v1/diagnostics:
     get:
       operationId: readNexcraftDiagnostics
-      summary: Read recent redacted diagnostics
+      summary: Read redacted diagnostics from the paired device
       parameters:
         - in: header
           name: X-Assistant-Token
           required: true
-          description: Use the assistantToken returned by pairNexcraftDevice. Keep it private.
           schema: { type: string }
         - in: query
           name: limit
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 30
+          schema: { type: integer, minimum: 1, maximum: 100, default: 30 }
       responses:
         '200':
-          description: Recent diagnostics
+          description: Diagnostics
           content:
             application/json:
               schema:
@@ -96,54 +85,80 @@ paths:
                         kind: { type: string }
                         createdAt: { type: string, format: date-time }
                         payload: {}
-        '401':
-          description: Invalid or revoked token
+        '401': { description: Invalid assistant token }
+    post:
+      operationId: uploadNexcraftDiagnostic
+      summary: Upload a diagnostic from Android using its device token
+      security:
+        - DeviceBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [kind, payload]
+              properties:
+                kind:
+                  type: string
+                  enum: [status, log, crash, screen, feature_snapshot]
+                payload: {}
+      responses:
+        '202': { description: Accepted }
+        '401': { description: Invalid device token }
   /v1/diagnostics/screen:
     get:
       operationId: viewNexcraftScreen
-      summary: View the latest user-approved NEXCRAFT screen frame
-      description: Returns the most recent JPEG snapshot. Android MediaProjection permission and active foreground service are required.
+      summary: Retrieve the latest user-approved JPEG screen snapshot
       parameters:
         - in: header
           name: X-Assistant-Token
           required: true
-          description: Use the assistantToken returned by pairNexcraftDevice. Keep it private.
           schema: { type: string }
       responses:
         '200':
-          description: Latest JPEG frame
+          description: JPEG snapshot
           content:
             image/jpeg:
-              schema:
-                type: string
-                format: binary
-        '404':
-          description: No screen frame is available
-        '401':
-          description: Invalid or revoked token
-  /v1/pairings/{id}/revoke:
+              schema: { type: string, format: binary }
+        '404': { description: No frame available }
+        '401': { description: Invalid assistant token }
+  /v1/diagnostics/screen/clear:
+    post:
+      operationId: clearNexcraftScreenFrames
+      summary: Clear stored screen frames from Android device
+      security:
+        - DeviceBearer: []
+      responses:
+        '200': { description: Cleared }
+        '401': { description: Invalid device token }
+  /v1/device/disconnect:
     post:
       operationId: disconnectNexcraftDevice
-      summary: Revoke and disconnect this paired device
+      summary: Disconnect the paired Android device
+      security:
+        - DeviceBearer: []
+      responses:
+        '200': { description: Revoked }
+        '401': { description: Invalid device token }
+  /v1/pairings/{id}/revoke:
+    post:
+      operationId: revokeNexcraftAssistantPairing
+      summary: Revoke the assistant pairing
       parameters:
         - in: header
           name: X-Assistant-Token
           required: true
-          description: Use the assistantToken returned by pairNexcraftDevice. Keep it private.
           schema: { type: string }
         - in: path
           name: id
           required: true
           schema: { type: string, format: uuid }
       responses:
-        '200':
-          description: Pairing revoked
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  revoked: { type: boolean }
-        '401':
-          description: Invalid or revoked token
-components: {}
+        '200': { description: Revoked }
+        '401': { description: Invalid assistant token }
+components:
+  securitySchemes:
+    DeviceBearer:
+      type: http
+      scheme: bearer

@@ -87,8 +87,20 @@ class ConnectorRelayClient(context: Context) {
         execute(request) { it.getLong("id") }
     }
 
-    fun disconnect() {
-        ConnectorTokenStore(appContext).clear()
+    suspend fun disconnect() = withContext(Dispatchers.IO) {
+        val store = ConnectorTokenStore(appContext)
+        val token = store.read()
+        try {
+            val base = relayUrl()
+            if (base != null && token != null) {
+                val request = Request.Builder().url("$base/v1/device/disconnect")
+                    .header("Authorization", "Bearer $token")
+                    .post("{}".toRequestBody(jsonType)).build()
+                execute(request) { Unit }
+            }
+        } finally {
+            store.clear()
+        }
     }
 
     private fun normalizeRelayUrl(value: String): String {

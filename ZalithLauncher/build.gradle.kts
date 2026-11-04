@@ -16,8 +16,8 @@ plugins {
 }
 
 val zalithPackageName = "com.movtery.zalithlauncher"
-val launcherAPPName = "NEXCRAFT Launcher"
-val launcherName = "NEXCRAFT"
+val launcherAPPName = "INDOCRAFT Launcher"
+val launcherName = "INDOCRAFT"
 val launcherShortName = "NX"
 val launcherUrl = "https://github.com/maxtroitofficial/NEXCRAFT"
 

@@ -22,6 +22,223 @@ paths:
                   service: { type: string }
                   api: { type: string }
                   storage: { type: string }
+  /v1/pairings:
+    post:
+      operationId: createNexcraftPairing
+      security: []
+      summary: Device-side pairing creation (called by the Android launcher)
+      description: The launcher creates a temporary pairing code. Do not call this operation from the assistant.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [deviceId, deviceLabel]
+              properties:
+                deviceId: { type: string, minLength: 8, maxLength: 128 }
+                deviceLabel: { type: string, minLength: 1, maxLength: 80 }
+      responses:
+        '201':
+          description: Temporary pairing code created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pairingId: { type: string, format: uuid }
+                  pairingCode: { type: string, pattern: '^[A-F0-9]{10}    post:
+      operationId: pairNexcraftDevice
+      security: []
+      summary: Complete pairing using the 10-character code displayed in NEXCRAFT
+      description: Ask the user for the temporary code shown by their launcher. The assistantToken is a secret; never reveal it in user-facing messages.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [pairingCode]
+              properties:
+                pairingCode: { type: string, pattern: '^[A-F0-9]{10}$' }
+      responses:
+        '200':
+          description: Paired
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pairingId: { type: string }
+                  assistantToken: { type: string }
+                  deviceLabel: { type: string }
+                  permissions:
+                    type: array
+                    items: { type: string }
+        '404': { description: Code expired or not found }
+        '409': { description: Code already used }
+        '429': { description: Rate limit exceeded }
+  /v1/pairings/status:
+    get:
+      operationId: getNexcraftPairingStatus
+      security: []
+      summary: Device-side polling for pairing approval
+      description: Called by the Android launcher using the device pairing secret. The device token is returned while available and must be acknowledged immediately.
+      parameters:
+        - in: query
+          name: pairingId
+          required: true
+          schema: { type: string, format: uuid }
+        - in: header
+          name: X-Device-Pairing-Secret
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: Pairing status and, once approved, the device token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, enum: [pending, paired, revoked] }
+                  pairingId: { type: string }
+                  deviceToken: { type: string }
+                  tokenDelivered: { type: boolean }
+                  expiresAt: { type: string, format: date-time }
+        '404': { description: Pairing not found }
+        '410': { description: Pairing expired }
+  /v1/pairings/{id}/device-token/ack:
+    post:
+      operationId: acknowledgeNexcraftDeviceToken
+      security: []
+      summary: Device-side acknowledgement after securely storing its token
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+        - in: header
+          name: X-Device-Pairing-Secret
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Device token acknowledged and server copy cleared }
+        '404': { description: Pairing not found }
+        '409': { description: Pairing not approved yet }
+  /v1/diagnostics:
+    get:
+      operationId: readNexcraftDiagnostics
+      summary: Read redacted diagnostics from the paired device
+      parameters:
+        - in: header
+          name: X-Assistant-Token
+          required: true
+          schema: { type: string }
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 100, default: 30 }
+      responses:
+        '200':
+          description: Diagnostics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pairingId: { type: string }
+                  device: { type: string }
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: integer }
+                        kind: { type: string }
+                        createdAt: { type: string, format: date-time }
+                        payload: {}
+        '401': { description: Invalid assistant token }
+    post:
+      operationId: uploadNexcraftDiagnostic
+      summary: Upload a diagnostic from Android using its device token
+      security:
+        - DeviceBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [kind, payload]
+              properties:
+                kind:
+                  type: string
+                  enum: [status, log, crash, screen, feature_snapshot]
+                payload: {}
+      responses:
+        '202': { description: Accepted }
+        '401': { description: Invalid device token }
+  /v1/diagnostics/screen:
+    get:
+      operationId: viewNexcraftScreen
+      summary: Retrieve the latest user-approved JPEG screen snapshot
+      parameters:
+        - in: header
+          name: X-Assistant-Token
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: JPEG snapshot
+          content:
+            image/jpeg:
+              schema: { type: string, format: binary }
+        '404': { description: No frame available }
+        '401': { description: Invalid assistant token }
+  /v1/diagnostics/screen/clear:
+    post:
+      operationId: clearNexcraftScreenFrames
+      summary: Clear stored screen frames from Android device
+      security:
+        - DeviceBearer: []
+      responses:
+        '200': { description: Cleared }
+        '401': { description: Invalid device token }
+  /v1/device/disconnect:
+    post:
+      operationId: disconnectNexcraftDevice
+      summary: Disconnect the paired Android device
+      security:
+        - DeviceBearer: []
+      responses:
+        '200': { description: Revoked }
+        '401': { description: Invalid device token }
+  /v1/pairings/{id}/revoke:
+    post:
+      operationId: revokeNexcraftAssistantPairing
+      summary: Revoke the assistant pairing
+      parameters:
+        - in: header
+          name: X-Assistant-Token
+          required: true
+          schema: { type: string }
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: Revoked }
+        '401': { description: Invalid assistant token }
+components:
+  securitySchemes:
+    DeviceBearer:
+      type: http
+      scheme: bearer
+ }
+                  deviceSecret: { type: string }
+                  expiresAt: { type: string, format: date-time }
+                  pollAfterSeconds: { type: integer }
+        '429': { description: Rate limit exceeded }
   /v1/pairings/complete:
     post:
       operationId: pairNexcraftDevice

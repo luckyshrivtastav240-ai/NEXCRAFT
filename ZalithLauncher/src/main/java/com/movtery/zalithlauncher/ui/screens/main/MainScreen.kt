@@ -80,6 +80,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.LayoutDirection
+import android.app.ActivityManager
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -152,6 +157,7 @@ fun MainScreen(
     modifyVersionViewModel: ModifyVersionViewModel,
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit
 ) {
+    val context = LocalContext.current
     //监控当前是否有任务正在进行
     var taskRunning by remember { mutableStateOf(true) }
     LaunchedEffect(Unit) {
@@ -262,6 +268,40 @@ fun MainScreen(
                     style = MaterialTheme.typography.labelLarge
                 )
                 Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "AI Bridge",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .clickable(onClick = {
+                            val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                            val memoryInfo = ActivityManager.MemoryInfo()
+                            activityManager.getMemoryInfo(memoryInfo)
+                            val versionName = runCatching {
+                                context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "unknown"
+                            }.getOrDefault("unknown")
+                            val report = buildString {
+                                appendLine("NEXCRAFT Diagnostics")
+                                appendLine("App: $versionName")
+                                appendLine("Device: ${Build.MANUFACTURER} ${Build.MODEL}")
+                                appendLine("Android: ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})")
+                                appendLine("Available RAM: ${memoryInfo.availMem / (1024 * 1024)} MB")
+                                appendLine("Low memory: ${memoryInfo.lowMemory}")
+                                appendLine("Package: ${context.packageName}")
+                                appendLine()
+                                appendLine("Shared by the user for troubleshooting.")
+                            }
+                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_SUBJECT, "NEXCRAFT diagnostics")
+                                putExtra(Intent.EXTRA_TEXT, report)
+                            }
+                            context.startActivity(Intent.createChooser(shareIntent, "Send diagnostics to ChatGPT"))
+                        })
+                        .padding(horizontal = 10.dp, vertical = 10.dp),
+                    color = Color(0xFFFFB36B),
+                    style = MaterialTheme.typography.labelLarge
+                )
                 Text(
                     text = "Settings",
                     modifier = Modifier

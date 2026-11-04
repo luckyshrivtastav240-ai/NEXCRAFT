@@ -202,7 +202,7 @@ private fun LoadingScreen(
             ) {
                 Image(
                     modifier = Modifier.size(88.dp),
-                    painter = painterResource(R.drawable.nexcraft_icon_lava_hammer),
+                    painter = painterResource(R.drawable.indocraft_mark),
                     contentDescription = stringResource(R.string.generic_loading)
                 )
                 Row(

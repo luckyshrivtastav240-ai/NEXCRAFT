@@ -3161,4 +3161,20 @@
     <string name="nexcraft_diagnostics_chooser">Choose where to share diagnostics</string>
     <!-- Button that shares the reviewed diagnostics report -->
     <string name="nexcraft_diagnostics_share">Share report</string>
+    <string name="nexcraft_diagnostics_cancel">Cancel</string>
+    <string name="nexcraft_diagnostics_report_title">NEXCRAFT Diagnostics</string>
+    <string name="nexcraft_diagnostics_app">App: %1$s</string>
+    <string name="nexcraft_diagnostics_device">Device: %1$s %2$s</string>
+    <string name="nexcraft_diagnostics_android">Android: %1$s (SDK %2$d)</string>
+    <string name="nexcraft_diagnostics_ram">Available RAM: %1$d MB</string>
+    <string name="nexcraft_diagnostics_low_memory">Low memory: %1$b</string>
+    <string name="nexcraft_diagnostics_package">Package: %1$s</string>
+    <string name="nexcraft_diagnostics_log_file">Log file: %1$s</string>
+    <string name="nexcraft_diagnostics_not_found">not found</string>
+    <string name="nexcraft_diagnostics_recent_log">Recent launcher log (last 60 KB):</string>
+    <string name="nexcraft_diagnostics_no_log">No launcher log available.</string>
+    <string name="nexcraft_diagnostics_last_crash">Last crash report:</string>
+    <string name="nexcraft_diagnostics_no_crash">No crash report available.</string>
+    <string name="nexcraft_diagnostics_share_notice">This report is shared only after you choose a sharing target.</string>
+    <string name="nexcraft_diagnostics_privacy_notice">Review it before sending; logs may contain personal file paths or server details.</string>
 </resources>

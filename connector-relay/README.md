@@ -52,7 +52,7 @@ For the no-paid-hosting Cloudflare setup, follow `cloudflare/README.md` first.
 1. Set the server URL in `openapi.yaml` to the real relay URL and import it into a ChatGPT GPT Action.
 2. In NEXCRAFT → ChatGPT Connector, enter the relay URL and create a pairing.
 3. Call `pairNexcraftDevice` with the one-time code shown in NEXCRAFT.
-4. Reuse the returned `assistantToken` as the `X-Assistant-Token` header for diagnostics, screen, and revoke actions.
+4. Reuse the returned `assistantToken` in the `X-Assistant-Token` header for diagnostics, screen, and revoke actions.
 5. Return to NEXCRAFT and tap Check Pairing.
 6. Use diagnostics/screen actions only while the user has approved sharing.
 

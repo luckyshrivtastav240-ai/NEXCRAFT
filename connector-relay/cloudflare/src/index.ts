@@ -148,6 +148,13 @@ export default {
         return json({ accepted:true, id:result.meta.last_row_id },202);
       }
 
+      if (request.method === "POST" && path === "/v1/diagnostics/screen/clear") {
+        const p = await authPairing(env,request,"device");
+        if (!p) return unauthorized();
+        await env.DB.prepare("DELETE FROM diagnostics WHERE pairing_id=? AND kind='screen'").bind(p.id).run();
+        return json({ cleared:true });
+      }
+
       if (request.method === "POST" && path === "/v1/device/disconnect") {
         const p = await authPairing(env,request,"device");
         if (!p) return unauthorized();

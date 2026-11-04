@@ -121,7 +121,7 @@ class ConnectorScreenCaptureService : Service() {
             val image = runCatching { reader.acquireLatestImage() }.getOrNull() ?: return@setOnImageAvailableListener
             image.use {
                 val now = System.currentTimeMillis()
-                if (stopping.get() || now - lastFrameSavedAt.get() < 1_000L) return@setOnImageAvailableListener
+                if (stopping.get() || now - lastFrameSavedAt.get() < 5_000L) return@setOnImageAvailableListener
                 lastFrameSavedAt.set(now)
                 val plane = it.planes.firstOrNull() ?: return@setOnImageAvailableListener
                 val pixelStride = plane.pixelStride

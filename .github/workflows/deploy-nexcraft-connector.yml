@@ -1,0 +1,68 @@
+name: Deploy NEXCRAFT Connector to Cloudflare
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out NEXCRAFT
+        uses: actions/checkout@v4
+        with:
+          ref: nexcraft/mobile-layout-and-ci
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Worker dependencies
+        working-directory: connector-relay/cloudflare
+        run: npm install
+
+      - name: Create Cloudflare D1 database and configure binding
+        working-directory: connector-relay/cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx wrangler d1 create nexcraft-connector 2>&1 | tee /tmp/d1-create.log
+          DB_ID="$(grep -Eo 'database_id[[:space:]]*=[[:space:]]*"[a-f0-9-]+"' /tmp/d1-create.log | head -n1 | sed -E 's/.*"([a-f0-9-]+)"/\1/')"
+          if [ -z "$DB_ID" ]; then
+            echo "Could not read the new D1 database ID from Wrangler output."
+            exit 1
+          fi
+          sed -i "s/REPLACE_WITH_CLOUDFLARE_D1_DATABASE_ID/$DB_ID/" wrangler.toml
+          echo "Created D1 database and configured Worker binding."
+
+      - name: Initialize D1 tables
+        working-directory: connector-relay/cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npm run db:init
+
+      - name: Generate and set private pairing secret
+        working-directory: connector-relay/cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          SECRET="$(openssl rand -hex 32)"
+          printf '%s' "$SECRET" | npx wrangler secret put PAIRING_SIGNING_SECRET
+          unset SECRET
+
+      - name: Deploy Worker
+        working-directory: connector-relay/cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npm run deploy

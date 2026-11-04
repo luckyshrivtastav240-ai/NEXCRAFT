@@ -1,8 +1,8 @@
 import { createHash, randomBytes, timingSafeEqual, createCipheriv, createDecipheriv } from "node:crypto";
 
 const secret = process.env.PAIRING_SIGNING_SECRET ?? "";
-if (!/^[a-fA-F0-9]{64,}$/.test(secret)) {
-  throw new Error("PAIRING_SIGNING_SECRET must contain at least 32 random bytes (hex).");
+if (Buffer.byteLength(secret, "utf8") < 32) {
+  throw new Error("PAIRING_SIGNING_SECRET must be at least 32 characters of cryptographically random data.");
 }
 export const hash = (value: string) => createHash("sha256").update(secret).update(value).digest("hex");
 const encryptionKey = createHash("sha256").update(secret).digest();

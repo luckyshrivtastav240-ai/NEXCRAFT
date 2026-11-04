@@ -199,7 +199,7 @@ fun MainScreen(
     val diagnosticsView = LocalView.current
     val connectorClient = remember(context) { ConnectorRelayClient(context) }
     var connectorDialogVisible by remember { mutableStateOf(false) }
-    var connectorRelayUrl by remember { mutableStateOf(connectorClient.relayUrl().orEmpty()) }
+    var connectorRelayUrl by remember { mutableStateOf(connectorClient.relayUrl() ?: "https://nexcraft-connector-relay.luckyshrivastav240.workers.dev") }
     var connectorPairing by remember { mutableStateOf<ConnectorPairing?>(null) }
     var connectorStatus by remember { mutableStateOf(if (ConnectorTokenStore(context).read() != null) "Connected" else "Not connected") }
     var connectorError by remember { mutableStateOf<String?>(null) }

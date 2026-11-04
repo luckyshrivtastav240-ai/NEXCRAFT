@@ -32,6 +32,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -48,10 +50,12 @@ import com.movtery.cardgrid.model.CardType
 import com.movtery.zalithlauncher.BuildConfig
 import com.movtery.zalithlauncher.BuildKeys
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
+import com.movtery.zalithlauncher.game.account.AccountsManager
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
 import com.movtery.zalithlauncher.ui.screens.content.home.server.ServerCardContent
 import com.movtery.zalithlauncher.ui.screens.content.home.version.VersionCardContent
+import com.movtery.zalithlauncher.ui.screens.content.home.version.LocalHomeCardLauncher
 
 /** 系统卡片（不可变更），由启动器自行提供并绘制在网格之外 */
 class SystemCard(val id: String, val content: @Composable () -> Unit)
@@ -109,15 +113,17 @@ object HomeCards {
 
     /** 系统卡片（不可变更） */
     fun systemCards(): List<SystemCard> = buildList {
-        add(unofficialVersionCard())
+        add(indocraftWelcomeCard())
         if (BuildConfig.DEBUG) {
             add(debugWarningCard())
         }
     }
 
     /** Responsive NEXCRAFT dashboard header sized for Android phone screens. */
-    private fun unofficialVersionCard() = SystemCard(id = "system_unofficial_version") {
+    private fun indocraftWelcomeCard() = SystemCard(id = "system_indocraft_welcome") {
         val selectedVersion by VersionsManager.currentVersion.collectAsStateWithLifecycle()
+        val currentAccount by AccountsManager.currentAccountFlow.collectAsStateWithLifecycle()
+        val launchVersion = LocalHomeCardLauncher.current
         val hasValidVersion = selectedVersion?.isValid() == true
 
         androidx.compose.material3.Surface(
@@ -151,8 +157,8 @@ object HomeCards {
                             color = Color(0xFF12324D)
                         ) {
                             Image(
-                                painter = painterResource(R.drawable.nexcraft_icon_lava_hammer),
-                                contentDescription = "NEXCRAFT app icon",
+                                painter = painterResource(R.drawable.indocraft_mark),
+                                contentDescription = "INDOCRAFT logo",
                                 modifier = Modifier.padding(8.dp).size(if (compact) 42.dp else 54.dp)
                             )
                         }
@@ -161,14 +167,14 @@ object HomeCards {
                             verticalArrangement = Arrangement.spacedBy(3.dp)
                         ) {
                             Text(
-                                text = "NEXCRAFT",
+                                text = "INDOCRAFT",
                                 style = if (compact) MaterialTheme.typography.titleLarge
                                     else MaterialTheme.typography.headlineSmall,
                                 color = Color(0xFFF4F8FF),
                                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                             )
                             Text(
-                                text = "MINECRAFT: JAVA EDITION  •  ANDROID",
+                                text = "MINECRAFT JAVA  •  FANTASY LAUNCHER",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = Color(0xFFB7CBE0)
                             )
@@ -201,7 +207,7 @@ object HomeCards {
                     androidx.compose.material3.HorizontalDivider(color = Color(0xFF29445D))
 
                     Text(
-                        text = "Your Minecraft, your world.",
+                        text = "Your world. Your adventure.",
                         style = if (compact) MaterialTheme.typography.titleMedium
                             else MaterialTheme.typography.titleLarge,
                         color = Color(0xFFEAF4FF),
@@ -249,6 +255,52 @@ object HomeCards {
                                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 13.dp),
                                 style = MaterialTheme.typography.labelLarge,
                                 color = Color(0xFFBFEFFF),
+                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                            )
+                        }
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        androidx.compose.material3.Surface(
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp),
+                            color = Color(0xFF142B2A)
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 9.dp),
+                                verticalArrangement = Arrangement.spacedBy(2.dp)
+                            ) {
+                                Text(
+                                    text = "PLAYER ACCOUNT",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = Color(0xFF83DDB2)
+                                )
+                                Text(
+                                    text = currentAccount?.username ?: "No account selected",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = Color(0xFFF0FFF6),
+                                    maxLines = 1
+                                )
+                            }
+                        }
+                        Button(
+                            onClick = { selectedVersion?.takeIf { it.isValid() }?.let(launchVersion) },
+                            enabled = hasValidVersion,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF2E9B69),
+                                contentColor = Color(0xFFFFFFFF),
+                                disabledContainerColor = Color(0xFF35434A),
+                                disabledContentColor = Color(0xFF9BAAB1)
+                            ),
+                            shape = RoundedCornerShape(13.dp),
+                            contentPadding = PaddingValues(horizontal = 22.dp, vertical = 13.dp)
+                        ) {
+                            Text(
+                                text = "PLAY NOW",
+                                style = MaterialTheme.typography.labelLarge,
                                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                             )
                         }

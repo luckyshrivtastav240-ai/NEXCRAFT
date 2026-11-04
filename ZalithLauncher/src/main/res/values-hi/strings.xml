@@ -1651,7 +1651,7 @@
     <string name="nexcraft_connector_status">स्थिति: %1$s</string>
     <string name="nexcraft_connector_pair_code">Pairing Code: %1$s</string>
     <string name="nexcraft_connector_pair_instructions">ChatGPT Action में pairNexcraftDevice चलाकर यह कोड दर्ज करें, फिर यहाँ Check Pairing दबाएँ।</string>
-    <string name="nexcraft_connector_privacy">स्क्रीन शेयरिंग Android की अनुमति से शुरू होती है। Stop दबाने तक स्क्रीन कैप्चर चालू रहेगा।</string>
+    <string name="nexcraft_connector_privacy">स्क्रीन कैप्चर Android की अनुमति के बाद ही शुरू होगा। शेयरिंग के दौरान हर सेकंड स्क्रीन फ्रेम और हर 30 सेकंड में छाँटे हुए लॉग भेजे जाएँगे। कभी भी Stop करें।</string>
     <string name="nexcraft_connector_pair">Pair बनाएं</string>
     <string name="nexcraft_connector_check">Pairing जाँचें</string>
     <string name="nexcraft_connector_copy_code">कोड कॉपी करें</string>

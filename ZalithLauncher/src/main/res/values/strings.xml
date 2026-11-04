@@ -3210,7 +3210,7 @@
     <string name="nexcraft_connector_status">Status: %1$s</string>
     <string name="nexcraft_connector_pair_code">Pairing Code: %1$s</string>
     <string name="nexcraft_connector_pair_instructions">Run pairNexcraftDevice in the ChatGPT Action with this code, then tap Check Pairing here.</string>
-    <string name="nexcraft_connector_privacy">Screen sharing starts only after Android permission. Capture continues until you press Stop.</string>
+    <string name="nexcraft_connector_privacy">Screen capture starts only after Android permission. While sharing, one screen frame per second and redacted diagnostics every 30 seconds are sent. Stop any time.</string>
     <string name="nexcraft_connector_pair">Create Pairing</string>
     <string name="nexcraft_connector_check">Check Pairing</string>
     <string name="nexcraft_connector_copy_code">Copy Code</string>

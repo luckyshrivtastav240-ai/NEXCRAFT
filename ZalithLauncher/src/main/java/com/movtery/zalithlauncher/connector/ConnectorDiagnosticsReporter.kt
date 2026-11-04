@@ -50,8 +50,12 @@ class ConnectorDiagnosticsReporter(private val context: Context) {
     }
 
     private fun redact(input: String): String {
-        val bearer = Regex("(?i)(authorization\\s*[:=]\\s*bearer\\s+)[^\\s]+")
-        val secrets = Regex("(?i)((?:access[_-]?token|refresh[_-]?token|token|password|passwd|secret|api[_-]?key|client[_-]?secret|cookie)\\s*[:=]\\s*)[^\\s,;]+")
-        return secrets.replace(bearer.replace(input, "$1[REDACTED]"), "$1[REDACTED]")
+        val bearer = Regex("(?i)(authorization\\\\s*[:=]\\\\s*bearer\\\\s+)[A-Za-z0-9._~+/-]+=*")
+        val secrets = Regex(
+            "(?i)((?:access[_-]?token|refresh[_-]?token|id[_-]?token|token|password|passwd|secret|api[_-]?key|client[_-]?secret|cookie|session|authorization|pairing[_-]?code)\\\\s*[:=]\\\\s*)(?:\"[^\"]*\"|'[^']*'|[^\\\\s,;&]+)"
+        )
+        val email = Regex("(?i)\\\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\\\.[A-Z]{2,}\\\\b")
+        val redacted = secrets.replace(bearer.replace(input, "$1[REDACTED]"), "$1[REDACTED]")
+        return email.replace(redacted, "[EMAIL]")
     }
 }

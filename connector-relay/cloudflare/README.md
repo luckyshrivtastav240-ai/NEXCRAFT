@@ -30,3 +30,14 @@ Import `../openapi.yaml`. Pair with `pairNexcraftDevice`, then pass the returned
 - Cloudflare account creation, D1 database creation, secret entry, and deployment still require the account owner to sign in and run the commands.
 - Screen sharing still requires Android's system MediaProjection permission and a visible foreground notification.
 - This adapter has not been deployed or end-to-end tested yet. Do not treat it as production-ready until the Worker build, D1 migration, pairing, screen upload, and revoke flows have been tested.
+
+## ChatGPT MCP server
+
+The Cloudflare Worker exposes a stateless Streamable HTTP MCP endpoint at `/mcp`.
+After deploying this Worker, configure ChatGPT's custom MCP server with:
+
+```text
+https://nexcraft-connector-relay.luckyshrivastav240.workers.dev/mcp
+```
+
+Available tools: `checkNexcraftRelay`, `pairNexcraftDevice`, `readNexcraftDiagnostics`, `viewNexcraftScreen`, and `revokeNexcraftPairing`. Pairing requires the temporary 10-character code shown by the Android launcher. The assistant token is a credential: do not paste it into chat or share it with anyone. The screen tool returns only the latest frame explicitly shared by the device owner. The MCP endpoint must be deployed and tested before adding it to ChatGPT; the URL alone does not mean the service is live.

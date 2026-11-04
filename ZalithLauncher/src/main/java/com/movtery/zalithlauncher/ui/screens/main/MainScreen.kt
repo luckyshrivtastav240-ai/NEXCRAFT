@@ -84,6 +84,9 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.LayoutDirection
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -103,6 +106,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -522,104 +526,165 @@ fun MainScreen(
     }
 
     if (connectorDialogVisible) {
-        AlertDialog(
-            onDismissRequest = { if (!connectorBusy) connectorDialogVisible = false },
-            title = { Text(stringResource(R.string.nexcraft_connector_title)) },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(stringResource(R.string.nexcraft_connector_description), style = MaterialTheme.typography.bodySmall)
+        Dialog(
+            onDismissRequest = { if (!connectorBusy) connectorDialogVisible = false }
+        ) {
+            Surface(
+                modifier = Modifier.fillMaxWidth().padding(12.dp),
+                shape = MaterialTheme.shapes.extraLarge,
+                color = Color(0xFF171D1A),
+                contentColor = Color(0xFFF4F4F4)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 680.dp)
+                        .verticalScroll(rememberScrollState())
+                        .padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.nexcraft_connector_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = Color(0xFFFFA45C)
+                    )
+                    Text(
+                        text = stringResource(R.string.nexcraft_connector_description),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFFD5DDD8)
+                    )
                     OutlinedTextField(
                         value = connectorRelayUrl,
                         onValueChange = { connectorRelayUrl = it },
                         label = { Text(stringResource(R.string.nexcraft_connector_relay_url)) },
-                        placeholder = { Text("https://your-relay.example") },
+                        placeholder = { Text("https://nexcraft-connector-relay.workers.dev") },
                         singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
+                        textStyle = MaterialTheme.typography.bodyMedium.copy(color = Color(0xFFF4F4F4)),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Uri,
+                            imeAction = ImeAction.Done
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 64.dp)
                     )
-                    Text(stringResource(R.string.nexcraft_connector_status, connectorStatus), style = MaterialTheme.typography.labelLarge)
+                    Text(
+                        text = stringResource(R.string.nexcraft_connector_status, connectorStatus),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = Color(0xFFB8E6C8)
+                    )
                     connectorPairing?.let { pairing ->
-                        Text(stringResource(R.string.nexcraft_connector_pair_code, pairing.pairingCode), style = MaterialTheme.typography.titleMedium)
-                        Text(stringResource(R.string.nexcraft_connector_pair_instructions), style = MaterialTheme.typography.bodySmall)
+                        Text(
+                            text = stringResource(R.string.nexcraft_connector_pair_code, pairing.pairingCode),
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color(0xFFFFC27A)
+                        )
+                        Text(
+                            text = stringResource(R.string.nexcraft_connector_pair_instructions),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFFD5DDD8)
+                        )
                     }
-                    connectorError?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
-                    Text(stringResource(R.string.nexcraft_connector_privacy), style = MaterialTheme.typography.bodySmall)
-                }
-            },
-            confirmButton = {
-                Column(horizontalAlignment = Alignment.End) {
-                    Row {
-                        TextButton(enabled = !connectorBusy, onClick = {
-                            diagnosticsScope.launch {
-                                connectorBusy = true
-                                connectorError = null
-                                try {
-                                    connectorClient.setRelayUrl(connectorRelayUrl)
-                                    connectorPairing = connectorClient.createPairing(Build.MANUFACTURER + " " + Build.MODEL)
-                                    connectorStatus = "Waiting for ChatGPT pairing approval"
-                                } catch (error: Exception) {
-                                    connectorError = error.message ?: "Could not create pairing"
-                                } finally {
-                                    connectorBusy = false
+                    connectorError?.let {
+                        Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                    }
+                    Text(
+                        text = stringResource(R.string.nexcraft_connector_privacy),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFFB8C2BC)
+                    )
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        TextButton(
+                            enabled = !connectorBusy,
+                            onClick = {
+                                diagnosticsScope.launch {
+                                    connectorBusy = true
+                                    connectorError = null
+                                    try {
+                                        connectorClient.setRelayUrl(connectorRelayUrl.trim())
+                                        connectorPairing = connectorClient.createPairing(Build.MANUFACTURER + " " + Build.MODEL)
+                                        connectorStatus = "Waiting for ChatGPT pairing approval"
+                                    } catch (error: Exception) {
+                                        connectorError = error.message ?: "Could not create pairing"
+                                    } finally {
+                                        connectorBusy = false
+                                    }
                                 }
                             }
-                        }) { Text(stringResource(R.string.nexcraft_connector_pair)) }
-                        TextButton(enabled = !connectorBusy && connectorPairing != null, onClick = {
-                            diagnosticsScope.launch {
-                                connectorBusy = true
-                                connectorError = null
-                                try {
-                                    val status = connectorClient.pairingStatus(connectorPairing!!)
-                                    connectorStatus = if (status.deviceToken != null || (status.status == "paired" && ConnectorTokenStore(context).read() != null)) "Connected" else status.status
-                                } catch (error: Exception) {
-                                    connectorError = error.message ?: "Could not check pairing"
-                                } finally {
-                                    connectorBusy = false
+                        ) { Text(stringResource(R.string.nexcraft_connector_pair)) }
+                        TextButton(
+                            enabled = !connectorBusy && connectorPairing != null,
+                            onClick = {
+                                diagnosticsScope.launch {
+                                    connectorBusy = true
+                                    connectorError = null
+                                    try {
+                                        val status = connectorClient.pairingStatus(connectorPairing!!)
+                                        connectorStatus = if (status.deviceToken != null || (status.status == "paired" && ConnectorTokenStore(context).read() != null)) "Connected" else status.status
+                                    } catch (error: Exception) {
+                                        connectorError = error.message ?: "Could not check pairing"
+                                    } finally {
+                                        connectorBusy = false
+                                    }
                                 }
                             }
-                        }) { Text(stringResource(R.string.nexcraft_connector_check)) }
+                        ) { Text(stringResource(R.string.nexcraft_connector_check)) }
                     }
-                    Row {
-                        TextButton(enabled = connectorPairing != null, onClick = {
-                            val code = connectorPairing?.pairingCode ?: return@TextButton
-                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                            clipboard.setPrimaryClip(android.content.ClipData.newPlainText("NEXCRAFT pairing code", code))
-                        }) { Text(stringResource(R.string.nexcraft_connector_copy_code)) }
-                        TextButton(enabled = !connectorBusy, onClick = {
-                            diagnosticsScope.launch {
-                                connectorBusy = true
-                                connectorError = null
-                                try {
-                                    connectorClient.disconnect()
-                                    context.startService(Intent(context, ConnectorScreenCaptureService::class.java).setAction(ConnectorScreenCaptureService.ACTION_STOP))
-                                    screenCaptureActive = false
-                                    connectorPairing = null
-                                    connectorStatus = "Disconnected"
-                                } catch (error: Exception) {
-                                    connectorError = error.message ?: "Could not disconnect"
-                                } finally {
-                                    connectorBusy = false
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        TextButton(
+                            enabled = connectorPairing != null,
+                            onClick = {
+                                val code = connectorPairing?.pairingCode ?: return@TextButton
+                                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                                clipboard.setPrimaryClip(android.content.ClipData.newPlainText("NEXCRAFT pairing code", code))
+                            }
+                        ) { Text(stringResource(R.string.nexcraft_connector_copy_code)) }
+                        TextButton(
+                            enabled = !connectorBusy,
+                            onClick = {
+                                diagnosticsScope.launch {
+                                    connectorBusy = true
+                                    connectorError = null
+                                    try {
+                                        connectorClient.disconnect()
+                                        context.startService(Intent(context, ConnectorScreenCaptureService::class.java).setAction(ConnectorScreenCaptureService.ACTION_STOP))
+                                        screenCaptureActive = false
+                                        connectorPairing = null
+                                        connectorStatus = "Disconnected"
+                                    } catch (error: Exception) {
+                                        connectorError = error.message ?: "Could not disconnect"
+                                    } finally {
+                                        connectorBusy = false
+                                    }
                                 }
                             }
-                        }) { Text(stringResource(R.string.nexcraft_connector_disconnect)) }
+                        ) { Text(stringResource(R.string.nexcraft_connector_disconnect)) }
                     }
-                    Row {
-                        TextButton(enabled = ConnectorTokenStore(context).read() != null, onClick = {
-                            val manager = context.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-                            screenCaptureLauncher.launch(manager.createScreenCaptureIntent())
-                        }) { Text(stringResource(R.string.nexcraft_connector_start_share)) }
-                        TextButton(enabled = screenCaptureActive, onClick = {
-                            context.startService(Intent(context, ConnectorScreenCaptureService::class.java).setAction(ConnectorScreenCaptureService.ACTION_STOP))
-                            screenCaptureActive = false
-                        }) { Text(stringResource(R.string.nexcraft_connector_stop_share)) }
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        TextButton(
+                            enabled = ConnectorTokenStore(context).read() != null,
+                            onClick = {
+                                val manager = context.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+                                screenCaptureLauncher.launch(manager.createScreenCaptureIntent())
+                            }
+                        ) { Text(stringResource(R.string.nexcraft_connector_start_share)) }
+                        TextButton(
+                            enabled = screenCaptureActive,
+                            onClick = {
+                                context.startService(Intent(context, ConnectorScreenCaptureService::class.java).setAction(ConnectorScreenCaptureService.ACTION_STOP))
+                                screenCaptureActive = false
+                            }
+                        ) { Text(stringResource(R.string.nexcraft_connector_stop_share)) }
                     }
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { connectorDialogVisible = false }) {
-                    Text(stringResource(R.string.nexcraft_diagnostics_cancel))
+                    TextButton(
+                        onClick = { connectorDialogVisible = false },
+                        modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Text(stringResource(R.string.nexcraft_diagnostics_cancel))
+                    }
                 }
             }
-        )
+        }
     }
 
     diagnosticsReport?.let { report ->

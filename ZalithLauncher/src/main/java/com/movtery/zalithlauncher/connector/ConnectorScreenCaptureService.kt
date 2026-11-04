@@ -38,6 +38,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import org.json.JSONObject
 
 class ConnectorScreenCaptureService : Service() {
@@ -97,6 +99,7 @@ class ConnectorScreenCaptureService : Service() {
                 }
             }, Handler(mainLooper))
             startFrameCapture()
+            startDiagnosticsMonitoring()
         } catch (_: Exception) {
             stopCapture()
             stopSelf()
@@ -188,6 +191,15 @@ class ConnectorScreenCaptureService : Service() {
             DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
             imageReader?.surface, null, workerHandler
         )
+    }
+
+    private fun startDiagnosticsMonitoring() {
+        serviceScope.launch {
+            while (isActive && !stopping.get()) {
+                runCatching { ConnectorDiagnosticsReporter(this@ConnectorScreenCaptureService).uploadSnapshot() }
+                delay(30_000L)
+            }
+        }
     }
 
     private fun createNotificationChannel() {

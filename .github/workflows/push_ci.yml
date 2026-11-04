@@ -1,6 +1,9 @@
 name: Build CI
 
 on:
+  push:
+    branches:
+      - nexcraft/mobile-layout-and-ci
   workflow_dispatch:
 
 # Keep only the newest build for each branch. Rapid commits should not

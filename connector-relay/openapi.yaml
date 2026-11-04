@@ -1,10 +1,10 @@
 openapi: 3.1.0
 info:
   title: NEXCRAFT Main Connector
-  version: 1.2.1
+  version: 1.2.2
   description: Pair a NEXCRAFT Android launcher and read user-approved diagnostics and sampled screen frames.
 servers:
-  - url: https://YOUR-DEPLOYED-RELAY-HOST
+  - url: https://nexcraft-connector-relay.luckyshrivastav240.workers.dev
 paths:
   /health:
     get:
@@ -18,16 +18,18 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [ok, service, api, storage]
                 properties:
                   ok: { type: boolean }
                   service: { type: string }
                   api: { type: string }
+                  storage: { type: string }
   /v1/pairings/complete:
     post:
       operationId: pairNexcraftDevice
       security: []
       summary: Pair using the one-time code displayed in NEXCRAFT
-      description: The returned assistantToken is a secret. Pass it in the X-Assistant-Token header for subsequent calls. Never expose it in ordinary user-facing text.
+      description: The returned assistantToken is a secret. Keep it private and pass it in the X-Assistant-Token header for subsequent calls. Never expose it in ordinary user-facing text.
       requestBody:
         required: true
         content:

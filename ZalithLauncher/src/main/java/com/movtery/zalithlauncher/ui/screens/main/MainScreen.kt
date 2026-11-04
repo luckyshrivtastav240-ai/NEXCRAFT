@@ -336,61 +336,41 @@ fun MainScreen(
                     selected = inLauncherScreen,
                     onClick = toMainScreen
                 )
-                Text(
-                    text = stringResource(R.string.nexcraft_nav_versions),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(MaterialTheme.shapes.medium)
-                        .background(Color(0x333E78C7))
-                        .clickable(onClick = { screenBackStackModel.navigateToDownload() })
-                        .padding(horizontal = 10.dp, vertical = 10.dp),
-                    color = Color(0xFFFFD29B),
-                    style = MaterialTheme.typography.labelLarge
+                IndocraftNavItem(
+                    label = stringResource(R.string.nexcraft_nav_versions),
+                    accent = Color(0xFFFFB45E),
+                    selected = false,
+                    onClick = { screenBackStackModel.navigateToDownload() }
                 )
-                Text(
-                    text = stringResource(R.string.nexcraft_nav_servers),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(MaterialTheme.shapes.medium)
-                        .background(Color(0x334F2D75))
-                        .clickable(onClick = {
-                            screenBackStackModel.mainScreen.removeAndNavigateTo(
-                                removes = screenBackStackModel.clearBeforeNavKeys,
-                                screenKey = NormalNavKey.Multiplayer
-                            )
-                        })
-                        .padding(horizontal = 10.dp, vertical = 10.dp),
-                    color = Color(0xFFD8C9FF),
-                    style = MaterialTheme.typography.labelLarge
+                IndocraftNavItem(
+                    label = stringResource(R.string.nexcraft_nav_servers),
+                    accent = Color(0xFFB99AFF),
+                    selected = false,
+                    onClick = {
+                        screenBackStackModel.mainScreen.removeAndNavigateTo(
+                            removes = screenBackStackModel.clearBeforeNavKeys,
+                            screenKey = NormalNavKey.Multiplayer
+                        )
+                    }
                 )
-                Text(
-                    text = stringResource(R.string.nexcraft_nav_files),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(MaterialTheme.shapes.medium)
-                        .background(Color(0x33318A9A))
-                        .clickable(onClick = {
-                            eventViewModel.sendEvent(
-                                EventViewModel.Event.OpenFileManager(
-                                    rootPath = PathManager.DIR_FILES_EXTERNAL.absolutePath
-                                )
+                IndocraftNavItem(
+                    label = stringResource(R.string.nexcraft_nav_files),
+                    accent = Color(0xFF65D7E8),
+                    selected = false,
+                    onClick = {
+                        eventViewModel.sendEvent(
+                            EventViewModel.Event.OpenFileManager(
+                                rootPath = PathManager.DIR_FILES_EXTERNAL.absolutePath
                             )
-                        })
-                        .padding(horizontal = 10.dp, vertical = 10.dp),
-                    color = Color(0xFFB8F0F4),
-                    style = MaterialTheme.typography.labelLarge
+                        )
+                    }
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = stringResource(R.string.nexcraft_nav_ai_bridge),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(MaterialTheme.shapes.medium)
-                        .background(Color(0x334D8B42))
-                        .clickable(onClick = { connectorDialogVisible = true })
-                        .padding(horizontal = 10.dp, vertical = 10.dp),
-                    color = Color(0xFFC5F29C),
-                    style = MaterialTheme.typography.labelLarge
+                IndocraftNavItem(
+                    label = stringResource(R.string.nexcraft_nav_ai_bridge),
+                    accent = Color(0xFFA9E66E),
+                    selected = connectorDialogVisible,
+                    onClick = { connectorDialogVisible = true }
                 )
                 Text(
                     text = stringResource(R.string.nexcraft_connector_open),
@@ -471,21 +451,16 @@ fun MainScreen(
                         .padding(horizontal = 10.dp, vertical = 10.dp),
                     color = Color(0xFFB8CAFF), style = MaterialTheme.typography.labelLarge
                 )
-                Text(
-                    text = stringResource(R.string.nexcraft_nav_settings),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(MaterialTheme.shapes.medium)
-                        .background(Color(0x336F4865))
-                        .clickable(onClick = {
-                            screenBackStackModel.mainScreen.removeAndNavigateTo(
-                                removes = screenBackStackModel.clearBeforeNavKeys,
-                                screenKey = screenBackStackModel.settingsScreen
-                            )
-                        })
-                        .padding(horizontal = 10.dp, vertical = 10.dp),
-                    color = Color(0xFFE2E7E3),
-                    style = MaterialTheme.typography.labelLarge
+                IndocraftNavItem(
+                    label = stringResource(R.string.nexcraft_nav_settings),
+                    accent = Color(0xFFBAC5D2),
+                    selected = mainScreenKey == screenBackStackModel.settingsScreen,
+                    onClick = {
+                        screenBackStackModel.mainScreen.removeAndNavigateTo(
+                            removes = screenBackStackModel.clearBeforeNavKeys,
+                            screenKey = screenBackStackModel.settingsScreen
+                        )
+                    }
                 )
             }
             Column(

@@ -16,9 +16,9 @@ This is sampled screen sharing, not a continuous high-frame-rate video call. And
 
 ## Important hosting status
 
-**No paid hosting is configured or deployed.** The user declined recurring hosting charges. The prior paid Render Blueprint has been removed. Do not deploy this SQLite relay on an ephemeral free filesystem: pairing records and credentials would be lost on restart/redeploy.
+**No paid hosting is configured or deployed.** The user declined recurring hosting charges. Paid Render deployment templates have been removed. Do not deploy this SQLite relay on an ephemeral free filesystem: pairing records and credentials would be lost on restart/redeploy.
 
-A genuinely free hosted version needs a persistent free database/runtime combination and must be adapted and tested for that platform. Until then, the relay is local-development/self-hosted only; there is no live relay URL.
+A separate Cloudflare Workers + D1 free-tier adapter is now in `cloudflare/`. It avoids the ephemeral-filesystem problem, but it still needs the account owner to create the D1 database, set a secret, deploy, and test it. There is no live relay URL yet. Free-tier daily quotas apply.
 
 ## API endpoints
 
@@ -46,6 +46,8 @@ A genuinely free hosted version needs a persistent free database/runtime combina
 - Never put ChatGPT cookies, account passwords, or personal API keys in the relay or APK.
 
 ## ChatGPT GPT Action setup (once a persistent HTTPS host exists)
+
+For the no-paid-hosting Cloudflare setup, follow `cloudflare/README.md` first.
 
 1. Set the server URL in `openapi.yaml` to the real relay URL and import it into a ChatGPT GPT Action.
 2. In NEXCRAFT → ChatGPT Connector, enter the relay URL and create a pairing.

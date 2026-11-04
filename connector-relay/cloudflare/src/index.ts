@@ -46,7 +46,7 @@ const safeEqual = (a: string, b: string) => {
 const authToken = (r: Request) => r.headers.get("authorization")?.match(/^Bearer ([A-Za-z0-9._~-]{20,200})$/)?.[1] ?? null;
 async function bodyJson(r: Request) {
   const raw = await r.text();
-  if (raw.length > 1_400_000) throw new Error("Request body too large");
+  if (raw.length > 700_000) throw new Error("Request body too large");
   return JSON.parse(raw);
 }
 async function getPairing(env: Env, id: string) {

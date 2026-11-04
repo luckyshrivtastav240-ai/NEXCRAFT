@@ -219,7 +219,7 @@ fun MainScreen(
                     color = Color(0xFFFF9A4A)
                 )
                 Text(
-                    text = "Home",
+                    text = stringResource(R.string.nexcraft_nav_home),
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(MaterialTheme.shapes.medium)
@@ -230,7 +230,7 @@ fun MainScreen(
                     style = MaterialTheme.typography.labelLarge
                 )
                 Text(
-                    text = "Versions",
+                    text = stringResource(R.string.nexcraft_nav_versions),
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(MaterialTheme.shapes.medium)
@@ -240,7 +240,7 @@ fun MainScreen(
                     style = MaterialTheme.typography.labelLarge
                 )
                 Text(
-                    text = "Servers",
+                    text = stringResource(R.string.nexcraft_nav_servers),
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(MaterialTheme.shapes.medium)
@@ -255,7 +255,7 @@ fun MainScreen(
                     style = MaterialTheme.typography.labelLarge
                 )
                 Text(
-                    text = "Files",
+                    text = stringResource(R.string.nexcraft_nav_files),
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(MaterialTheme.shapes.medium)
@@ -272,7 +272,7 @@ fun MainScreen(
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "AI Bridge",
+                    text = stringResource(R.string.nexcraft_nav_ai_bridge),
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(MaterialTheme.shapes.medium)
@@ -314,7 +314,7 @@ fun MainScreen(
                             }
                             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                                 type = "text/plain"
-                                putExtra(Intent.EXTRA_SUBJECT, "NEXCRAFT diagnostics")
+                                putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.nexcraft_diagnostics_subject))
                                 putExtra(Intent.EXTRA_TEXT, report)
                             }
                             diagnosticsReport = report
@@ -324,7 +324,7 @@ fun MainScreen(
                     style = MaterialTheme.typography.labelLarge
                 )
                 Text(
-                    text = "Settings",
+                    text = stringResource(R.string.nexcraft_nav_settings),
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(MaterialTheme.shapes.medium)
@@ -419,7 +419,7 @@ fun MainScreen(
     diagnosticsReport?.let { report ->
         AlertDialog(
             onDismissRequest = { diagnosticsReport = null },
-            title = { Text("NEXCRAFT diagnostics") },
+            title = { Text(stringResource(R.string.nexcraft_diagnostics_title)) },
             text = {
                 Text(
                     text = report.take(7_000),
@@ -436,10 +436,10 @@ fun MainScreen(
                         }
                         diagnosticsReport = null
                         context.startActivity(
-                            Intent.createChooser(shareIntent, "Choose where to share diagnostics")
+                            Intent.createChooser(shareIntent, context.getString(R.string.nexcraft_diagnostics_chooser))
                         )
                     }
-                ) { Text("Share report") }
+                ) { Text(stringResource(R.string.nexcraft_diagnostics_share)) }
             },
             dismissButton = {
                 TextButton(onClick = { diagnosticsReport = null }) {

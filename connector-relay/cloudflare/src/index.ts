@@ -1,3 +1,11 @@
+interface D1Statement {
+  bind(...values: unknown[]): D1Statement;
+  first<T = Record<string, unknown>>(): Promise<T | null>;
+  all<T = Record<string, unknown>>(): Promise<{ results: T[] }>;
+  run(): Promise<{ meta: { changes: number; last_row_id: number } }>;
+}
+interface D1Database { prepare(query: string): D1Statement; }
+
 export interface Env {
   DB: D1Database;
   PAIRING_SIGNING_SECRET: string;
@@ -29,6 +37,12 @@ const unseal = async (env: Env, value: string) => {
   return new TextDecoder().decode(plain);
 };
 const uuid = () => crypto.randomUUID();
+const safeEqual = (a: string, b: string) => {
+  if (a.length !== b.length) return false;
+  let mismatch = 0;
+  for (let i = 0; i < a.length; i++) mismatch |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return mismatch === 0;
+};
 const authToken = (r: Request) => r.headers.get("authorization")?.match(/^Bearer ([A-Za-z0-9._~-]{20,200})$/)?.[1] ?? null;
 async function bodyJson(r: Request) {
   const raw = await r.text();
@@ -50,6 +64,7 @@ async function rateLimited(env: Env, r: Request) {
   const key = await digest(env, ip);
   const now = Date.now();
   const window = Math.floor(now / 60_000);
+  await env.DB.prepare("DELETE FROM rate_limits WHERE window < ?").bind(window - 10).run();
   await env.DB.prepare(`INSERT INTO rate_limits (bucket, window, hits) VALUES (?, ?, 1)
     ON CONFLICT(bucket) DO UPDATE SET window=excluded.window, hits=CASE WHEN window=excluded.window THEN hits+1 ELSE 1 END`).bind(key, window).run();
   const row = await env.DB.prepare("SELECT hits FROM rate_limits WHERE bucket=? AND window=?").bind(key, window).first<{ hits: number }>();
@@ -98,7 +113,7 @@ export default {
         const id = url.searchParams.get("pairingId") ?? "";
         const secret = request.headers.get("X-Device-Pairing-Secret") ?? "";
         const p = await getPairing(env,id);
-        if (!p || !secret || p.device_secret_hash !== await digest(env,secret)) return json({ error:"Pairing not found" },404);
+        if (!p || !secret || !safeEqual(p.device_secret_hash, await digest(env,secret))) return json({ error:"Pairing not found" },404);
         if (p.status === "pending" && p.expires_at < Date.now()) {
           await env.DB.prepare("UPDATE pairings SET status='expired' WHERE id=? AND status='pending'").bind(id).run();
           return json({ status:"expired" },410);

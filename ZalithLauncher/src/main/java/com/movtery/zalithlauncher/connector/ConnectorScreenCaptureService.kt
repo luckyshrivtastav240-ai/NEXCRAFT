@@ -154,7 +154,7 @@ class ConnectorScreenCaptureService : Service() {
                                 output.toByteArray()
                             }
                             if (uploadBitmap !== frame) uploadBitmap.recycle()
-                            if (bytes.size <= 600_000) {
+                            if (bytes.size <= 300_000) {
                                 serviceScope.launch {
                                     try {
                                         ConnectorRelayClient(this@ConnectorScreenCaptureService).uploadDiagnostic(

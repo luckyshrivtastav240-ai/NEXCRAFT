@@ -1622,4 +1622,20 @@
     <string name="nexcraft_diagnostics_subject">NEXCRAFT जाँच रिपोर्ट</string>
     <string name="nexcraft_diagnostics_chooser">रिपोर्ट कहाँ साझा करनी है</string>
     <string name="nexcraft_diagnostics_share">रिपोर्ट साझा करें</string>
+    <string name="nexcraft_diagnostics_cancel">रद्द करें</string>
+    <string name="nexcraft_diagnostics_report_title">NEXCRAFT जाँच रिपोर्ट</string>
+    <string name="nexcraft_diagnostics_app">ऐप: %1$s</string>
+    <string name="nexcraft_diagnostics_device">डिवाइस: %1$s %2$s</string>
+    <string name="nexcraft_diagnostics_android">Android: %1$s (SDK %2$d)</string>
+    <string name="nexcraft_diagnostics_ram">उपलब्ध RAM: %1$d MB</string>
+    <string name="nexcraft_diagnostics_low_memory">मेमोरी कम है: %1$b</string>
+    <string name="nexcraft_diagnostics_package">पैकेज: %1$s</string>
+    <string name="nexcraft_diagnostics_log_file">लॉग फ़ाइल: %1$s</string>
+    <string name="nexcraft_diagnostics_not_found">नहीं मिली</string>
+    <string name="nexcraft_diagnostics_recent_log">हाल का Launcher लॉग (आख़िरी 60 KB):</string>
+    <string name="nexcraft_diagnostics_no_log">Launcher लॉग उपलब्ध नहीं है।</string>
+    <string name="nexcraft_diagnostics_last_crash">आख़िरी क्रैश रिपोर्ट:</string>
+    <string name="nexcraft_diagnostics_no_crash">क्रैश रिपोर्ट उपलब्ध नहीं है।</string>
+    <string name="nexcraft_diagnostics_share_notice">यह रिपोर्ट तभी साझा होगी जब आप साझा करने का विकल्प चुनेंगे।</string>
+    <string name="nexcraft_diagnostics_privacy_notice">भेजने से पहले जाँच लें; लॉग में निजी फ़ाइल पथ या सर्वर की जानकारी हो सकती है।</string>
 </resources>

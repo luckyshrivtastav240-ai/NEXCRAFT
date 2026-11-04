@@ -1611,4 +1611,15 @@
     <string name="nexcraft_cap_netherite">नेथराइट हेल्मेट</string>
     <string name="nexcraft_cap_diamond">हीरे का ताज</string>
     <string name="nexcraft_cap_ender">एंडर हुड</string>
+
+    <string name="nexcraft_nav_home">होम</string>
+    <string name="nexcraft_nav_versions">वर्ज़न</string>
+    <string name="nexcraft_nav_servers">सर्वर</string>
+    <string name="nexcraft_nav_files">फ़ाइलें</string>
+    <string name="nexcraft_nav_ai_bridge">AI ब्रिज</string>
+    <string name="nexcraft_nav_settings">सेटिंग्स</string>
+    <string name="nexcraft_diagnostics_title">NEXCRAFT जाँच रिपोर्ट</string>
+    <string name="nexcraft_diagnostics_subject">NEXCRAFT जाँच रिपोर्ट</string>
+    <string name="nexcraft_diagnostics_chooser">रिपोर्ट कहाँ साझा करनी है</string>
+    <string name="nexcraft_diagnostics_share">रिपोर्ट साझा करें</string>
 </resources>

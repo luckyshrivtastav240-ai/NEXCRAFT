@@ -126,7 +126,7 @@ export default {
       if (request.method === "POST" && ack) {
         const p = await getPairing(env,ack[1]);
         const secret = request.headers.get("X-Device-Pairing-Secret") ?? "";
-        if (!p || !secret || p.device_secret_hash !== await digest(env,secret)) return json({ error:"Pairing not found" },404);
+        if (!p || !secret || !safeEqual(p.device_secret_hash, await digest(env,secret))) return json({ error:"Pairing not found" },404);
         if (p.status !== "paired") return json({ error:"Pairing is not approved yet" },409);
         await env.DB.prepare("UPDATE pairings SET device_token_cipher=NULL WHERE id=?").bind(p.id).run();
         return json({ acknowledged:true });

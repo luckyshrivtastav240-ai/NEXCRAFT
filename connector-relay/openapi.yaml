@@ -1,12 +1,10 @@
 openapi: 3.1.0
 info:
   title: NEXCRAFT Main Connector
-  version: 1.0.0
+  version: 1.1.0
   description: Assistant API for pairing with a NEXCRAFT Android launcher, reading redacted diagnostics, viewing the latest user-approved screen frame, and revoking access.
 servers:
   - url: https://YOUR-DEPLOYED-RELAY-HOST
-security:
-  - bearerAuth: []
 paths:
   /health:
     get:
@@ -29,7 +27,7 @@ paths:
       operationId: pairNexcraftDevice
       security: []
       summary: Pair the NEXCRAFT launcher using its one-time code
-      description: Enter the short-lived code shown in NEXCRAFT. The returned assistantToken is shown once; configure it as the Bearer API key for subsequent action calls.
+      description: Enter the short-lived code shown in NEXCRAFT. Reuse the returned assistantToken in the X-Assistant-Token header for all other connector actions. Treat it as a secret.
       requestBody:
         required: true
         content:
@@ -43,11 +41,12 @@ paths:
                   pattern: '^[A-F0-9]{10}$'
       responses:
         '200':
-          description: Device paired
+          description: Device paired; assistant token is returned once
           content:
             application/json:
               schema:
                 type: object
+                required: [pairingId, assistantToken, deviceLabel]
                 properties:
                   pairingId: { type: string, format: uuid }
                   assistantToken: { type: string }
@@ -63,6 +62,7 @@ paths:
       summary: Read recent diagnostics from the paired NEXCRAFT launcher
       description: Returns recent device status, redacted launcher logs, and crash reports. Screen frames are available through viewNexcraftScreen.
       parameters:
+        - $ref: '#/components/parameters/AssistantToken'
         - in: query
           name: limit
           schema:
@@ -96,6 +96,8 @@ paths:
       operationId: viewNexcraftScreen
       summary: View the latest user-approved NEXCRAFT screen frame
       description: Returns the most recent JPEG frame captured while Android MediaProjection screen sharing is active. The user can stop capture in NEXCRAFT or its foreground notification.
+      parameters:
+        - $ref: '#/components/parameters/AssistantToken'
       responses:
         '200':
           description: Latest screen frame
@@ -113,6 +115,7 @@ paths:
       operationId: disconnectNexcraftDevice
       summary: Disconnect and revoke the paired NEXCRAFT device
       parameters:
+        - $ref: '#/components/parameters/AssistantToken'
         - in: path
           name: id
           required: true
@@ -129,8 +132,12 @@ paths:
         '401':
           description: Invalid or revoked assistant token
 components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: NEXCRAFT assistant pairing token
+  parameters:
+    AssistantToken:
+      in: header
+      name: X-Assistant-Token
+      required: true
+      description: One-time assistantToken returned by pairNexcraftDevice. Keep private and reuse only for this paired device.
+      schema:
+        type: string
+  securitySchemes: {}

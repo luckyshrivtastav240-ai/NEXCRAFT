@@ -37,7 +37,7 @@ The Cloudflare Worker exposes a stateless Streamable HTTP MCP endpoint at `/mcp`
 After deploying this Worker, configure ChatGPT's custom MCP server with:
 
 ```text
-https://nexcraft-connector-relay.luckyshrivastav240.workers.dev/mcp
+https://nexcraft-connector-relay.luckyshrivtastav240.workers.dev/mcp
 ```
 
 Available tools: `checkNexcraftRelay`, `pairNexcraftDevice`, `readNexcraftDiagnostics`, `viewNexcraftScreen`, and `revokeNexcraftPairing`. Pairing requires the temporary 10-character code shown by the Android launcher. The assistant token is a credential: do not paste it into chat or share it with anyone. The screen tool returns only the latest frame explicitly shared by the device owner. The MCP endpoint must be deployed and tested before adding it to ChatGPT; the URL alone does not mean the service is live.

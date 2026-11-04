@@ -79,7 +79,6 @@ import com.movtery.colorpicker.ColorPickerController
 import com.movtery.colorpicker.components.HueBarPicker
 import com.movtery.colorpicker.rememberColorPickerController
 import com.movtery.zalithlauncher.R
-import com.movtery.zalithlauncher.connector.NexcraftChatGPTConnectorCard
 import com.movtery.zalithlauncher.contract.MediaPickerContract
 import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskSystem
@@ -164,12 +163,6 @@ fun LauncherSettingsScreen(
                 .padding(all = 12.dp),
             isVisible = isVisible
         ) {
-            AnimatedItem { ctx ->
-                SettingsCardColumn(modifier = Modifier.fillMaxWidth().animated(ctx)) {
-                    NexcraftChatGPTConnectorCard()
-                }
-            }
-
             AnimatedItem { ctx ->
                 SettingsCardColumn(
                     modifier = Modifier

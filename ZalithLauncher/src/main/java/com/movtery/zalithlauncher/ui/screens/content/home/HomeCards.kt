@@ -121,6 +121,10 @@ object HomeCards {
     }
 
     /** Responsive NEXCRAFT dashboard header sized for Android phone screens. */
+    /**
+     * INDOCRAFT fantasy landing hero. Uses the launcher's actual Minecraft artwork,
+     * live selected version/account state, and the existing launch callback.
+     */
     private fun indocraftWelcomeCard() = SystemCard(id = "system_indocraft_welcome") {
         val selectedVersion by VersionsManager.currentVersion.collectAsStateWithLifecycle()
         val currentAccount by AccountsManager.currentAccountFlow.collectAsStateWithLifecycle()
@@ -129,134 +133,160 @@ object HomeCards {
 
         androidx.compose.material3.Surface(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
-            color = Color(0xFF081321),
-            contentColor = Color(0xFFF0F6FF),
-            tonalElevation = 2.dp
+            shape = RoundedCornerShape(26.dp),
+            color = Color(0xFF101C25),
+            contentColor = Color(0xFFF5F3E9),
+            tonalElevation = 0.dp
         ) {
             androidx.compose.foundation.layout.BoxWithConstraints(
-                modifier = Modifier.background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(Color(0xFF0B1B2E), Color(0xFF102B46), Color(0xFF071321))
-                    )
-                )
+                modifier = Modifier.fillMaxWidth()
             ) {
-                val compact = maxWidth < 520.dp
-                Column(
-                    modifier = Modifier.padding(
-                        horizontal = if (compact) 14.dp else 20.dp,
-                        vertical = if (compact) 14.dp else 18.dp
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(if (compact) 12.dp else 16.dp)
+                val compact = maxWidth < 560.dp
+                androidx.compose.foundation.layout.Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .then(if (compact) Modifier else Modifier.size(1.dp).weight(1f))
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    Image(
+                        painter = painterResource(R.drawable.img_minecraft),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                    androidx.compose.foundation.layout.Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.linearGradient(
+                                    colors = listOf(
+                                        Color(0xF20A1720),
+                                        Color(0xD90C1C25),
+                                        Color(0xA60B1720)
+                                    )
+                                )
+                            )
+                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                horizontal = if (compact) 18.dp else 28.dp,
+                                vertical = if (compact) 18.dp else 24.dp
+                            ),
+                        verticalArrangement = Arrangement.spacedBy(if (compact) 13.dp else 18.dp)
                     ) {
-                        androidx.compose.material3.Surface(
-                            shape = RoundedCornerShape(16.dp),
-                            color = Color(0xFF12324D)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             Image(
                                 painter = painterResource(R.drawable.indocraft_mark),
-                                contentDescription = "INDOCRAFT logo",
-                                modifier = Modifier.padding(8.dp).size(if (compact) 42.dp else 54.dp)
+                                contentDescription = "INDOCRAFT",
+                                modifier = Modifier.size(if (compact) 36.dp else 42.dp)
                             )
-                        }
-                        Column(
-                            modifier = Modifier.weight(1f),
-                            verticalArrangement = Arrangement.spacedBy(3.dp)
-                        ) {
-                            Text(
-                                text = "INDOCRAFT",
-                                style = if (compact) MaterialTheme.typography.titleLarge
-                                    else MaterialTheme.typography.headlineSmall,
-                                color = Color(0xFFF4F8FF),
-                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                            )
-                            Text(
-                                text = "MINECRAFT JAVA  •  FANTASY LAUNCHER",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = Color(0xFFB7CBE0)
-                            )
-                        }
-                        androidx.compose.material3.Surface(
-                            shape = CircleShape,
-                            color = if (hasValidVersion) Color(0xFF123A32) else Color(0xFF34313A),
-                            contentColor = if (hasValidVersion) Color(0xFF8CF0C3) else Color(0xFFE1D9E8)
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 9.dp, vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
+                                Text(
+                                    text = "INDOCRAFT",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = Color(0xFFFFD18A),
+                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Black,
+                                    letterSpacing = 1.8.sp
+                                )
+                                Text(
+                                    text = "MINECRAFT JAVA  /  FANTASY EDITION",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = Color(0xFFC3D1CC),
+                                    letterSpacing = 1.1.sp
+                                )
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+                            androidx.compose.material3.Surface(
+                                color = Color(0xB51B302C),
+                                shape = RoundedCornerShape(50.dp),
+                                contentColor = Color(0xFFA8E4B8)
                             ) {
-                                androidx.compose.foundation.layout.Box(
-                                    Modifier.size(6.dp).background(
-                                        if (hasValidVersion) Color(0xFF65E6A8) else Color(0xFFB7A9C4),
-                                        CircleShape
-                                    )
+                                Text(
+                                    text = if (hasValidVersion) "READY TO PLAY" else "SETUP REQUIRED",
+                                    modifier = Modifier.padding(horizontal = 11.dp, vertical = 7.dp),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                )
+                            }
+                        }
+
+                        androidx.compose.foundation.layout.Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .background(Color(0x66D7C49A))
+                        )
+
+                        Text(
+                            text = "YOUR NEXT\nADVENTURE BEGINS HERE",
+                            style = if (compact) MaterialTheme.typography.headlineSmall
+                                else MaterialTheme.typography.headlineLarge,
+                            color = Color(0xFFFFF5DF),
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.Black,
+                            lineHeight = if (compact) 31.sp else 42.sp,
+                            letterSpacing = 0.4.sp
+                        )
+                        Text(
+                            text = "A world of blocks, biomes and possibilities is waiting.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color(0xFFD4E0D9)
+                        )
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier.weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Text(
+                                    text = "ACTIVE PROFILE",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = Color(0xFFFFD18A),
+                                    letterSpacing = 1.2.sp
+                                )
+                                Text(
+                                    text = currentAccount?.username ?: "No account selected",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = Color(0xFFF5F3E9),
+                                    maxLines = 1
                                 )
                                 Text(
                                     text = selectedVersion?.takeIf { it.isValid() }?.getVersionName()
                                         ?: stringResource(R.string.versions_manage_no_versions),
-                                    style = MaterialTheme.typography.labelMedium
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color(0xFFB8C9C0),
+                                    maxLines = 1
                                 )
                             }
-                        }
-                    }
-
-                    androidx.compose.material3.HorizontalDivider(color = Color(0xFF29445D))
-
-                    Text(
-                        text = "Your world. Your adventure.",
-                        style = if (compact) MaterialTheme.typography.titleMedium
-                            else MaterialTheme.typography.titleLarge,
-                        color = Color(0xFFEAF4FF),
-                        fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
-                    )
-                    Text(
-                        text = stringResource(R.string.nexcraft_unofficial_modified_notice),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF9DB7CE)
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(14.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(
-                            modifier = Modifier.weight(1f),
-                            verticalArrangement = Arrangement.spacedBy(3.dp)
-                        ) {
-                            Text(
-                                text = "PLAYER",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = Color(0xFF83DDB2)
-                            )
-                            Text(
-                                text = currentAccount?.username ?: "No account selected",
-                                style = MaterialTheme.typography.titleSmall,
-                                color = Color(0xFFF0FFF6),
-                                maxLines = 1
-                            )
-                        }
-                        Button(
-                            onClick = { selectedVersion?.takeIf { it.isValid() }?.let(launchVersion) },
-                            enabled = hasValidVersion,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFF2E9B69),
-                                contentColor = Color(0xFFFFFFFF),
-                                disabledContainerColor = Color(0xFF35434A),
-                                disabledContentColor = Color(0xFF9BAAB1)
-                            ),
-                            shape = RoundedCornerShape(13.dp),
-                            contentPadding = PaddingValues(horizontal = 22.dp, vertical = 13.dp)
-                        ) {
-                            Text(
-                                text = "PLAY NOW",
-                                style = MaterialTheme.typography.labelLarge,
-                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                            )
+                            Button(
+                                onClick = { selectedVersion?.takeIf { it.isValid() }?.let(launchVersion) },
+                                enabled = hasValidVersion,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFFD49A45),
+                                    contentColor = Color(0xFF241A0D),
+                                    disabledContainerColor = Color(0xFF4B514B),
+                                    disabledContentColor = Color(0xFFB9C0B9)
+                                ),
+                                shape = RoundedCornerShape(13.dp),
+                                contentPadding = PaddingValues(
+                                    horizontal = if (compact) 17.dp else 24.dp,
+                                    vertical = 13.dp
+                                )
+                            ) {
+                                Text(
+                                    text = "PLAY NOW",
+                                    style = MaterialTheme.typography.labelLarge,
+                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Black,
+                                    letterSpacing = 0.8.sp
+                                )
+                            }
                         }
                     }
                 }

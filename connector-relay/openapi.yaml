@@ -107,6 +107,21 @@ components:
                     type: array
                     items: { type: string }
         '404': { description: Pairing code expired or not found }
+  /v1/diagnostics/screen:
+    get:
+      operationId: viewNexcraftScreen
+      summary: View the latest user-approved NEXCRAFT screen frame
+      description: Returns the most recent JPEG frame captured only while Android MediaProjection screen sharing is active. The user can stop capture at any time in NEXCRAFT or its foreground notification.
+      responses:
+        '200':
+          description: Latest screen frame
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        '404': { description: No screen frame has been uploaded }
+        '401': { description: Invalid or revoked assistant token }
   /v1/diagnostics:
     get:
       operationId: readNexcraftDiagnostics

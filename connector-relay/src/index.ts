@@ -128,6 +128,19 @@ app.post("/v1/device/disconnect", authenticate("device"), (req,res) => {
   publish(auth.pairing.id,{type:"revoked",at:Date.now()});
   res.json({revoked:true});
 });
+app.get("/v1/diagnostics/screen", authenticate("assistant"), (req,res) => {
+  const auth = req as Authenticated;
+  const row = db.prepare("SELECT payload,created_at FROM diagnostics WHERE pairing_id=? AND kind='screen' ORDER BY created_at DESC LIMIT 1")
+    .get(auth.pairing.id) as {payload:string;created_at:number} | undefined;
+  if (!row) return res.status(404).json({error:"No screen frame has been received yet"});
+  const payload = JSON.parse(row.payload) as {mimeType?:string;encoding?:string;frame?:string};
+  if (payload.mimeType !== "image/jpeg" || payload.encoding !== "base64" || !payload.frame) {
+    return res.status(422).json({error:"Latest screen frame has an unsupported format"});
+  }
+  res.setHeader("Cache-Control","no-store");
+  res.setHeader("X-Captured-At",String(row.created_at));
+  res.type("image/jpeg").send(Buffer.from(payload.frame,"base64"));
+});
 app.get("/v1/diagnostics", authenticate("assistant"), (req,res) => {
   const auth = req as Authenticated;
   const limit = Math.min(100,Math.max(1,Number(req.query.limit ?? 30)));

@@ -166,7 +166,12 @@ class ConnectorScreenCaptureService : Service() {
                                                 .put("capturedAt", System.currentTimeMillis())
                                         )
                                     } catch (_: Exception) {
-                                        // Keep screen capture running; reconnect/upload can retry on a later frame.
+                                        if (ConnectorTokenStore(this@ConnectorScreenCaptureService).read() == null) {
+                                            Handler(mainLooper).post {
+                                                stopCapture()
+                                                stopSelf()
+                                            }
+                                        }
                                     } finally {
                                         uploadInFlight.set(false)
                                     }

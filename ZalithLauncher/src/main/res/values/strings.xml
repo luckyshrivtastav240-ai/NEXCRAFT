@@ -3160,6 +3160,7 @@
     <!-- Chooser title shown before the user shares diagnostics -->
     <string name="nexcraft_diagnostics_chooser">Choose where to share diagnostics</string>
     <!-- Button that shares the reviewed diagnostics report -->
+    <string name="nexcraft_diagnostics_screenshot_label">NEXCRAFT screen</string>
     <string name="nexcraft_diagnostics_share">Share report</string>
     <string name="nexcraft_diagnostics_cancel">Cancel</string>
     <string name="nexcraft_diagnostics_report_title">NEXCRAFT Diagnostics</string>

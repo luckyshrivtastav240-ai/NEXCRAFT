@@ -12,12 +12,13 @@ The Android screen sampler was reduced to one uploaded frame every 5 seconds to 
 
 1. Create or sign in to a Cloudflare account and open a terminal with Node.js installed.
 2. From this directory run `npm install`.
-3. Create the free D1 database: `npx wrangler d1 create nexcraft-connector`.
-4. Copy the returned database ID into `wrangler.toml`, replacing `REPLACE_WITH_CLOUDFLARE_D1_DATABASE_ID`.
-5. Create the tables: `npm run db:init`.
-6. Set the relay secret: `npx wrangler secret put PAIRING_SIGNING_SECRET`. Paste at least 32 cryptographically random characters (for example, generate 32 random bytes locally and encode as hex).
-7. Test locally with `npm run dev`, then publish with `npm run deploy`.
-8. Copy the Worker HTTPS URL into NEXCRAFT → ChatGPT Connector and replace the server URL in the GPT Action OpenAPI file with that same URL.
+3. Authorize Wrangler in your Cloudflare account: `npx wrangler login`.
+4. Create the free D1 database: `npx wrangler d1 create nexcraft-connector`.
+5. Copy the returned database ID into `wrangler.toml`, replacing `REPLACE_WITH_CLOUDFLARE_D1_DATABASE_ID`.
+6. Create the tables: `npm run db:init`.
+7. Set the relay secret: `npx wrangler secret put PAIRING_SIGNING_SECRET`. Paste at least 32 cryptographically random characters (for example, generate 32 random bytes locally and encode as hex).
+8. Test locally with `npm run dev`, then publish with `npm run deploy`.
+9. Copy the Worker HTTPS URL into NEXCRAFT → ChatGPT Connector and replace the server URL in the GPT Action OpenAPI file with that same URL.
 
 ## GPT Action
 

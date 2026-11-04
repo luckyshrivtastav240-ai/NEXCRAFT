@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: NEXCRAFT Main Connector
   version: 1.0.0
-  description: Secure assistant-side API for reading diagnostics and revoking a paired NEXCRAFT launcher device. Configure this as a ChatGPT GPT Action after deploying the relay over HTTPS.
+  description: Assistant API for pairing with a NEXCRAFT Android launcher, reading redacted diagnostics, viewing the latest user-approved screen frame, and revoking access.
 servers:
   - url: https://YOUR-DEPLOYED-RELAY-HOST
 security:
@@ -29,7 +29,7 @@ paths:
       operationId: pairNexcraftDevice
       security: []
       summary: Pair the NEXCRAFT launcher using its one-time code
-      description: Enter the short-lived code shown in the NEXCRAFT AI Bridge screen. The returned assistant token is shown once; configure it as the bearer API key for subsequent action calls.
+      description: Enter the short-lived code shown in NEXCRAFT. The returned assistantToken is shown once; configure it as the Bearer API key for subsequent action calls.
       requestBody:
         required: true
         content:
@@ -38,60 +38,9 @@ paths:
               type: object
               required: [pairingCode]
               properties:
-                pairingCode: { type: string, pattern: '^[A-F0-9]{10}    get:
-      operationId: readNexcraftDiagnostics
-      summary: Read recent diagnostics from the paired NEXCRAFT launcher
-      description: Returns recent launcher diagnostics, log excerpts, crash reports or screen frames uploaded by the paired device. Only returns data from the device paired to this bearer token.
-      parameters:
-        - in: query
-          name: limit
-          schema: { type: integer, minimum: 1, maximum: 100, default: 30 }
-      responses:
-        '200':
-          description: Recent diagnostics
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  pairingId: { type: string }
-                  device: { type: string }
-                  items:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id: { type: integer }
-                        kind: { type: string }
-                        createdAt: { type: string, format: date-time }
-                        payload: {}
-        '401': { description: Invalid or revoked assistant token }
-  /v1/pairings/{id}/revoke:
-    post:
-      operationId: disconnectNexcraftDevice
-      summary: Disconnect and revoke the paired NEXCRAFT device
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: string, format: uuid }
-      responses:
-        '200':
-          description: Pairing revoked
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  revoked: { type: boolean }
-        '401': { description: Invalid or revoked assistant token }
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: NEXCRAFT assistant pairing token
- }
+                pairingCode:
+                  type: string
+                  pattern: '^[A-F0-9]{10}$'
       responses:
         '200':
           description: Device paired
@@ -106,31 +55,21 @@ components:
                   permissions:
                     type: array
                     items: { type: string }
-        '404': { description: Pairing code expired or not found }
-  /v1/diagnostics/screen:
-    get:
-      operationId: viewNexcraftScreen
-      summary: View the latest user-approved NEXCRAFT screen frame
-      description: Returns the most recent JPEG frame captured only while Android MediaProjection screen sharing is active. The user can stop capture at any time in NEXCRAFT or its foreground notification.
-      responses:
-        '200':
-          description: Latest screen frame
-          content:
-            image/jpeg:
-              schema:
-                type: string
-                format: binary
-        '404': { description: No screen frame has been uploaded }
-        '401': { description: Invalid or revoked assistant token }
+        '404':
+          description: Pairing code expired or not found
   /v1/diagnostics:
     get:
       operationId: readNexcraftDiagnostics
       summary: Read recent diagnostics from the paired NEXCRAFT launcher
-      description: Returns recent launcher diagnostics, log excerpts, crash reports or screen frames uploaded by the paired device. Only returns data from the device paired to this bearer token.
+      description: Returns recent device status, redacted launcher logs, and crash reports. Screen frames are available through viewNexcraftScreen.
       parameters:
         - in: query
           name: limit
-          schema: { type: integer, minimum: 1, maximum: 100, default: 30 }
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 30
       responses:
         '200':
           description: Recent diagnostics
@@ -150,7 +89,25 @@ components:
                         kind: { type: string }
                         createdAt: { type: string, format: date-time }
                         payload: {}
-        '401': { description: Invalid or revoked assistant token }
+        '401':
+          description: Invalid or revoked assistant token
+  /v1/diagnostics/screen:
+    get:
+      operationId: viewNexcraftScreen
+      summary: View the latest user-approved NEXCRAFT screen frame
+      description: Returns the most recent JPEG frame captured while Android MediaProjection screen sharing is active. The user can stop capture in NEXCRAFT or its foreground notification.
+      responses:
+        '200':
+          description: Latest screen frame
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: No screen frame has been uploaded
+        '401':
+          description: Invalid or revoked assistant token
   /v1/pairings/{id}/revoke:
     post:
       operationId: disconnectNexcraftDevice
@@ -169,7 +126,8 @@ components:
                 type: object
                 properties:
                   revoked: { type: boolean }
-        '401': { description: Invalid or revoked assistant token }
+        '401':
+          description: Invalid or revoked assistant token
 components:
   securitySchemes:
     bearerAuth:

@@ -1644,4 +1644,16 @@
     <string name="nexcraft_diagnostics_privacy_notice">भेजने से पहले जाँच लें; लॉग में निजी फ़ाइल पथ या सर्वर की जानकारी हो सकती है।</string>
     <string name="nexcraft_connector_start_share">लाइव स्क्रीन शेयर शुरू करें</string>
     <string name="nexcraft_connector_stop_share">स्क्रीन शेयर बंद करें</string>
+    <string name="nexcraft_connector_open">ChatGPT कनेक्टर</string>
+    <string name="nexcraft_connector_title">NEXCRAFT Main Connector</string>
+    <string name="nexcraft_connector_description">अपना HTTPS Relay URL डालें। Pairing Code को ChatGPT Action में दर्ज करके डिवाइस जोड़ें।</string>
+    <string name="nexcraft_connector_relay_url">HTTPS Relay URL</string>
+    <string name="nexcraft_connector_status">स्थिति: %1$s</string>
+    <string name="nexcraft_connector_pair_code">Pairing Code: %1$s</string>
+    <string name="nexcraft_connector_pair_instructions">ChatGPT Action में pairNexcraftDevice चलाकर यह कोड दर्ज करें, फिर यहाँ Check Pairing दबाएँ।</string>
+    <string name="nexcraft_connector_privacy">स्क्रीन शेयरिंग Android की अनुमति से शुरू होती है। Stop दबाने तक स्क्रीन कैप्चर चालू रहेगा।</string>
+    <string name="nexcraft_connector_pair">Pair बनाएं</string>
+    <string name="nexcraft_connector_check">Pairing जाँचें</string>
+    <string name="nexcraft_connector_copy_code">कोड कॉपी करें</string>
+    <string name="nexcraft_connector_disconnect">Disconnect</string>
 </resources>

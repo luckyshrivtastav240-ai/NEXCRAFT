@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -148,10 +149,33 @@ private fun LoadingScreen(
         val ctx = rememberAnimatedContext(isVisible = isVisible)
         val brand = "INDOCRAFT"
         var shownLetters by remember { mutableIntStateOf(0) }
+        var sceneIndex by remember { mutableIntStateOf(0) }
+
+        val sceneNames = listOf(
+            "THE WORLD IS YOURS",
+            "A NEW ADVENTURE AWAITS",
+            "EXPLORE THE UNKNOWN",
+            "BUILD YOUR LEGACY",
+            "WELCOME TO YOUR WORLD"
+        )
+        val sceneColors = listOf(
+            listOf(Color(0xFF102E35), Color(0xFF285B48), Color(0xFF111B2A)),
+            listOf(Color(0xFF302044), Color(0xFF80506A), Color(0xFF17233A)),
+            listOf(Color(0xFF172A50), Color(0xFF286B83), Color(0xFF101827)),
+            listOf(Color(0xFF4A2C24), Color(0xFF9A6334), Color(0xFF20233A)),
+            listOf(Color(0xFF263D2C), Color(0xFF477C55), Color(0xFF101D2C))
+        )
 
         LaunchedEffect(isVisible) {
             shownLetters = 0
+            sceneIndex = 0
             if (isVisible) {
+                launch {
+                    while (true) {
+                        delay(3_800L)
+                        sceneIndex = (sceneIndex + 1) % sceneNames.size
+                    }
+                }
                 delay(280)
                 brand.indices.forEach { index ->
                     shownLetters = index + 1
@@ -160,10 +184,17 @@ private fun LoadingScreen(
             }
         }
 
+        val currentScene = sceneColors[sceneIndex]
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFF070B12))
+                .background(
+                    Brush.linearGradient(
+                        colors = currentScene,
+                        start = androidx.compose.ui.geometry.Offset.Zero,
+                        end = androidx.compose.ui.geometry.Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
+                    )
+                )
                 .animated(ctx, from = AnimatedDirection.Bottom),
             contentAlignment = Alignment.Center
         ) {
@@ -172,7 +203,7 @@ private fun LoadingScreen(
                 verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
                 Image(
-                    modifier = Modifier.size(76.dp),
+                    modifier = Modifier.size(88.dp),
                     painter = painterResource(R.drawable.nexcraft_icon_lava_hammer),
                     contentDescription = stringResource(R.string.generic_loading)
                 )
@@ -196,9 +227,10 @@ private fun LoadingScreen(
                             label = "indocraft-letter-scale-$index"
                         )
                         val letterColor = when (index) {
-                            in 0..2 -> Color(0xFFFF9933)
-                            in 3..5 -> Color(0xFFF4F5F7)
-                            else -> Color(0xFF31C46C)
+                            0, 1 -> Color(0xFFFFA64D)
+                            2, 3 -> Color(0xFFF4F5F7)
+                            4, 5 -> Color(0xFF73D5FF)
+                            else -> Color(0xFF83D68A)
                         }
                         Text(
                             text = letter.toString(),
@@ -213,16 +245,23 @@ private fun LoadingScreen(
                     }
                 }
                 Text(
+                    text = sceneNames[sceneIndex],
+                    color = Color(0xFFF2F5FA),
+                    fontSize = 12.sp,
+                    letterSpacing = 2.1.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
                     text = "INDIA  •  GAMING  •  CREATIVITY",
-                    color = Color(0xFF9AA7B8),
+                    color = Color(0xFFCFD8E5),
                     fontSize = 10.sp,
                     letterSpacing = 2.2.sp,
                     fontWeight = FontWeight.SemiBold
                 )
                 LinearWavyProgressIndicator(
-                    modifier = Modifier.width(156.dp),
-                    color = Color(0xFFFF9933),
-                    trackColor = Color(0xFF26313D),
+                    modifier = Modifier.width(184.dp),
+                    color = Color(0xFF78D59A),
+                    trackColor = Color(0x665A6B7C),
                     wavelength = 32.dp
                 )
             }

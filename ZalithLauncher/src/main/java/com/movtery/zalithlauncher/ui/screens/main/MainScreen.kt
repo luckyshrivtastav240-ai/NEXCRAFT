@@ -345,6 +345,14 @@ fun MainScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(MaterialTheme.shapes.medium)
+                        .clickable(onClick = { connectorDialogVisible = true })
+                        .padding(horizontal = 10.dp, vertical = 10.dp),
+                    color = Color(0xFFFFB36B),
+                    style = MaterialTheme.typography.labelLarge
+                )
+                Text(
+                    text = stringResource(R.string.nexcraft_connector_open),
+                    modifier = Modifier.fillMaxWidth().clip(MaterialTheme.shapes.medium)
                         .clickable(onClick = {
                             val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
                             val memoryInfo = ActivityManager.MemoryInfo()
@@ -417,14 +425,6 @@ fun MainScreen(
                                 }
                             }
                         })
-                        .padding(horizontal = 10.dp, vertical = 10.dp),
-                    color = Color(0xFFFFB36B),
-                    style = MaterialTheme.typography.labelLarge
-                )
-                Text(
-                    text = stringResource(R.string.nexcraft_connector_open),
-                    modifier = Modifier.fillMaxWidth().clip(MaterialTheme.shapes.medium)
-                        .clickable(onClick = { connectorDialogVisible = true })
                         .padding(horizontal = 10.dp, vertical = 10.dp),
                     color = Color(0xFF8DD8FF), style = MaterialTheme.typography.labelLarge
                 )

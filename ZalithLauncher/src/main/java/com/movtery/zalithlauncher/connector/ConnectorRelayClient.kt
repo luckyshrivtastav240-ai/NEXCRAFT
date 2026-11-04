@@ -73,7 +73,7 @@ class ConnectorRelayClient(context: Context) {
             if (token != null) {
                 ConnectorTokenStore(appContext).save(token)
                 val ack = Request.Builder()
-                    .url("$base/v1/pairings/\${Uri.encode(pairing.pairingId)}/device-token/ack")
+                    .url("$base/v1/pairings/${Uri.encode(pairing.pairingId)}/device-token/ack")
                     .header("X-Device-Pairing-Secret", pairing.deviceSecret)
                     .post("{}".toRequestBody(jsonType)).build()
                 execute(ack) { Unit }

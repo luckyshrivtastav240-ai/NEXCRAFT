@@ -1,6 +1,6 @@
 /*
  * NEXCRAFT Main Connector - user-approved screen capture.
- * Screen frames remain on-device until an authenticated relay uploader is attached.
+ * Screen frames are uploaded only to the paired relay while explicit Android capture consent is active.
  */
 package com.movtery.zalithlauncher.connector
 

@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: NEXCRAFT Main Connector
-  version: 1.1.0
-  description: Assistant API for pairing with a NEXCRAFT Android launcher, reading redacted diagnostics, viewing the latest user-approved screen frame, and revoking access.
+  version: 1.2.0
+  description: Pair a NEXCRAFT Android launcher and read user-approved diagnostics and sampled screen frames.
 servers:
   - url: https://YOUR-DEPLOYED-RELAY-HOST
 paths:
@@ -10,10 +10,10 @@ paths:
     get:
       operationId: checkRelayHealth
       security: []
-      summary: Check whether the NEXCRAFT relay is online
+      summary: Check relay health
       responses:
         '200':
-          description: Relay status
+          description: Relay health
           content:
             application/json:
               schema:
@@ -26,8 +26,8 @@ paths:
     post:
       operationId: pairNexcraftDevice
       security: []
-      summary: Pair the NEXCRAFT launcher using its one-time code
-      description: Enter the short-lived code shown in NEXCRAFT. Reuse the returned assistantToken in the X-Assistant-Token header for all other connector actions. Treat it as a secret.
+      summary: Pair using the one-time code displayed in NEXCRAFT
+      description: The returned assistantToken is a secret. Store it in this Action's secure runtime and use it as a Bearer token for subsequent calls. Never expose it in ordinary user-facing text.
       requestBody:
         required: true
         content:
@@ -41,7 +41,7 @@ paths:
                   pattern: '^[A-F0-9]{10}$'
       responses:
         '200':
-          description: Device paired; assistant token is returned once
+          description: Pairing approved
           content:
             application/json:
               schema:
@@ -55,14 +55,16 @@ paths:
                     type: array
                     items: { type: string }
         '404':
-          description: Pairing code expired or not found
+          description: Code expired or not found
+        '409':
+          description: Code already consumed
   /v1/diagnostics:
     get:
       operationId: readNexcraftDiagnostics
-      summary: Read recent diagnostics from the paired NEXCRAFT launcher
-      description: Returns recent device status, redacted launcher logs, and crash reports. Screen frames are available through viewNexcraftScreen.
+      security:
+        - bearerAuth: []
+      summary: Read recent redacted diagnostics
       parameters:
-        - $ref: '#/components/parameters/AssistantToken'
         - in: query
           name: limit
           schema:
@@ -90,32 +92,33 @@ paths:
                         createdAt: { type: string, format: date-time }
                         payload: {}
         '401':
-          description: Invalid or revoked assistant token
+          description: Invalid or revoked token
   /v1/diagnostics/screen:
     get:
       operationId: viewNexcraftScreen
+      security:
+        - bearerAuth: []
       summary: View the latest user-approved NEXCRAFT screen frame
-      description: Returns the most recent JPEG frame captured while Android MediaProjection screen sharing is active. The user can stop capture in NEXCRAFT or its foreground notification.
-      parameters:
-        - $ref: '#/components/parameters/AssistantToken'
+      description: Returns the most recent JPEG snapshot. Android MediaProjection permission and active foreground service are required.
       responses:
         '200':
-          description: Latest screen frame
+          description: Latest JPEG frame
           content:
             image/jpeg:
               schema:
                 type: string
                 format: binary
         '404':
-          description: No screen frame has been uploaded
+          description: No screen frame is available
         '401':
-          description: Invalid or revoked assistant token
+          description: Invalid or revoked token
   /v1/pairings/{id}/revoke:
     post:
       operationId: disconnectNexcraftDevice
-      summary: Disconnect and revoke the paired NEXCRAFT device
+      security:
+        - bearerAuth: []
+      summary: Revoke and disconnect this paired device
       parameters:
-        - $ref: '#/components/parameters/AssistantToken'
         - in: path
           name: id
           required: true
@@ -130,14 +133,10 @@ paths:
                 properties:
                   revoked: { type: boolean }
         '401':
-          description: Invalid or revoked assistant token
+          description: Invalid or revoked token
 components:
-  parameters:
-    AssistantToken:
-      in: header
-      name: X-Assistant-Token
-      required: true
-      description: One-time assistantToken returned by pairNexcraftDevice. Keep private and reuse only for this paired device.
-      schema:
-        type: string
-  securitySchemes: {}
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque

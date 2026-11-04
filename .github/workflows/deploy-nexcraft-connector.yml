@@ -24,7 +24,7 @@ jobs:
         working-directory: connector-relay/cloudflare
         run: npm install
 
-      - name: Create Cloudflare D1 database and configure binding
+      - name: Create or reuse Cloudflare D1 database
         working-directory: connector-relay/cloudflare
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -32,14 +32,31 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          npx wrangler d1 create nexcraft-connector 2>&1 | tee /tmp/d1-create.log
-          DB_ID="$(grep -Eo 'database_id[[:space:]]*=[[:space:]]*"[a-f0-9-]+"' /tmp/d1-create.log | head -n1 | sed -E 's/.*"([a-f0-9-]+)"/\1/')"
+          DB_LIST="$(npx wrangler d1 list --json)"
+          DB_ID="$(printf '%s' "$DB_LIST" | node -e '
+            let s=""; process.stdin.on("data",d=>s+=d).on("end",()=>{
+              const parsed=JSON.parse(s);
+              const rows=Array.isArray(parsed)?parsed:(parsed.result||parsed.databases||[]);
+              const db=rows.find(x=>x.name==="nexcraft-connector");
+              process.stdout.write(db?(db.uuid||db.database_id||""):"");
+            });')"
           if [ -z "$DB_ID" ]; then
-            echo "Could not read the new D1 database ID from Wrangler output."
+            npx wrangler d1 create nexcraft-connector
+            DB_LIST="$(npx wrangler d1 list --json)"
+            DB_ID="$(printf '%s' "$DB_LIST" | node -e '
+              let s=""; process.stdin.on("data",d=>s+=d).on("end",()=>{
+                const parsed=JSON.parse(s);
+                const rows=Array.isArray(parsed)?parsed:(parsed.result||parsed.databases||[]);
+                const db=rows.find(x=>x.name==="nexcraft-connector");
+                process.stdout.write(db?(db.uuid||db.database_id||""):"");
+              });')"
+          fi
+          if [ -z "$DB_ID" ]; then
+            echo "Could not determine the D1 database ID."
             exit 1
           fi
           sed -i "s/REPLACE_WITH_CLOUDFLARE_D1_DATABASE_ID/$DB_ID/" wrangler.toml
-          echo "Created D1 database and configured Worker binding."
+          echo "D1 database is ready and Worker binding is configured."
 
       - name: Initialize D1 tables
         working-directory: connector-relay/cloudflare
@@ -56,9 +73,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          SECRET="$(openssl rand -hex 32)"
-          printf '%s' "$SECRET" | npx wrangler secret put PAIRING_SIGNING_SECRET
-          unset SECRET
+          openssl rand -hex 32 | npx wrangler secret put PAIRING_SIGNING_SECRET
 
       - name: Deploy Worker
         working-directory: connector-relay/cloudflare

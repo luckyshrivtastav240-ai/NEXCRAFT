@@ -18,6 +18,8 @@
 
 package com.movtery.zalithlauncher.ui.screens.splash
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
@@ -192,10 +194,16 @@ private fun LoadingScreen(
                 .animated(ctx, from = AnimatedDirection.Bottom),
             contentAlignment = Alignment.Center
         ) {
-            FantasyLoadingBackdrop(
-                sceneIndex = sceneIndex,
-                modifier = Modifier.fillMaxSize()
-            )
+            Crossfade(
+                targetState = sceneIndex,
+                animationSpec = tween(durationMillis = 950),
+                label = "indocraft-biome-transition"
+            ) { activeScene ->
+                FantasyLoadingBackdrop(
+                    sceneIndex = activeScene,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(18.dp)

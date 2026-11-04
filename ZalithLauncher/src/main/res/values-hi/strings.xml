@@ -1594,7 +1594,7 @@
     <string name="language_filipino" translatable="false">Filipino</string>
     <string name="language_thai" translatable="false">ไทย</string>
     <string name="language_korean" translatable="false">한국어</string>
-    <string name="nexcraft_icon_style_xbox">Minecraft Xbox Controller</string>
+    <string name="nexcraft_icon_style_xbox">Minecraft Xbox कंट्रोलर</string>
     <string name="nexcraft_launch_title">MINECRAFT शुरू हो रहा है</string>
         <string name="nexcraft_launch_subtitle">आपकी दुनिया तैयार हो रही है · NEXCRAFT</string>
     <string name="nexcraft_cap_wardrobe_title">सिर की Cap और पीठ की Cape</string>

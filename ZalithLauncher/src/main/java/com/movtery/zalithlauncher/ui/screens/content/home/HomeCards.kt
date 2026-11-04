@@ -145,7 +145,6 @@ object HomeCards {
                 androidx.compose.foundation.layout.Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .then(if (compact) Modifier else Modifier.size(1.dp).weight(1f))
                 ) {
                     Image(
                         painter = painterResource(R.drawable.img_minecraft),

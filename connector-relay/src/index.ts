@@ -9,7 +9,7 @@ import { createServer } from "node:http";
 import { z } from "zod";
 import {
   db, pairingByCode, pairingById, insertPairing, completePairing, expirePairing,
-  revokePairing, insertDiagnostic, listDiagnostics, pruneDiagnostics, type Pairing
+  revokePairing, insertDiagnostic, listDiagnostics, pruneDiagnostics, acknowledgeDeviceToken, type Pairing
 } from "./store.js";
 import { hash, randomToken, newCode, bearer, safeEqual, seal, unseal } from "./security.js";
 
@@ -105,7 +105,7 @@ app.post("/v1/pairings/:id/device-token/ack", (req,res) => {
   const p = pairingById.get(req.params.id) as Pairing | undefined;
   if (!p || !secret || !safeEqual(p.device_secret_hash,hash(secret))) return res.status(404).json({ error:"Pairing not found" });
   if (p.status !== "paired") return res.status(409).json({ error:"Pairing is not approved yet" });
-  if (p.device_token_cipher) db.prepare("UPDATE pairings SET device_token_cipher=NULL WHERE id=? AND status='paired'").run(p.id);
+  if (p.device_token_cipher) acknowledgeDeviceToken.run(p.id);
   return res.json({ acknowledged:true });
 });
 

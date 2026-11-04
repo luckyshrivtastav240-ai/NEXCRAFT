@@ -185,20 +185,17 @@ private fun LoadingScreen(
             }
         }
 
-        val currentScene = sceneColors[sceneIndex]
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    Brush.linearGradient(
-                        colors = currentScene,
-                        start = androidx.compose.ui.geometry.Offset.Zero,
-                        end = androidx.compose.ui.geometry.Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
-                    )
-                )
+                .background(Color(0xFF101D2C))
                 .animated(ctx, from = AnimatedDirection.Bottom),
             contentAlignment = Alignment.Center
         ) {
+            FantasyLoadingBackdrop(
+                sceneIndex = sceneIndex,
+                modifier = Modifier.fillMaxSize()
+            )
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(18.dp)

@@ -2,13 +2,14 @@ import "dotenv/config";
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
+import rateLimit from "express-rate-limit";
 import { randomUUID } from "node:crypto";
 import { WebSocketServer } from "ws";
 import { createServer } from "node:http";
 import { z } from "zod";
 import {
   db, pairingByCode, pairingById, insertPairing, completePairing, expirePairing,
-  revokePairing, insertDiagnostic, listDiagnostics, type Pairing
+  revokePairing, insertDiagnostic, listDiagnostics, pruneDiagnostics, type Pairing
 } from "./store.js";
 import { hash, randomToken, newCode, bearer, safeEqual, seal, unseal } from "./security.js";
 
@@ -25,6 +26,7 @@ const diagnosticInput = z.object({
   payload: z.unknown()
 });
 const MAX_PAYLOAD = 1_000_000;
+const pairingLimiter = rateLimit({ windowMs:60_000, limit:8, standardHeaders:"draft-7", legacyHeaders:false });
 app.disable("x-powered-by");
 if (process.env.TRUST_PROXY === "true") app.set("trust proxy", 1);
 app.use(helmet({ crossOriginResourcePolicy: { policy: "same-site" } }));
@@ -57,7 +59,7 @@ function publish(pairingId: string, event: unknown) {
   for (const ws of set) if (ws.readyState === ws.OPEN) ws.send(data);
 }
 
-app.post("/v1/pairings", (req,res) => {
+app.post("/v1/pairings", pairingLimiter, (req,res) => {
   const parsed = pairingInput.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error:"Invalid device details" });
   expirePairing.run(Date.now());
@@ -87,7 +89,7 @@ app.get("/v1/pairings/status", (req,res) => {
   return res.json({ status:p.status, expiresAt:new Date(p.expires_at).toISOString() });
 });
 
-app.post("/v1/pairings/complete", (req,res) => {
+app.post("/v1/pairings/complete", pairingLimiter, (req,res) => {
   const parsed = z.object({ pairingCode:z.string().regex(/^[A-F0-9]{10}$/) }).safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error:"Invalid pairing code" });
   expirePairing.run(Date.now());
@@ -119,6 +121,7 @@ app.post("/v1/diagnostics", authenticate("device"), (req,res) => {
   if (Buffer.byteLength(payload) > MAX_PAYLOAD) return res.status(413).json({ error:"Diagnostic payload too large" });
   const auth = req as Authenticated;
   const result = insertDiagnostic.run(auth.pairing.id, parsed.data.kind, payload, Date.now());
+  pruneDiagnostics.run(auth.pairing.id, parsed.data.kind, auth.pairing.id, parsed.data.kind, parsed.data.kind === "screen" ? 5 : 100);
   publish(auth.pairing.id,{ type:"diagnostic", id:Number(result.lastInsertRowid), kind:parsed.data.kind, createdAt:Date.now(), payload:parsed.data.payload });
   res.status(202).json({ accepted:true, id:Number(result.lastInsertRowid) });
 });

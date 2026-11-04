@@ -24,13 +24,21 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
 import android.util.DisplayMetrics
+import android.util.Base64
 import android.view.WindowManager
 import androidx.core.app.NotificationCompat
 import com.movtery.zalithlauncher.R
 import java.io.File
 import java.io.FileOutputStream
+import java.io.ByteArrayOutputStream
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 class ConnectorScreenCaptureService : Service() {
     companion object {
@@ -50,6 +58,8 @@ class ConnectorScreenCaptureService : Service() {
     private var workerHandler: Handler? = null
     private val stopping = AtomicBoolean(false)
     private val lastFrameSavedAt = AtomicLong(0L)
+    private val uploadInFlight = AtomicBoolean(false)
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -122,7 +132,45 @@ class ConnectorScreenCaptureService : Service() {
                     try {
                         val directory = File(cacheDir, "nexcraft_connector").apply { mkdirs() }
                         FileOutputStream(File(directory, FRAME_FILE)).use { output ->
-                            frame.compress(Bitmap.CompressFormat.JPEG, 72, output)
+                            frame.compress(Bitmap.CompressFormat.JPEG, 68, output)
+                        }
+                        if (ConnectorTokenStore(this@ConnectorScreenCaptureService).read() != null &&
+                            uploadInFlight.compareAndSet(false, true)
+                        ) {
+                            val scale = minOf(1f, 960f / maxOf(frame.width, frame.height))
+                            val uploadBitmap = if (scale < 1f) {
+                                Bitmap.createScaledBitmap(
+                                    frame,
+                                    (frame.width * scale).toInt().coerceAtLeast(1),
+                                    (frame.height * scale).toInt().coerceAtLeast(1),
+                                    true
+                                )
+                            } else frame
+                            val bytes = ByteArrayOutputStream().use { output ->
+                                uploadBitmap.compress(Bitmap.CompressFormat.JPEG, 48, output)
+                                output.toByteArray()
+                            }
+                            if (uploadBitmap !== frame) uploadBitmap.recycle()
+                            if (bytes.size <= 600_000) {
+                                serviceScope.launch {
+                                    try {
+                                        ConnectorRelayClient(this@ConnectorScreenCaptureService).uploadDiagnostic(
+                                            "screen",
+                                            JSONObject()
+                                                .put("mimeType", "image/jpeg")
+                                                .put("encoding", "base64")
+                                                .put("frame", Base64.encodeToString(bytes, Base64.NO_WRAP))
+                                                .put("capturedAt", System.currentTimeMillis())
+                                        )
+                                    } catch (_: Exception) {
+                                        // Keep screen capture running; reconnect/upload can retry on a later frame.
+                                    } finally {
+                                        uploadInFlight.set(false)
+                                    }
+                                }
+                            } else {
+                                uploadInFlight.set(false)
+                            }
                         }
                     } finally {
                         frame.recycle()
@@ -173,6 +221,7 @@ class ConnectorScreenCaptureService : Service() {
         imageReader = null
         projection?.stop()
         projection = null
+        serviceScope.cancel()
         worker?.quitSafely()
         worker = null
         workerHandler = null

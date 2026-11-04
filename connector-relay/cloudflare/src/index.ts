@@ -53,7 +53,9 @@ async function getPairing(env: Env, id: string) {
   return env.DB.prepare("SELECT * FROM pairings WHERE id=?").bind(id).first<Pairing>();
 }
 async function authPairing(env: Env, r: Request, role: "device" | "assistant") {
-  const token = authToken(r);
+  const token = role === "assistant"
+    ? (r.headers.get("X-Assistant-Token") ?? authToken(r))
+    : authToken(r);
   if (!token) return null;
   const tokenHash = await digest(env, token);
   const field = role === "device" ? "device_token_hash" : "assistant_token_hash";

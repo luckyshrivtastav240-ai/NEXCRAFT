@@ -6,7 +6,7 @@ This Worker implements the HTTP API used by the Android connector and ChatGPT GP
 
 Cloudflare currently documents Workers Free as 100,000 requests/day and 10 ms CPU time per invocation. D1 Free currently includes 5 million rows read/day, 100,000 rows written/day, and 5 GB total storage. These are quotas, not an unlimited guarantee; requests/queries can fail when daily limits are reached. Check current Cloudflare pricing/limits before deployment.
 
-The Android screen sampler was reduced to one uploaded frame every 5 seconds to leave quota for diagnostics and pairing. Stopping screen sharing deletes the cached local JPEG and asks the relay to delete retained screen frames. The Worker retains only the latest five frames per device and the latest 100 diagnostics per kind.
+The Android screen sampler was reduced to one uploaded frame (up to 300 KB) every 5 seconds to leave quota for diagnostics and pairing. Stopping screen sharing deletes the cached local JPEG and asks the relay to delete retained screen frames. The Worker retains only the latest five frames per device and the latest 100 diagnostics per kind.
 
 ## Setup
 

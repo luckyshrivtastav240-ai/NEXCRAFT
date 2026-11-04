@@ -294,28 +294,23 @@ fun MainScreen(
                                 PathManager.FILE_CRASH_REPORT.takeIf { it.isFile }?.readText()?.takeLast(30_000)
                             }.getOrNull()
                             val report = buildString {
-                                appendLine("NEXCRAFT Diagnostics")
-                                appendLine("App: $versionName")
-                                appendLine("Device: ${Build.MANUFACTURER} ${Build.MODEL}")
-                                appendLine("Android: ${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})")
-                                appendLine("Available RAM: ${memoryInfo.availMem / (1024 * 1024)} MB")
-                                appendLine("Low memory: ${memoryInfo.lowMemory}")
-                                appendLine("Package: ${context.packageName}")
-                                appendLine("Log file: ${latestLog?.name ?: "not found"}")
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_report_title))
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_app, versionName))
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_device, Build.MANUFACTURER, Build.MODEL))
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_android, Build.VERSION.RELEASE, Build.VERSION.SDK_INT))
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_ram, memoryInfo.availMem / (1024 * 1024)))
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_low_memory, memoryInfo.lowMemory))
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_package, context.packageName))
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_log_file, latestLog?.name ?: context.getString(R.string.nexcraft_diagnostics_not_found)))
                                 appendLine()
-                                appendLine("Recent launcher log (last 60 KB):")
-                                appendLine(recentLog ?: "No launcher log available.")
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_recent_log))
+                                appendLine(recentLog ?: context.getString(R.string.nexcraft_diagnostics_no_log))
                                 appendLine()
-                                appendLine("Last crash report:")
-                                appendLine(crashReport ?: "No crash report available.")
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_last_crash))
+                                appendLine(crashReport ?: context.getString(R.string.nexcraft_diagnostics_no_crash))
                                 appendLine()
-                                appendLine("This report is shared only after you choose a sharing target.")
-                                appendLine("Review it before sending; logs may contain personal file paths or server details.")
-                            }
-                            val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                                type = "text/plain"
-                                putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.nexcraft_diagnostics_subject))
-                                putExtra(Intent.EXTRA_TEXT, report)
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_share_notice))
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_privacy_notice))
                             }
                             diagnosticsReport = report
                         })
@@ -443,7 +438,7 @@ fun MainScreen(
             },
             dismissButton = {
                 TextButton(onClick = { diagnosticsReport = null }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.nexcraft_diagnostics_cancel))
                 }
             }
         )

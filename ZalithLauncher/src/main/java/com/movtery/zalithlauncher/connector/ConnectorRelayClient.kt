@@ -40,8 +40,12 @@ class ConnectorRelayClient(context: Context) {
         check(prefs.edit().putString("relay_url", normalized).commit())
     }
 
-    fun relayUrl(): String? = prefs.getString("relay_url", null)?.let {
+    fun relayUrl(): String? = (prefs.getString("relay_url", null) ?: DEFAULT_RELAY_URL).let {
         runCatching { normalizeRelayUrl(it) }.getOrNull()
+    }
+
+    private companion object {
+        const val DEFAULT_RELAY_URL = "https://nexcraft-connector-relay.luckyshrivtastav240.workers.dev"
     }
 
     suspend fun createPairing(deviceLabel: String): ConnectorPairing = withContext(Dispatchers.IO) {

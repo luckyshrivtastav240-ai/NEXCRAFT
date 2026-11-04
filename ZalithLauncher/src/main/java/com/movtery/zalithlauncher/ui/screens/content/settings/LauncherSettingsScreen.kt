@@ -19,6 +19,8 @@
 package com.movtery.zalithlauncher.ui.screens.content.settings
 
 import android.os.Build
+import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
@@ -163,6 +165,39 @@ fun LauncherSettingsScreen(
                 .padding(all = 12.dp),
             isVisible = isVisible
         ) {
+            AnimatedItem { ctx ->
+                SettingsCardColumn(
+                    modifier = Modifier.fillMaxWidth().animated(ctx)
+                ) {
+                    SettingsCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        position = CardPosition.Top
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth().padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            TitleAndSummary(
+                                title = "ChatGPT",
+                                summary = "Open the official ChatGPT app. NEXCRAFT connector authorization is a separate one-time step in ChatGPT."
+                            )
+                            Button(
+                                onClick = {
+                                    val launchIntent = context.packageManager.getLaunchIntentForPackage("com.openai.chatgpt")
+                                    val intent = launchIntent ?: Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse("https://chatgpt.com/")
+                                    )
+                                    runCatching { context.startActivity(intent) }
+                                }
+                            ) {
+                                Text("Open ChatGPT")
+                            }
+                        }
+                    }
+                }
+            }
+
             AnimatedItem { ctx ->
                 SettingsCardColumn(
                     modifier = Modifier

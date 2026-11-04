@@ -280,6 +280,16 @@ fun MainScreen(
                             val versionName = runCatching {
                                 context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "unknown"
                             }.getOrDefault("unknown")
+                            val latestLog = PathManager.DIR_LAUNCHER_LOGS
+                                .listFiles()
+                                ?.filter { it.isFile && it.extension.equals("log", ignoreCase = true) }
+                                ?.maxByOrNull { it.lastModified() }
+                            val recentLog = runCatching {
+                                latestLog?.readText()?.takeLast(60_000)
+                            }.getOrNull()
+                            val crashReport = runCatching {
+                                PathManager.FILE_CRASH_REPORT.takeIf { it.isFile }?.readText()?.takeLast(30_000)
+                            }.getOrNull()
                             val report = buildString {
                                 appendLine("NEXCRAFT Diagnostics")
                                 appendLine("App: $versionName")
@@ -288,8 +298,16 @@ fun MainScreen(
                                 appendLine("Available RAM: ${memoryInfo.availMem / (1024 * 1024)} MB")
                                 appendLine("Low memory: ${memoryInfo.lowMemory}")
                                 appendLine("Package: ${context.packageName}")
+                                appendLine("Log file: ${latestLog?.name ?: "not found"}")
                                 appendLine()
-                                appendLine("Shared by the user for troubleshooting.")
+                                appendLine("Recent launcher log (last 60 KB):")
+                                appendLine(recentLog ?: "No launcher log available.")
+                                appendLine()
+                                appendLine("Last crash report:")
+                                appendLine(crashReport ?: "No crash report available.")
+                                appendLine()
+                                appendLine("This report is shared only after you choose a sharing target.")
+                                appendLine("Review it before sending; logs may contain personal file paths or server details.")
                             }
                             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                                 type = "text/plain"

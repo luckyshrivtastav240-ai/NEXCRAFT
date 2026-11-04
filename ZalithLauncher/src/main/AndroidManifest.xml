@@ -17,6 +17,7 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
@@ -28,16 +29,16 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:networkSecurityConfig="@xml/network_security_config"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/nexcraft_icon_lava_hammer"
         android:label="${launcher_name}"
-        android:theme="@style/AppTheme.ZalithLauncher"
+        android:theme="@style/AppTheme.NEXCRAFT"
         android:appCategory="game"
         android:supportsRtl="true"
         android:isGame="true"
         android:allowBackup="true"
         android:hasFragileUserData="true"
         android:resizeableActivity="true"
-        android:usesCleartextTraffic="true"
+        android:usesCleartextTraffic="false"
         android:preserveLegacyExternalStorage="true"
         android:requestLegacyExternalStorage="true"
         android:allowNativeHeapPointerTagging="false"
@@ -53,10 +54,58 @@
             android:screenOrientation="sensorLandscape">
         </activity>
         <activity-alias
+            android:name=".icon.XBOX_BLUE"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/xbox_blue"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".icon.XBOX_GREEN"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/xbox_green"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".icon.XBOX_PURPLE"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/xbox_purple"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".icon.XBOX_RED"
+            android:targetActivity=".ui.activities.SplashActivity"
+            android:label="${launcher_name}"
+            android:icon="@mipmap/xbox_red"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
             android:name=".icon.NX_BLUE"
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
-            android:icon="@mipmap/nx_blue"
+            android:icon="@drawable/nexcraft_icon_nx_blue"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -68,7 +117,7 @@
             android:name=".icon.NX_GREEN"
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
-            android:icon="@mipmap/nx_green"
+            android:icon="@drawable/nexcraft_icon_nx_green"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
@@ -80,7 +129,7 @@
             android:name=".icon.NX_PURPLE"
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
-            android:icon="@mipmap/nx_purple"
+            android:icon="@drawable/nexcraft_icon_nx_purple"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
@@ -92,7 +141,7 @@
             android:name=".icon.NX_RED"
             android:targetActivity=".ui.activities.SplashActivity"
             android:label="${launcher_name}"
-            android:icon="@mipmap/nx_red"
+            android:icon="@drawable/nexcraft_icon_nx_red"
             android:enabled="false"
             android:exported="true">
             <intent-filter>
@@ -276,6 +325,12 @@
             android:screenOrientation="sensorLandscape"
             android:enableOnBackInvokedCallback="true"
             android:exported="false" />
+
+        <service
+            android:name=".connector.ConnectorScreenCaptureService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" />
 
         <service
             android:name=".filemanager.events.FileManagerEventService"

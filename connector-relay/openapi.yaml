@@ -1,0 +1,139 @@
+openapi: 3.1.0
+info:
+  title: NEXCRAFT Main Connector
+  version: 1.4.0
+  description: >-
+    Assistant-facing API for pairing with a NEXCRAFT Android launcher and
+    reading diagnostics explicitly shared by the device owner. Pairing codes
+    expire after five minutes. Screen sharing requires Android runtime consent.
+servers:
+  - url: https://nexcraft-connector-relay.luckyshrivastav240.workers.dev
+paths:
+  /health:
+    get:
+      operationId: checkRelayHealth
+      summary: Check whether the NEXCRAFT relay is online
+      security: []
+      responses:
+        '200':
+          description: Relay health
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  service: { type: string }
+                  api: { type: string }
+                  storage: { type: string }
+                required: [ok, service, api, storage]
+  /v1/pairings/complete:
+    post:
+      operationId: pairNexcraftDevice
+      summary: Pair the user's NEXCRAFT launcher using its temporary code
+      description: >-
+        Ask the user for the 10-character pairing code shown inside their
+        launcher. Never display, repeat, or ask the user to share the returned
+        assistantToken. Treat it as a credential.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [pairingCode]
+              properties:
+                pairingCode:
+                  type: string
+                  pattern: '^[A-F0-9]{10}$'
+      responses:
+        '200':
+          description: Pairing completed
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [pairingId, assistantToken, deviceLabel, permissions]
+                properties:
+                  pairingId: { type: string, format: uuid }
+                  assistantToken: { type: string, description: Secret credential; never show to the user }
+                  deviceLabel: { type: string }
+                  permissions:
+                    type: array
+                    items: { type: string }
+        '404': { description: Pairing code expired or not found }
+        '409': { description: Pairing code already used }
+        '429': { description: Rate limit exceeded }
+  /v1/diagnostics:
+    get:
+      operationId: readNexcraftDiagnostics
+      summary: Read redacted diagnostics from the paired NEXCRAFT device
+      description: Requires the assistant token returned by pairNexcraftDevice.
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/AssistantToken'
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 100, default: 30 }
+      responses:
+        '200':
+          description: Redacted device diagnostics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pairingId: { type: string, format: uuid }
+                  device: { type: string }
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: integer }
+                        kind: { type: string }
+                        createdAt: { type: string, format: date-time }
+                        payload: {}
+        '401': { description: Missing, invalid, or revoked assistant token }
+  /v1/diagnostics/screen:
+    get:
+      operationId: viewNexcraftScreen
+      summary: View the latest screen frame explicitly shared by the user
+      description: >-
+        Only available while the user has actively enabled Android screen
+        sharing. The endpoint returns one JPEG frame, not continuous video.
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/AssistantToken'
+      responses:
+        '200':
+          description: Latest user-approved JPEG screen frame
+          content:
+            image/jpeg:
+              schema: { type: string, format: binary }
+        '404': { description: No frame is currently available }
+        '401': { description: Missing, invalid, or revoked assistant token }
+  /v1/pairings/{id}/revoke:
+    post:
+      operationId: revokeNexcraftAssistantPairing
+      summary: Revoke the assistant's access to the paired device
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/AssistantToken'
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: Assistant pairing revoked }
+        '401': { description: Missing, invalid, or revoked assistant token }
+        '404': { description: Pairing not found }
+components:
+  parameters:
+    AssistantToken:
+      in: header
+      name: X-Assistant-Token
+      required: true
+      description: Secret returned by pairNexcraftDevice; keep private.
+      schema: { type: string, minLength: 20 }

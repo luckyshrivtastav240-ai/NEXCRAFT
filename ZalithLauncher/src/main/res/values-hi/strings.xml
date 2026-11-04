@@ -39,9 +39,10 @@
     <string name="app_lock_gate_prompt">लॉन्चर खोलने के लिए अपना PIN डालें।</string>
     <string name="app_lock_unlock">अनलॉक करें</string>
     <string name="app_lock_incorrect">गलत PIN। फिर से कोशिश करें।</string>
+    <string name="nexcraft_icon_apply">आइकन लागू करें</string>
     <string name="nexcraft_icon_style_title">ऐप आइकन डिज़ाइन</string>
     <string name="nexcraft_icon_style_summary">होम स्क्रीन पर दिखने वाला NEXCRAFT आइकन चुनें।</string>
-    <string name="nexcraft_icon_style_nx">NX क्लासिक</string>
+    <string name="nexcraft_icon_style_nx">लावा हैमर</string>
     <string name="nexcraft_icon_style_grass">घास वाला ब्लॉक</string>
     <string name="nexcraft_icon_style_ender">एंडर आई</string>
     <string name="nexcraft_icon_color_title">ऐप आइकन का रंग</string>
@@ -143,7 +144,7 @@
     <string name="settings_tab_control">कंट्रोल</string>
     <string name="settings_tab_gamepad">गेमपैड</string>
     <string name="settings_tab_launcher">लॉन्चर</string>
-    <string name="settings_tab_java_manage">Java</string>
+    <string name="settings_tab_java_manage">जावा</string>
     <string name="settings_tab_control_manage">कंट्रोल लेआउट</string>
     <string name="settings_tab_info_about">जानकारी</string>
     <string name="download_category_game">गेम</string>
@@ -463,7 +464,7 @@
     <string name="error_bad_gateway">(%s) सर्वर को दूसरे सर्वर से गलत जवाब मिला</string>
     <string name="error_service_unavailable">(%s) सर्वर अभी अनुरोध संभाल नहीं सकता</string>
     <string name="error_gateway_timeout">(%s) सर्वर को समय पर जवाब नहीं मिला</string>
-    <string name="welcome_screen_subtitle">Android के लिए Minecraft Java Edition लॉन्चर</string>
+    <string name="welcome_screen_subtitle">आपकी Minecraft दुनिया यहीं से शुरू होती है।</string>
     <string name="welcome_screen_intro_primary">%1$s में आपका स्वागत है। यह Android के लिए बनाया गया एक थर्ड-पार्टी Minecraft: Java Edition लॉन्चर है।</string>
     <string name="welcome_screen_intro_core">Minecraft Java Edition को अपने Android डिवाइस पर चलाएँ।</string>
     <string name="welcome_screen_agreement_title">लाइसेंस और उपयोग की शर्तें</string>
@@ -1593,4 +1594,66 @@
     <string name="language_filipino" translatable="false">Filipino</string>
     <string name="language_thai" translatable="false">ไทย</string>
     <string name="language_korean" translatable="false">한국어</string>
+    <string name="nexcraft_icon_style_xbox">Minecraft Xbox कंट्रोलर</string>
+    <string name="nexcraft_launch_title">MINECRAFT शुरू हो रहा है</string>
+        <string name="nexcraft_launch_subtitle">आपकी दुनिया तैयार हो रही है · NEXCRAFT</string>
+    <string name="nexcraft_cap_wardrobe_title">सिर की Cap और पीठ की Cape</string>
+    <string name="nexcraft_wardrobe_apply_both">Cap + Cape दोनों लगाएँ</string>
+    <string name="nexcraft_cap_wardrobe_hint">Cap आपकी 64x64 Skin में जुड़ती है, इसलिए जहाँ यह Skin स्वीकार होगी वहाँ गेम में दिख सकती है। Cape में अभी आपके Microsoft Minecraft अकाउंट की पहले से मिली Capes चुनी जा सकती हैं। Multiplayer सर्वर पर Custom Cape दिखाने के लिए compatible client/server support जरूरी है।</string>
+    <string name="nexcraft_cap_none">कैप हटाएँ</string>
+    <string name="nexcraft_cap_red">लाल कैप</string>
+    <string name="nexcraft_cap_blue">नीली कैप</string>
+    <string name="nexcraft_cap_creeper">क्रीपर कैप</string>
+    <string name="nexcraft_cap_crown">सुनहरा ताज</string>
+    <string name="nexcraft_cap_beanie">बैंगनी बीनी</string>
+    <string name="nexcraft_cap_straw">स्ट्रॉ हैट</string>
+    <string name="nexcraft_cap_lava">लावा फोर्ज</string>
+    <string name="nexcraft_cap_netherite">नेथराइट हेल्मेट</string>
+    <string name="nexcraft_cap_diamond">हीरे का ताज</string>
+    <string name="nexcraft_cap_ender">एंडर हुड</string>
+
+    <string name="nexcraft_nav_home">होम</string>
+    <string name="nexcraft_nav_versions">वर्ज़न</string>
+    <string name="nexcraft_nav_servers">सर्वर</string>
+    <string name="nexcraft_nav_files">फ़ाइलें</string>
+    <string name="nexcraft_nav_ai_bridge">AI ब्रिज</string>
+    <string name="nexcraft_nav_settings">सेटिंग्स</string>
+    <string name="nexcraft_diagnostics_title">NEXCRAFT जाँच रिपोर्ट</string>
+    <string name="nexcraft_diagnostics_subject">NEXCRAFT जाँच रिपोर्ट</string>
+    <string name="nexcraft_diagnostics_chooser">रिपोर्ट कहाँ साझा करनी है</string>
+    <string name="nexcraft_diagnostics_screenshot_preparing">Launcher का स्क्रीनशॉट तैयार हो रहा है…</string>
+    <string name="nexcraft_diagnostics_screenshot_ready">Launcher का स्क्रीनशॉट रिपोर्ट के साथ भेजा जाएगा।</string>
+    <string name="nexcraft_diagnostics_screenshot_unavailable">स्क्रीनशॉट उपलब्ध नहीं है; टेक्स्ट रिपोर्ट फिर भी साझा कर सकते हैं।</string>
+    <string name="nexcraft_diagnostics_screenshot_label">NEXCRAFT स्क्रीन</string>
+    <string name="nexcraft_diagnostics_share">रिपोर्ट साझा करें</string>
+    <string name="nexcraft_diagnostics_cancel">रद्द करें</string>
+    <string name="nexcraft_diagnostics_report_title">NEXCRAFT जाँच रिपोर्ट</string>
+    <string name="nexcraft_diagnostics_app">ऐप: %1$s</string>
+    <string name="nexcraft_diagnostics_device">डिवाइस: %1$s %2$s</string>
+    <string name="nexcraft_diagnostics_android">Android: %1$s (SDK %2$d)</string>
+    <string name="nexcraft_diagnostics_ram">उपलब्ध RAM: %1$d MB</string>
+    <string name="nexcraft_diagnostics_low_memory">मेमोरी कम है: %1$b</string>
+    <string name="nexcraft_diagnostics_package">पैकेज: %1$s</string>
+    <string name="nexcraft_diagnostics_log_file">लॉग फ़ाइल: %1$s</string>
+    <string name="nexcraft_diagnostics_not_found">नहीं मिली</string>
+    <string name="nexcraft_diagnostics_recent_log">हाल का Launcher लॉग (आख़िरी 60 KB):</string>
+    <string name="nexcraft_diagnostics_no_log">Launcher लॉग उपलब्ध नहीं है।</string>
+    <string name="nexcraft_diagnostics_last_crash">आख़िरी क्रैश रिपोर्ट:</string>
+    <string name="nexcraft_diagnostics_no_crash">क्रैश रिपोर्ट उपलब्ध नहीं है।</string>
+    <string name="nexcraft_diagnostics_share_notice">यह रिपोर्ट तभी साझा होगी जब आप साझा करने का विकल्प चुनेंगे।</string>
+    <string name="nexcraft_diagnostics_privacy_notice">भेजने से पहले जाँच लें; लॉग में निजी फ़ाइल पथ या सर्वर की जानकारी हो सकती है।</string>
+    <string name="nexcraft_connector_start_share">स्क्रीन शेयर शुरू करें</string>
+    <string name="nexcraft_connector_stop_share">स्क्रीन शेयर बंद करें</string>
+    <string name="nexcraft_connector_open">ChatGPT कनेक्टर</string>
+    <string name="nexcraft_connector_title">NEXCRAFT Main Connector</string>
+    <string name="nexcraft_connector_description">अपना HTTPS Relay URL डालें। Pairing Code को ChatGPT Action में दर्ज करके डिवाइस जोड़ें।</string>
+    <string name="nexcraft_connector_relay_url">HTTPS Relay URL</string>
+    <string name="nexcraft_connector_status">स्थिति: %1$s</string>
+    <string name="nexcraft_connector_pair_code">Pairing Code: %1$s</string>
+    <string name="nexcraft_connector_pair_instructions">ChatGPT Action में pairNexcraftDevice चलाकर यह कोड दर्ज करें, फिर यहाँ Check Pairing दबाएँ।</string>
+    <string name="nexcraft_connector_privacy">स्क्रीन कैप्चर Android की अनुमति के बाद ही शुरू होगा। शेयरिंग के दौरान हर पाँच सेकंड में स्क्रीन फ्रेम और हर 30 सेकंड में छाँटे हुए लॉग भेजे जाएँगे। कभी भी Stop करें।</string>
+    <string name="nexcraft_connector_pair">Pair बनाएं</string>
+    <string name="nexcraft_connector_check">Pairing जाँचें</string>
+    <string name="nexcraft_connector_copy_code">कोड कॉपी करें</string>
+    <string name="nexcraft_connector_disconnect">Disconnect</string>
 </resources>

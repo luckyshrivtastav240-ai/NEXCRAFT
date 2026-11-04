@@ -225,7 +225,7 @@
     <!-- Error message for HTTP 504 responses; %s is the status code -->
     <string name="error_gateway_timeout">(%s) The server did not receive a timely response</string>
     <!-- Subtitle shown below the animated welcome title -->
-    <string name="welcome_screen_subtitle">Come and experience something new.</string>
+    <string name="welcome_screen_subtitle">Your Minecraft world begins here.</string>
     <!-- First welcome introduction paragraph; %1$s is the launcher name -->
     <string name="welcome_screen_intro_primary">Welcome to %1$s, a third-party Minecraft: Java Edition launcher designed for Android devices.</string>
     <!-- Second introduction paragraph describing the PojavLauncher core -->
@@ -2580,7 +2580,7 @@
     <!-- Line under the launcher name on the About page; %s is the version number -->
     <string name="about_launcher_version">Launcher Version: %s</string>
     <!-- Name of the launcher author shown as an item title on the About page -->
-    <string name="about_launcher_author_movtery_title">MovTery</string>
+    <string name="about_launcher_author_movtery_title">NEXCRAFT Team</string>
     <!-- Description under the author name on the About page; %s is the launcher name -->
     <string name="about_launcher_author_movtery_text">Author of %s</string>
     <!-- Button on the About page opening the project website -->
@@ -3093,11 +3093,12 @@
     <!-- Error shown when the entered app unlock PIN is incorrect -->
     <string name="app_lock_incorrect">Incorrect PIN. Try again.</string>
     <!-- Title of the home screen app icon design selector -->
+    <string name="nexcraft_icon_apply">Apply icon</string>
     <string name="nexcraft_icon_style_title">App icon design</string>
     <!-- Description of the home screen app icon design selector -->
     <string name="nexcraft_icon_style_summary">Choose the NEXCRAFT icon shown on your home screen.</string>
     <!-- Classic NEXCRAFT monogram app icon style -->
-    <string name="nexcraft_icon_style_nx">NX Classic</string>
+    <string name="nexcraft_icon_style_nx">Lava Hammer</string>
     <!-- Minecraft grass block app icon style -->
     <string name="nexcraft_icon_style_grass">Grass Block</string>
     <!-- Ender eye app icon style -->
@@ -3122,4 +3123,96 @@
     <string name="nexcraft_performance_profile_performance">Performance</string>
     <string name="nexcraft_performance_profile_balanced">Balanced</string>
     <string name="nexcraft_performance_profile_quality">Visual quality</string>
+    <string name="nexcraft_icon_style_xbox">Minecraft Xbox Controller</string>
+    <string name="nexcraft_launch_title">MINECRAFT IS STARTING</string>
+        <string name="nexcraft_launch_subtitle">Preparing your world · Powered by NEXCRAFT</string>
+    <string name="nexcraft_cap_wardrobe_title">Head Cap &amp; Back Cape Wardrobe</string>
+    <string name="nexcraft_wardrobe_apply_both">Apply Cap + Cape</string>
+    <string name="nexcraft_cap_wardrobe_hint">The cap is painted onto your 64x64 skin, so it can appear in-game wherever that skin is accepted. The cape selector currently equips capes already owned by your Microsoft Minecraft account. Custom capes on multiplayer servers need compatible client/server support.</string>
+    <string name="nexcraft_cap_none">No Cap</string>
+    <string name="nexcraft_cap_red">Red Cap</string>
+    <string name="nexcraft_cap_blue">Blue Cap</string>
+    <string name="nexcraft_cap_creeper">Creeper</string>
+    <string name="nexcraft_cap_crown">Golden Crown</string>
+    <string name="nexcraft_cap_beanie">Purple Beanie</string>
+    <string name="nexcraft_cap_straw">Straw Hat</string>
+    <string name="nexcraft_cap_lava">Lava Forge</string>
+    <string name="nexcraft_cap_netherite">Netherite Helm</string>
+    <string name="nexcraft_cap_diamond">Diamond Crown</string>
+    <string name="nexcraft_cap_ender">Ender Hood</string>
+
+    <!-- Home navigation label in the NEXCRAFT landscape sidebar -->
+    <string name="nexcraft_nav_home">Home</string>
+    <!-- Versions navigation label in the NEXCRAFT landscape sidebar -->
+    <string name="nexcraft_nav_versions">Versions</string>
+    <!-- Multiplayer navigation label in the NEXCRAFT landscape sidebar -->
+    <string name="nexcraft_nav_servers">Servers</string>
+    <!-- File browser navigation label in the NEXCRAFT landscape sidebar -->
+    <string name="nexcraft_nav_files">Files</string>
+    <!-- Diagnostics navigation label in the NEXCRAFT landscape sidebar -->
+    <string name="nexcraft_nav_ai_bridge">AI Bridge</string>
+    <!-- Settings navigation label in the NEXCRAFT landscape sidebar -->
+    <string name="nexcraft_nav_settings">Settings</string>
+    <!-- Title of the diagnostics preview dialog -->
+    <string name="nexcraft_diagnostics_title">NEXCRAFT diagnostics</string>
+    <!-- Subject used when sharing a diagnostics report -->
+    <string name="nexcraft_diagnostics_subject">NEXCRAFT diagnostics</string>
+    <!-- Chooser title shown before the user shares diagnostics -->
+    <string name="nexcraft_diagnostics_chooser">Choose where to share diagnostics</string>
+    <!-- Status while the AI Bridge screen capture is being saved -->
+    <string name="nexcraft_diagnostics_screenshot_preparing">Preparing launcher screenshot…</string>
+    <!-- Status when the AI Bridge screenshot is ready to share -->
+    <string name="nexcraft_diagnostics_screenshot_ready">Launcher screenshot will be included.</string>
+    <!-- Status when only the diagnostics text report can be shared -->
+    <string name="nexcraft_diagnostics_screenshot_unavailable">Screenshot unavailable; the text report can still be shared.</string>
+    <!-- Accessible label for the screenshot attached to a diagnostics report -->
+    <string name="nexcraft_diagnostics_screenshot_label">NEXCRAFT screen</string>
+    <!-- Button that shares the reviewed diagnostics report -->
+    <string name="nexcraft_diagnostics_share">Share report</string>
+    <!-- Button that closes the diagnostics preview without sharing -->
+    <string name="nexcraft_diagnostics_cancel">Cancel</string>
+    <!-- Heading at the start of an exported diagnostics report -->
+    <string name="nexcraft_diagnostics_report_title">NEXCRAFT Diagnostics</string>
+    <!-- App version line in an exported diagnostics report -->
+    <string name="nexcraft_diagnostics_app">App: %1$s</string>
+    <!-- Device model line in an exported diagnostics report -->
+    <string name="nexcraft_diagnostics_device">Device: %1$s %2$s</string>
+    <!-- Android version line in an exported diagnostics report -->
+    <string name="nexcraft_diagnostics_android">Android: %1$s (SDK %2$d)</string>
+    <!-- Available memory line in an exported diagnostics report -->
+    <string name="nexcraft_diagnostics_ram">Available RAM: %1$d MB</string>
+    <!-- Low-memory status line in an exported diagnostics report -->
+    <string name="nexcraft_diagnostics_low_memory">Low memory: %1$b</string>
+    <!-- Application package line in an exported diagnostics report -->
+    <string name="nexcraft_diagnostics_package">Package: %1$s</string>
+    <!-- Latest launcher log filename in an exported diagnostics report -->
+    <string name="nexcraft_diagnostics_log_file">Log file: %1$s</string>
+    <!-- Fallback text when the latest launcher log is unavailable -->
+    <string name="nexcraft_diagnostics_not_found">not found</string>
+    <!-- Heading above the recent launcher log excerpt -->
+    <string name="nexcraft_diagnostics_recent_log">Recent launcher log (last 60 KB):</string>
+    <!-- Fallback text when no launcher log can be read -->
+    <string name="nexcraft_diagnostics_no_log">No launcher log available.</string>
+    <!-- Heading above the most recent crash report -->
+    <string name="nexcraft_diagnostics_last_crash">Last crash report:</string>
+    <!-- Fallback text when no crash report can be read -->
+    <string name="nexcraft_diagnostics_no_crash">No crash report available.</string>
+    <!-- Notice that sharing requires an explicit destination choice -->
+    <string name="nexcraft_diagnostics_share_notice">This report is shared only after you choose a sharing target.</string>
+    <!-- Privacy warning shown in the exported diagnostics report -->
+    <string name="nexcraft_diagnostics_privacy_notice">Review it before sending; logs may contain personal file paths or server details.</string>
+    <string name="nexcraft_connector_start_share">Start screen sharing</string>
+    <string name="nexcraft_connector_stop_share">Stop screen share</string>
+    <string name="nexcraft_connector_open">ChatGPT Connector</string>
+    <string name="nexcraft_connector_title">NEXCRAFT Main Connector</string>
+    <string name="nexcraft_connector_description">Enter your HTTPS relay URL. Use the pairing code in the ChatGPT Action to pair this device.</string>
+    <string name="nexcraft_connector_relay_url">HTTPS Relay URL</string>
+    <string name="nexcraft_connector_status">Status: %1$s</string>
+    <string name="nexcraft_connector_pair_code">Pairing Code: %1$s</string>
+    <string name="nexcraft_connector_pair_instructions">Run pairNexcraftDevice in the ChatGPT Action with this code, then tap Check Pairing here.</string>
+    <string name="nexcraft_connector_privacy">Screen capture starts only after Android permission. While sharing, one screen frame every five seconds and redacted diagnostics every 30 seconds are sent. Stop any time.</string>
+    <string name="nexcraft_connector_pair">Create Pairing</string>
+    <string name="nexcraft_connector_check">Check Pairing</string>
+    <string name="nexcraft_connector_copy_code">Copy Code</string>
+    <string name="nexcraft_connector_disconnect">Disconnect</string>
 </resources>

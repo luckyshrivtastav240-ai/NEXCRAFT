@@ -25,6 +25,11 @@ jobs:
     if: success()
 
     steps:
+      - name: Checkout release source
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
       - name: Download Files
         uses: actions/download-artifact@v8
         with:
@@ -50,7 +55,7 @@ jobs:
               arm64) abi="arm64-v8a" ;;
               *) abi="$arch" ;;
             esac
-            cp "$dir/mapping.txt" "./mappings/ZalithLauncher-mapping-${version}${abi:+-$abi}.txt"
+            cp "$dir/mapping.txt" "./mappings/NEXCRAFT-mapping-${version}${abi:+-$abi}.txt"
           done
 
           echo "Found $(ls ./mappings/ | wc -l) mapping file(s)"
@@ -63,3 +68,52 @@ jobs:
             ./apks/*.apk
             ./mappings/*.txt
           fail_on_unmatched_files: true
+
+      - name: Publish NEXCRAFT update manifest
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          version_code=$(sed -n 's/^launcher_version_code=//p' ZalithLauncher/gradle.properties | head -n 1)
+          version_name=$(sed -n 's/^launcher_version_name=//p' ZalithLauncher/gradle.properties | head -n 1)
+          test -n "$version_code"
+          test -n "$version_name"
+
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/$RELEASE_TAG" > release.json
+          published_at=$(jq -r '.published_at // .created_at' release.json)
+          release_body=$(jq -r '.body // "NEXCRAFT Launcher update."' release.json)
+
+          jq --argjson code "$version_code" \
+             --arg version "$version_name" \
+             --arg created_at "$published_at" \
+             --arg body "$release_body" '
+            {
+              code: $code,
+              version: $version,
+              created_at: $created_at,
+              default_cloud_drive: null,
+              cloud_drives: [],
+              files: [
+                .assets[]
+                | select(.name | endswith(".apk"))
+                | {
+                    file_name: .name,
+                    uri: .browser_download_url,
+                    arch: (
+                      if (.name | endswith("-armeabi-v7a.apk")) then "arm"
+                      elif (.name | endswith("-arm64-v8a.apk")) then "arm64"
+                      elif (.name | endswith("-x86_64.apk")) then "x86_64"
+                      elif (.name | endswith("-x86.apk")) then "x86"
+                      else "all"
+                      end
+                    ),
+                    size: .size
+                  }
+              ],
+              default_body: {language: "en", markdown: $body},
+              bodies: []
+            }
+          ' release.json > latest_version_md.json
+
+          test "$(jq '.files | length' latest_version_md.json)" -gt 0
+          gh release upload "$RELEASE_TAG" latest_version_md.json --clobber

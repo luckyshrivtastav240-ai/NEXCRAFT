@@ -18,22 +18,54 @@ object AppIconManager {
         color: NEXCRAFTIconColor
     ) {
         val packageManager = context.packageManager
-        val selectedName = "${style.name}_${color.name}"
-        NEXCRAFTIconStyle.entries.forEach { iconStyle ->
-            NEXCRAFTIconColor.entries.forEach { iconColor ->
-                // Manifest aliases are packaged under the final applicationId. This includes
-                // build-type suffixes such as .debug, so resolve from context.packageName.
-                val aliasName = "${context.packageName}.icon.${iconStyle.name}_${iconColor.name}"
-                packageManager.setComponentEnabledSetting(
-                    ComponentName(context.packageName, aliasName),
-                    if (selectedName == "${iconStyle.name}_${iconColor.name}") {
-                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-                    } else {
-                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-                    },
-                    PackageManager.DONT_KILL_APP
-                )
+        val selectedAlias = "${style.name}_${color.name}"
+        val aliases = NEXCRAFTIconStyle.entries.flatMap { iconStyle ->
+            NEXCRAFTIconColor.entries.map { iconColor ->
+                "${iconStyle.name}_${iconColor.name}"
             }
         }
+
+        // Enable the requested launcher entry first, so the package never temporarily
+        // has zero MAIN/LAUNCHER activities while Android refreshes the home screen.
+        val selectedComponent = ComponentName(
+            context.packageName,
+            "${context.packageName}.icon.$selectedAlias"
+        )
+        val selectedExists = runCatching {
+            packageManager.getActivityInfo(
+                selectedComponent,
+                PackageManager.MATCH_DISABLED_COMPONENTS
+            )
+        }.isSuccess
+
+        if (!selectedExists) return
+
+        packageManager.setComponentEnabledSetting(
+            selectedComponent,
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+            PackageManager.DONT_KILL_APP
+        )
+
+        aliases.asSequence()
+            .filterNot { it == selectedAlias }
+            .forEach { alias ->
+                val component = ComponentName(
+                    context.packageName,
+                    "${context.packageName}.icon.$alias"
+                )
+                val exists = runCatching {
+                    packageManager.getActivityInfo(
+                        component,
+                        PackageManager.MATCH_DISABLED_COMPONENTS
+                    )
+                }.isSuccess
+                if (exists) {
+                    packageManager.setComponentEnabledSetting(
+                        component,
+                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                        PackageManager.DONT_KILL_APP
+                    )
+                }
+            }
     }
 }

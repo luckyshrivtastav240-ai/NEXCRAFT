@@ -20,6 +20,7 @@ package com.movtery.zalithlauncher.ui.screens.content
 
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -64,6 +65,7 @@ import com.movtery.zalithlauncher.game.account.auth_server.data.AuthServer
 import com.movtery.zalithlauncher.game.account.isAuthServerAccount
 import com.movtery.zalithlauncher.game.account.isMicrosoftAccount
 import com.movtery.zalithlauncher.game.account.isMicrosoftLogging
+import com.movtery.zalithlauncher.game.account.wardrobe.MinecraftCapStyle
 import com.movtery.zalithlauncher.game.account.wardrobe.toArmModel
 import com.movtery.zalithlauncher.game.account.yggdrasil.PlayerProfile
 import com.movtery.zalithlauncher.ui.AndroidStringText
@@ -231,33 +233,62 @@ private fun AccountManageContent(
     operationUiState: AccountManageViewModel.OperationUiState,
     actions: AccountActions,
 ) {
-    Row(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        ActionsLayout(
-            isVisible = isVisible,
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(all = 12.dp)
-                .weight(3f),
-            currentAccount = profileUiState.currentAccount,
-            actions = actions
-        )
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        if (maxWidth < 600.dp) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                ActionsLayout(
+                    isVisible = isVisible,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(190.dp)
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    currentAccount = profileUiState.currentAccount,
+                    actions = actions
+                )
 
-        AccountsLayout(
-            isVisible = isVisible,
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(top = 12.dp, end = 12.dp, bottom = 12.dp)
-                .weight(7f),
-            accounts = profileUiState.accounts,
-            currentAccount = profileUiState.currentAccount,
-            accountOperation = operationUiState.accountOp,
-            accountSkinOperation = operationUiState.accountSkinOp,
-            accountSkinDialogState = operationUiState.accountSkinDialogState,
-            accountCapes = profileUiState.accountCapeOpMap,
-            actions = actions
-        )
+                AccountsLayout(
+                    isVisible = isVisible,
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .padding(start = 12.dp, end = 12.dp, bottom = 12.dp),
+                    accounts = profileUiState.accounts,
+                    currentAccount = profileUiState.currentAccount,
+                    accountOperation = operationUiState.accountOp,
+                    accountSkinOperation = operationUiState.accountSkinOp,
+                    accountSkinDialogState = operationUiState.accountSkinDialogState,
+                    accountCapes = profileUiState.accountCapeOpMap,
+                    actions = actions
+                )
+            }
+        } else {
+            Row(modifier = Modifier.fillMaxSize()) {
+                ActionsLayout(
+                    isVisible = isVisible,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(all = 12.dp)
+                        .weight(3f),
+                    currentAccount = profileUiState.currentAccount,
+                    actions = actions
+                )
+
+                AccountsLayout(
+                    isVisible = isVisible,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(top = 12.dp, end = 12.dp, bottom = 12.dp)
+                        .weight(7f),
+                    accounts = profileUiState.accounts,
+                    currentAccount = profileUiState.currentAccount,
+                    accountOperation = operationUiState.accountOp,
+                    accountSkinOperation = operationUiState.accountSkinOp,
+                    accountSkinDialogState = operationUiState.accountSkinDialogState,
+                    accountCapes = profileUiState.accountCapeOpMap,
+                    actions = actions
+                )
+            }
+        }
     }
 
     LoginMenuOperation(loginUiState.menuOp, actions, profileUiState.authServers)
@@ -801,6 +832,9 @@ private fun AccountSkinOperation(
                 },
                 onApplyCape = { cape ->
                     actions.onIntent(AccountManageIntent.ApplyMicrosoftCape(account, cape))
+                },
+                onApplyCap = { style, sourceSkin, model ->
+                    actions.onIntent(AccountManageIntent.ApplyCap(account, style, sourceSkin, model))
                 }
             )
         }

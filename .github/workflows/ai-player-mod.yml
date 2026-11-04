@@ -1,0 +1,56 @@
+name: Build NEXCRAFT AI Player Mod
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [nexcraft/mobile-layout-and-ci]
+    paths:
+      - "ai-player-mod/**"
+      - ".github/workflows/ai-player-mod.yml"
+
+jobs:
+  build-mod:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Build Fabric mod
+        run: |
+          chmod +x ./gradlew
+          ./gradlew -p ai-player-mod build
+      - name: Assemble test pack
+        run: |
+          mkdir -p test-pack/mods
+          cp ai-player-mod/build/libs/nexcraft-ai-player-*.jar test-pack/mods/
+          curl -fL "https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/0.92.2+1.20.1/fabric-api-0.92.2+1.20.1.jar" -o test-pack/mods/fabric-api-0.92.2+1.20.1.jar
+          cat > test-pack/INSTALL-HI.txt <<'EOF'
+          NEXCRAFT AI PLAYER TEST PACK
+          Minecraft Java: 1.20.1
+          Required Java: 17 or newer
+
+          1. In NEXCRAFT Launcher, create/select a Minecraft Java 1.20.1 instance.
+          2. Install Fabric Loader for Minecraft 1.20.1 using the launcher's loader/version installer.
+          3. Start that Fabric instance once, then close the game.
+          4. Open that instance's game directory and its mods folder.
+          5. Copy BOTH JAR files from this pack's mods folder into the instance mods folder.
+          6. Start the same Fabric 1.20.1 instance.
+          7. In a single-player world with cheats enabled, run:
+             /nexcraftbot spawn
+             /nexcraftbot status
+             /nexcraftbot stop
+
+          IMPORTANT:
+          - This is an early companion prototype. It currently uses a named villager entity, not a player-model skin.
+          - It only has spawn/status/stop and basic follow behavior. Voice, mining, crafting, building and fighting AI are not implemented yet.
+          - Back up worlds before testing. This pack is for Minecraft Java 1.20.1 + Fabric only.
+          EOF
+      - name: Upload complete test pack
+        uses: actions/upload-artifact@v4
+        with:
+          name: NEXCRAFT-AI-Player-Test-Pack-MC-1.20.1-Fabric
+          path: test-pack/
+          if-no-files-found: error

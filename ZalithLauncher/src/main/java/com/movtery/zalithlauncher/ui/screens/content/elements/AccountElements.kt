@@ -127,6 +127,8 @@ import com.movtery.zalithlauncher.game.account.isLocalAccount
 import com.movtery.zalithlauncher.game.account.isMicrosoftAccount
 import com.movtery.zalithlauncher.game.account.isSkinChangeAllowed
 import com.movtery.zalithlauncher.game.account.wardrobe.EmptyCape
+import com.movtery.zalithlauncher.game.account.wardrobe.MinecraftCapStyle
+import com.movtery.zalithlauncher.game.account.wardrobe.applyMinecraftCap
 import com.movtery.zalithlauncher.game.account.wardrobe.SkinModelType
 import com.movtery.zalithlauncher.game.account.wardrobe.capeLocalRes
 import com.movtery.zalithlauncher.game.account.wardrobe.toArmModel
@@ -456,7 +458,7 @@ fun LoginMenuDialog(
                 .padding(all = 16.dp)
                 .heightIn(max = rememberDialogMaxHeight())
                 .fillMaxHeight()
-                .fillMaxWidth(0.6f),
+                .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             Surface(
@@ -1415,9 +1417,14 @@ fun ChangeSkinDialog(
     onResetSkin: () -> Unit,
     onApplySkin: (File, SkinModelType) -> Unit,
     onApplyCape: (PlayerProfile.Cape) -> Unit,
+    onApplyCap: (MinecraftCapStyle, File?, SkinModelType) -> Unit,
     onFetchCapes: () -> Unit
 ) {
     var showCapeSelector by remember { mutableStateOf(false) }
+    var selectedCapStyleName by rememberSaveable { mutableStateOf("") }
+    val capChanged = selectedCapStyleName.isNotEmpty()
+    val applyingBoth = capChanged && capeState is ChangeCape.ChangeCapeData
+    val selectedCapStyle = MinecraftCapStyle.entries.firstOrNull { it.name == selectedCapStyleName } ?: MinecraftCapStyle.NONE
 
     var isFetchingCapes by remember { mutableStateOf(false) }
 
@@ -1470,24 +1477,32 @@ fun ChangeSkinDialog(
         }
 
     // 皮肤状态变化时重载预览皮肤
-    val previewSkin by produceState<ByteArray?>(null, skinState) {
+    val context = LocalContext.current
+    val previewSkin by produceState<ByteArray?>(null, skinState, selectedCapStyle, capChanged) {
         value = withContext(Dispatchers.IO) {
-            when (skinState) {
+            val model = when (skinState) {
+                ChangeSkin.None -> account.skinModelType.takeUnless { it == SkinModelType.NONE } ?: SkinModelType.STEVE
+                is ChangeSkin.ChangeSkinData -> skinState.data.getModelType()
+                ChangeSkin.ResetSkin -> SkinModelType.STEVE
+            }
+            val base = when (skinState) {
                 ChangeSkin.None -> account.getSkinFile()
                     .takeIf { it.exists() }
                     ?.inputStream()
                     ?.use { it.readBytes() }
                 is ChangeSkin.ChangeSkinData -> runCatching {
-                    skinState.cacheFile
-                        .inputStream()
-                        .use { it.readBytes() }
+                    skinState.cacheFile.inputStream().use { it.readBytes() }
                 }.getOrNull()
                 ChangeSkin.ResetSkin -> null
-            }
+            } ?: context.assets.open(
+                if (model == SkinModelType.ALEX) "skin/alex.png" else "skin/steve.png"
+            ).use { it.readBytes() }
+            if (capChanged) runCatching { applyMinecraftCap(base, selectedCapStyle) }.getOrDefault(base)
+            else base
         }
     }
     val previewArm = when (skinState) {
-        ChangeSkin.None -> account.skinModelType.toArmModel()
+        ChangeSkin.None -> account.skinModelType.takeUnless { it == SkinModelType.NONE }?.toArmModel() ?: ArmModel.Classic
         is ChangeSkin.ChangeSkinData -> skinState.data.getModelType().toArmModel()
         ChangeSkin.ResetSkin -> ArmModel.Classic
     }
@@ -1503,7 +1518,7 @@ fun ChangeSkinDialog(
                 .padding(all = 16.dp)
                 .heightIn(max = rememberDialogMaxHeight())
                 .fillMaxHeight()
-                .fillMaxWidth(0.6f),
+                .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             Surface(
@@ -1626,6 +1641,51 @@ fun ChangeSkinDialog(
                                 }
                             }
 
+                            Text(
+                                text = stringResource(R.string.nexcraft_cap_wardrobe_title),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                text = stringResource(R.string.nexcraft_cap_wardrobe_hint),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            FlowRow(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                MinecraftCapStyle.entries.forEach { style ->
+                                    val selected = capChanged && selectedCapStyle == style
+                                    Surface(
+                                        modifier = Modifier.clickable { selectedCapStyleName = style.name },
+                                        shape = MaterialTheme.shapes.large,
+                                        color = if (selected) MaterialTheme.colorScheme.primaryContainer
+                                        else MaterialTheme.colorScheme.surfaceContainerHighest
+                                    ) {
+                                        Text(
+                                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+                                            text = when (style) {
+                                                MinecraftCapStyle.NONE -> stringResource(R.string.nexcraft_cap_none)
+                                                MinecraftCapStyle.RED_BASEBALL -> stringResource(R.string.nexcraft_cap_red)
+                                                MinecraftCapStyle.BLUE_BASEBALL -> stringResource(R.string.nexcraft_cap_blue)
+                                                MinecraftCapStyle.CREEPER -> stringResource(R.string.nexcraft_cap_creeper)
+                                                MinecraftCapStyle.GOLD_CROWN -> stringResource(R.string.nexcraft_cap_crown)
+                                                MinecraftCapStyle.PURPLE_BEANIE -> stringResource(R.string.nexcraft_cap_beanie)
+                                                MinecraftCapStyle.STRAW_HAT -> stringResource(R.string.nexcraft_cap_straw)
+                                                MinecraftCapStyle.LAVA_FORGE -> stringResource(R.string.nexcraft_cap_lava)
+                                                MinecraftCapStyle.NETHERITE_HELMET -> stringResource(R.string.nexcraft_cap_netherite)
+                                                MinecraftCapStyle.DIAMOND_CROWN -> stringResource(R.string.nexcraft_cap_diamond)
+                                                MinecraftCapStyle.ENDER_HOOD -> stringResource(R.string.nexcraft_cap_ender)
+                                            },
+                                            style = MaterialTheme.typography.labelMedium,
+                                            color = if (selected) MaterialTheme.colorScheme.onPrimaryContainer
+                                            else MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
+                                }
+                            }
+
                             //仅微软账号支持更改披风
                             if (account.isMicrosoftAccount()) {
                                 InfoLayoutTextItem(
@@ -1689,18 +1749,26 @@ fun ChangeSkinDialog(
 
                         Button(
                             modifier = Modifier.weight(1f),
-                            enabled = skinState != ChangeSkin.None || capeState != ChangeCape.None,
+                            enabled = skinState != ChangeSkin.None || capeState != ChangeCape.None || capChanged,
                             onClick = {
-                                when (skinState) {
-                                    is ChangeSkin.ChangeSkinData -> {
-                                        onApplySkin(skinState.cacheFile, skinState.data.getModelType())
+                                if (capChanged) {
+                                    val sourceFile = when (skinState) {
+                                        is ChangeSkin.ChangeSkinData -> skinState.cacheFile
+                                        ChangeSkin.None -> account.getSkinFile().takeIf { it.exists() }
+                                        ChangeSkin.ResetSkin -> null
                                     }
-
-                                    is ChangeSkin.ResetSkin -> {
-                                        onResetSkin()
+                                    val model = when (skinState) {
+                                        is ChangeSkin.ChangeSkinData -> skinState.data.getModelType()
+                                        ChangeSkin.None -> account.skinModelType.takeUnless { it == SkinModelType.NONE } ?: SkinModelType.STEVE
+                                        ChangeSkin.ResetSkin -> SkinModelType.STEVE
                                     }
-
-                                    ChangeSkin.None -> {}
+                                    onApplyCap(selectedCapStyle, sourceFile, model)
+                                } else {
+                                    when (skinState) {
+                                        is ChangeSkin.ChangeSkinData -> onApplySkin(skinState.cacheFile, skinState.data.getModelType())
+                                        is ChangeSkin.ResetSkin -> onResetSkin()
+                                        ChangeSkin.None -> {}
+                                    }
                                 }
 
                                 if (capeState is ChangeCape.ChangeCapeData) {

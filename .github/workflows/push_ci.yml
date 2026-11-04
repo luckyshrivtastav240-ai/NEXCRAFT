@@ -1,9 +1,6 @@
 name: Build CI
 
 on:
-  push:
-    branches:
-      - '**'
   workflow_dispatch:
 
 # Keep only the newest build for each branch. Rapid commits should not

@@ -19,7 +19,7 @@ val zalithPackageName = "com.movtery.zalithlauncher"
 val launcherAPPName = "NEXCRAFT Launcher"
 val launcherName = "NEXCRAFT"
 val launcherShortName = "NX"
-val launcherUrl = "https://github.com/luckyshrivtastav240-ai/NEXCRAFT"
+val launcherUrl = "https://github.com/maxtroitofficial/NEXCRAFT"
 
 val launcherVersionCode = (project.findProperty("launcher_version_code") as? String)?.toIntOrNull() ?: error("The \"launcher_version_code\" property is not set as an integer in gradle.properties.")
 val launcherVersionName = project.findProperty("launcher_version_name") as? String ?: error("The \"launcher_version_name\" property is not set in gradle.properties.")

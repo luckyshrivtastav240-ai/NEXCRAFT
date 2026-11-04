@@ -143,3 +143,154 @@ private fun Bitmap.isTransparent(xRange: IntRange, yRange: IntRange): Boolean {
         requireAll = true
     )
 }
+
+
+/** Available pixel-art caps painted onto Minecraft's outer head/hat layer. */
+enum class MinecraftCapStyle(val displayName: String) {
+    NONE("No Cap"),
+    RED_BASEBALL("Red Baseball Cap"),
+    BLUE_BASEBALL("Blue Baseball Cap"),
+    CREEPER("Creeper Cap"),
+    GOLD_CROWN("Golden Crown"),
+    PURPLE_BEANIE("Purple Beanie"),
+    STRAW_HAT("Straw Hat"),
+    LAVA_FORGE("Lava Forge"),
+    NETHERITE_HELMET("Netherite Helm"),
+    DIAMOND_CROWN("Diamond Crown"),
+    ENDER_HOOD("Ender Hood")
+}
+
+/**
+ * Applies a cap to the 64x64 Minecraft skin outer head layer.
+ * The returned PNG remains a standard skin texture, so the hat is part of
+ * the skin rather than a launcher-only 3D attachment.
+ */
+fun applyMinecraftCap(skinBytes: ByteArray, style: MinecraftCapStyle): ByteArray {
+    val source = BitmapFactory.decodeByteArray(skinBytes, 0, skinBytes.size)
+        ?: throw IllegalArgumentException("Skin image could not be opened")
+    try {
+        require(source.width == 64 && source.height == 64) {
+            "Caps require a modern 64x64 Minecraft skin"
+        }
+        val result = source.copy(Bitmap.Config.ARGB_8888, true)
+            ?: throw IllegalStateException("Could not copy skin bitmap")
+        try {
+            val clear = android.graphics.Paint().apply {
+                xfermode = android.graphics.PorterDuffXfermode(android.graphics.PorterDuff.Mode.CLEAR)
+            }
+            val canvas = android.graphics.Canvas(result)
+            // Clear only the five outer head faces, preserving the player's base skin.
+            listOf(
+                android.graphics.Rect(40, 0, 48, 8),   // top
+                android.graphics.Rect(40, 8, 48, 16),  // front
+                android.graphics.Rect(32, 8, 40, 16),  // right
+                android.graphics.Rect(48, 8, 56, 16),  // left
+                android.graphics.Rect(56, 8, 64, 16)   // back
+            ).forEach { canvas.drawRect(it, clear) }
+            clear.xfermode = null
+            if (style == MinecraftCapStyle.NONE) {
+                val output = java.io.ByteArrayOutputStream()
+                result.compress(Bitmap.CompressFormat.PNG, 100, output)
+                return output.toByteArray()
+            }
+
+            val (main, dark, light, accent) = when (style) {
+                MinecraftCapStyle.RED_BASEBALL -> intArrayOf(0xFFE53935.toInt(), 0xFF9F1717.toInt(), 0xFFFF8A80.toInt(), 0xFFFFFFFF.toInt())
+                MinecraftCapStyle.BLUE_BASEBALL -> intArrayOf(0xFF1976D2.toInt(), 0xFF0D3970.toInt(), 0xFF64B5F6.toInt(), 0xFFFFFFFF.toInt())
+                MinecraftCapStyle.CREEPER -> intArrayOf(0xFF4CAF50.toInt(), 0xFF1B5E20.toInt(), 0xFF81C784.toInt(), 0xFF17231A.toInt())
+                MinecraftCapStyle.GOLD_CROWN -> intArrayOf(0xFFFFC928.toInt(), 0xFFB87908.toInt(), 0xFFFFF2A1.toInt(), 0xFFB51F32.toInt())
+                MinecraftCapStyle.PURPLE_BEANIE -> intArrayOf(0xFF8E44AD.toInt(), 0xFF51216D.toInt(), 0xFFC58BDB.toInt(), 0xFFFFD6F2.toInt())
+                MinecraftCapStyle.STRAW_HAT -> intArrayOf(0xFFE9C46A.toInt(), 0xFF9C702A.toInt(), 0xFFFFE7A3.toInt(), 0xFF6B8E23.toInt())
+                MinecraftCapStyle.LAVA_FORGE -> intArrayOf(0xFF4B2520.toInt(), 0xFF201615.toInt(), 0xFFFF6D24.toInt(), 0xFFFFC247.toInt())
+                MinecraftCapStyle.NETHERITE_HELMET -> intArrayOf(0xFF34313B.toInt(), 0xFF17151D.toInt(), 0xFF766A83.toInt(), 0xFFB58B48.toInt())
+                MinecraftCapStyle.DIAMOND_CROWN -> intArrayOf(0xFF35C8C2.toInt(), 0xFF147C91.toInt(), 0xFFB8FFFF.toInt(), 0xFFECFFFF.toInt())
+                MinecraftCapStyle.ENDER_HOOD -> intArrayOf(0xFF302044.toInt(), 0xFF140E22.toInt(), 0xFF7546A8.toInt(), 0xFF9BFF55.toInt())
+                MinecraftCapStyle.NONE -> intArrayOf(0, 0, 0, 0)
+            }
+            fun pixel(x: Int, y: Int, color: Int) { result.setPixel(x, y, color) }
+
+            // Crown/top face and four vertical faces.
+            for (y in 0..7) for (x in 40..47) {
+                val color = when {
+                    style == MinecraftCapStyle.GOLD_CROWN && (x == 40 || x == 43 || x == 47) && y == 0 -> accent
+                    style == MinecraftCapStyle.LAVA_FORGE && (x + y) % 5 == 0 -> light
+                    style == MinecraftCapStyle.NETHERITE_HELMET && (x == 40 || x == 47 || y == 0) -> dark
+                    style == MinecraftCapStyle.DIAMOND_CROWN && (x + y) % 3 == 0 -> light
+                    style == MinecraftCapStyle.ENDER_HOOD && (x + y) % 4 == 0 -> dark
+                    style == MinecraftCapStyle.STRAW_HAT && y >= 6 -> dark
+                    (x + y) % 7 == 0 -> light
+                    else -> main
+                }
+                pixel(x, y, color)
+            }
+            for (y in 8..15) for (x in 32..63) {
+                val facePixel = when (style) {
+                    MinecraftCapStyle.RED_BASEBALL, MinecraftCapStyle.BLUE_BASEBALL -> y <= 12
+                    MinecraftCapStyle.CREEPER -> y <= 12
+                    MinecraftCapStyle.GOLD_CROWN -> y <= 13
+                    MinecraftCapStyle.PURPLE_BEANIE -> y <= 13
+                    MinecraftCapStyle.STRAW_HAT -> y <= 12 || y == 13
+                    MinecraftCapStyle.LAVA_FORGE -> y <= 12 || y == 13
+                    MinecraftCapStyle.NETHERITE_HELMET -> y <= 14
+                    MinecraftCapStyle.DIAMOND_CROWN -> y <= 13
+                    MinecraftCapStyle.ENDER_HOOD -> y <= 13
+                    MinecraftCapStyle.NONE -> false
+                }
+                if (facePixel) {
+                    var color = if (y == 13) dark else main
+                    if (style == MinecraftCapStyle.CREEPER && y in 10..12 && x in 42..45) color = accent
+                    if (style == MinecraftCapStyle.GOLD_CROWN && y == 8 && x % 2 == 0) color = light
+                    if (style == MinecraftCapStyle.LAVA_FORGE && (x + y) % 4 == 0) color = light
+                    if (style == MinecraftCapStyle.NETHERITE_HELMET && (y == 13 || x == 32 || x == 63)) color = dark
+                    if (style == MinecraftCapStyle.DIAMOND_CROWN && y == 8 && x % 2 == 0) color = accent
+                    if (style == MinecraftCapStyle.ENDER_HOOD && y == 8) color = dark
+                    if (style == MinecraftCapStyle.PURPLE_BEANIE && y == 8) color = light
+                    if (style == MinecraftCapStyle.STRAW_HAT && y == 8) color = accent
+                    pixel(x, y, color)
+                }
+            }
+            // Front-face emblem/patch and baseball-cap visor.
+            if (style == MinecraftCapStyle.RED_BASEBALL || style == MinecraftCapStyle.BLUE_BASEBALL) {
+                for (x in 43..44) for (y in 10..11) pixel(x, y, accent)
+                for (x in 40..47) pixel(x, 14, dark)
+            }
+            if (style == MinecraftCapStyle.CREEPER) {
+                pixel(42, 10, accent); pixel(45, 10, accent)
+                pixel(43, 12, accent); pixel(44, 12, accent)
+                pixel(43, 13, accent); pixel(44, 13, accent)
+            }
+            if (style == MinecraftCapStyle.GOLD_CROWN) {
+                for (x in 41..46) pixel(x, 15, accent)
+                pixel(43, 10, light); pixel(44, 10, light)
+            }
+            if (style == MinecraftCapStyle.STRAW_HAT) {
+                for (x in 32..63) pixel(x, 14, dark)
+                for (x in 43..44) pixel(x, 11, accent)
+            }
+            if (style == MinecraftCapStyle.LAVA_FORGE) {
+                pixel(42, 10, 0xFFFFC247.toInt()); pixel(45, 12, 0xFFFFC247.toInt())
+                pixel(43, 13, 0xFFFF6D24.toInt()); pixel(44, 13, 0xFFFF6D24.toInt())
+            }
+            if (style == MinecraftCapStyle.NETHERITE_HELMET) {
+                for (x in 32..63) pixel(x, 14, dark)
+                pixel(42, 11, accent); pixel(45, 11, accent)
+            }
+            if (style == MinecraftCapStyle.DIAMOND_CROWN) {
+                for (x in 40..47 step 2) { pixel(x, 8, accent); pixel(x + 1, 8, light) }
+                for (x in 41..46) pixel(x, 15, dark)
+            }
+            if (style == MinecraftCapStyle.ENDER_HOOD) {
+                pixel(42, 10, accent); pixel(45, 10, accent)
+                pixel(43, 12, dark); pixel(44, 12, dark)
+            }
+
+            val output = java.io.ByteArrayOutputStream()
+            result.compress(Bitmap.CompressFormat.PNG, 100, output)
+            return output.toByteArray()
+        } finally {
+            result.recycle()
+        }
+    } finally {
+        source.recycle()
+    }
+}

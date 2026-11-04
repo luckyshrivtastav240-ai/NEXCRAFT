@@ -176,13 +176,9 @@ class SponsorsViewModel : ViewModel() {
      * 启动时预拉取数据并刷新缓存
      */
     fun loadOnStart(showLastMonth: Boolean) {
-        viewModelScope.launch(Dispatchers.Main) {
-            _data.update { DataOperation.Loading }
-
-            val newData = toDataOperation(ensureData())
-            _data.update { newData }
-            if (showLastMonth) checkLastMonthReport(newData)
-        }
+        // NEXCRAFT does not fetch or display upstream sponsor reports on startup.
+        // Sponsor data is fetched only if the user explicitly opens the sponsor dialog.
+        _data.update { DataOperation.Empty }
     }
 
     private var refreshJob: Job? = null

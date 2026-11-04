@@ -10,7 +10,8 @@ import com.movtery.zalithlauncher.R
 enum class NEXCRAFTIconStyle(val textRes: Int) {
     NX(R.string.nexcraft_icon_style_nx),
     GRASS(R.string.nexcraft_icon_style_grass),
-    ENDER(R.string.nexcraft_icon_style_ender)
+    ENDER(R.string.nexcraft_icon_style_ender),
+    XBOX(R.string.nexcraft_icon_style_xbox)
 }
 
 enum class NEXCRAFTIconColor(val textRes: Int) {
@@ -40,5 +41,11 @@ fun nexcraftIconPreview(style: NEXCRAFTIconStyle, color: NEXCRAFTIconColor): Int
             NEXCRAFTIconColor.GREEN -> R.drawable.nexcraft_icon_ender_green
             NEXCRAFTIconColor.PURPLE -> R.drawable.nexcraft_icon_ender_purple
             NEXCRAFTIconColor.RED -> R.drawable.nexcraft_icon_ender_red
+        }
+        NEXCRAFTIconStyle.XBOX -> when (color) {
+            NEXCRAFTIconColor.BLUE -> R.drawable.nexcraft_icon_xbox_blue
+            NEXCRAFTIconColor.GREEN -> R.drawable.nexcraft_icon_xbox_green
+            NEXCRAFTIconColor.PURPLE -> R.drawable.nexcraft_icon_xbox_purple
+            NEXCRAFTIconColor.RED -> R.drawable.nexcraft_icon_xbox_red
         }
     }

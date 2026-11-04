@@ -63,6 +63,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -73,11 +74,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.movtery.petlib.ArmModel
+import com.movtery.petlib.PetAnimation
 import com.movtery.zalithlauncher.BuildKeys
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.legal.AvailableAgreement
 import com.movtery.zalithlauncher.ui.base.BaseScreen
 import com.movtery.zalithlauncher.ui.components.ScalingActionButton
+import com.movtery.zalithlauncher.ui.components.PetModelView
 import com.movtery.zalithlauncher.ui.components.fadeEdge
 import com.movtery.zalithlauncher.ui.components.swapAnimateAlphaProgressAsState
 import com.movtery.zalithlauncher.ui.components.swapAnimateProgressAsState
@@ -115,7 +119,7 @@ fun WelcomeScreen(
         }
 
         BoxWithConstraints(
-            modifier = modifier.background(MaterialTheme.colorScheme.background),
+            modifier = modifier.background(Color(0xFF07111F)),
             contentAlignment = Alignment.Center
         ) {
             if (maxWidth >= 800.dp && maxHeight >= 500.dp) {
@@ -249,7 +253,7 @@ private fun WelcomeTerminal(
         welcomeText = ""
         welcomeFinished = false
         delay(700.milliseconds)
-        "WEL".forEach { character ->
+        "NEX".forEach { character ->
             welcomeText += character
             delay(85.milliseconds)
         }
@@ -257,7 +261,7 @@ private fun WelcomeTerminal(
         // 中途小小休息
         delay(420.milliseconds)
 
-        "COME!".forEach { character ->
+        "CRAFT".forEach { character ->
             welcomeText += character
             delay(85.milliseconds)
         }
@@ -267,8 +271,8 @@ private fun WelcomeTerminal(
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(36.dp),
-        color = MaterialTheme.colorScheme.primaryContainer,
-        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        color = Color(0xFF0C1B2D),
+        contentColor = Color(0xFFF0F6FF)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Box(
@@ -278,17 +282,41 @@ private fun WelcomeTerminal(
                     .size(156.dp)
                     .rotate(18f)
                     .background(
-                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.16f),
+                        color = Color(0xFF28BFFF).copy(alpha = 0.12f),
                         shape = RoundedCornerShape(44.dp)
                     )
             )
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 10.dp, end = 12.dp)
+                    .size(142.dp)
+            ) {
+                PetModelView(
+                    modifier = Modifier.fillMaxSize(),
+                    skin = null,
+                    cape = null,
+                    arm = ArmModel.Classic,
+                    animation = PetAnimation.Walking,
+                    animationSpeed = 0.9f,
+                    gazeEnabled = false
+                )
+                Image(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .size(34.dp)
+                        .graphicsLayer { rotationZ = 12f },
+                    painter = painterResource(R.drawable.nexcraft_icon_lava_hammer),
+                    contentDescription = null
+                )
+            }
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .offset(x = (-30).dp, y = 30.dp)
                     .size(116.dp)
                     .background(
-                        color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.14f),
+                        color = Color(0xFF4B83FF).copy(alpha = 0.10f),
                         shape = CircleShape
                     )
             )
@@ -301,11 +329,11 @@ private fun WelcomeTerminal(
                 // 左上角标签
                 Surface(
                     shape = CircleShape,
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                    color = Color(0xFF24BFFF).copy(alpha = 0.12f)
                 ) {
                     Text(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
-                        text = "♥ MADE WITH HEART ♥",
+                        text = "MINECRAFT JAVA  •  NEXCRAFT",
                         style = MaterialTheme.typography.labelSmall,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 1.4.sp
@@ -331,7 +359,7 @@ private fun WelcomeTerminal(
                         modifier = Modifier.alpha(cursorAlpha),
                         text = "_",
                         style = MaterialTheme.typography.displayLarge,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = Color(0xFF35C8FF),
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight.Black,
                         fontSize = 56.sp,
@@ -351,7 +379,7 @@ private fun WelcomeTerminal(
                     ),
                     text = stringResource(R.string.welcome_screen_subtitle),
                     style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.72f),
+                    color = Color(0xFFB9CBE0),
                     fontWeight = FontWeight.SemiBold
                 )
 
@@ -486,7 +514,7 @@ private fun ProductBanner(
     ) {
         Image(
             modifier = Modifier.size(52.dp),
-            painter = painterResource(R.drawable.img_launcher),
+            painter = painterResource(R.drawable.nexcraft_icon_lava_hammer),
             contentDescription = null
         )
 

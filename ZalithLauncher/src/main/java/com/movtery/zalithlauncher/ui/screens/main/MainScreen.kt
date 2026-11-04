@@ -19,7 +19,17 @@
 package com.movtery.zalithlauncher.ui.screens.main
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -30,6 +40,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -44,6 +55,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -56,11 +70,13 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
@@ -69,14 +85,39 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.LayoutDirection
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.net.Uri
+import android.app.Activity
+import android.app.ActivityManager
+import android.media.projection.MediaProjectionManager
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import androidx.core.content.FileProvider
+import androidx.core.content.ContextCompat
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.entryProvider
 import com.movtery.zalithlauncher.BuildKeys
+import com.movtery.zalithlauncher.connector.ConnectorScreenCaptureService
+import com.movtery.zalithlauncher.connector.ConnectorRelayClient
+import com.movtery.zalithlauncher.connector.ConnectorPairing
+import com.movtery.zalithlauncher.connector.ConnectorTokenStore
 import com.movtery.zalithlauncher.R
 import com.movtery.zalithlauncher.coroutine.Task
 import com.movtery.zalithlauncher.coroutine.TaskSystem
+import com.movtery.zalithlauncher.game.account.AccountsManager
+import com.movtery.zalithlauncher.game.account.wardrobe.toArmModel
+import com.movtery.petlib.PetAnimation
 import com.movtery.zalithlauncher.game.version.installed.Version
 import com.movtery.zalithlauncher.game.version.installed.VersionsManager
 import com.movtery.zalithlauncher.path.PathManager
@@ -85,6 +126,7 @@ import com.movtery.zalithlauncher.ui.AndroidStringText
 import com.movtery.zalithlauncher.ui.androidText
 import com.movtery.zalithlauncher.ui.components.BackgroundCard
 import com.movtery.zalithlauncher.ui.components.CardTitleLayout
+import com.movtery.zalithlauncher.ui.components.PetModelView
 import com.movtery.zalithlauncher.ui.components.TextRailItem
 import com.movtery.zalithlauncher.ui.guide.sendStartGuideOnce
 import com.movtery.zalithlauncher.ui.screens.BackStackNavKey
@@ -126,6 +168,8 @@ import com.movtery.zalithlauncher.viewmodel.ModpackImportViewModel
 import com.movtery.zalithlauncher.viewmodel.ScreenBackStackViewModel
 import com.movtery.zalithlauncher.viewmodel.sendKeepScreen
 import com.movtery.zalithlauncher.viewmodel.sendToast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun MainScreen(
@@ -135,13 +179,65 @@ fun MainScreen(
     modifyVersionViewModel: ModifyVersionViewModel,
     submitError: (ErrorViewModel.ThrowableMessage) -> Unit
 ) {
+    val context = LocalContext.current
+    var diagnosticsReport by remember { mutableStateOf<String?>(null) }
+    var diagnosticsScreenshotUri by remember { mutableStateOf<Uri?>(null) }
+    var diagnosticsScreenshotPreparing by remember { mutableStateOf(false) }
+    var screenCaptureActive by remember { mutableStateOf(false) }
+    val screenCaptureLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+            val captureIntent = Intent(context, ConnectorScreenCaptureService::class.java).apply {
+                action = ConnectorScreenCaptureService.ACTION_START
+                putExtra(ConnectorScreenCaptureService.EXTRA_RESULT_CODE, result.resultCode)
+                putExtra(ConnectorScreenCaptureService.EXTRA_RESULT_DATA, result.data)
+            }
+            ContextCompat.startForegroundService(context, captureIntent)
+            screenCaptureActive = true
+        }
+    }
+    val diagnosticsScope = rememberCoroutineScope()
+    val diagnosticsView = LocalView.current
+    val connectorClient = remember(context) { ConnectorRelayClient(context) }
+    var connectorDialogVisible by remember { mutableStateOf(false) }
+    var connectorRelayUrl by remember { mutableStateOf(connectorClient.relayUrl() ?: "https://nexcraft-connector-relay.luckyshrivastav240.workers.dev") }
+    var connectorPairing by remember { mutableStateOf<ConnectorPairing?>(null) }
+    var connectorStatus by remember { mutableStateOf(if (ConnectorTokenStore(context).read() != null) "Connected" else "Not connected") }
+    var connectorError by remember { mutableStateOf<String?>(null) }
+    var connectorBusy by remember { mutableStateOf(false) }
+    LaunchedEffect(connectorPairing?.pairingId) {
+        val pairing = connectorPairing ?: return@LaunchedEffect
+        repeat(100) {
+            try {
+                val status = connectorClient.pairingStatus(pairing)
+                if (status.status == "paired" && ConnectorTokenStore(context).read() != null) {
+                    connectorStatus = "Connected"
+                    connectorError = null
+                    return@LaunchedEffect
+                }
+                if (status.status == "expired" || status.status == "revoked") {
+                    connectorStatus = status.status.replaceFirstChar { it.uppercase() }
+                    return@LaunchedEffect
+                }
+            } catch (error: Exception) {
+                if (error.message?.contains("expired", ignoreCase = true) == true) {
+                    connectorStatus = "Pairing expired"
+                    connectorError = error.message
+                    return@LaunchedEffect
+                }
+                connectorError = error.message ?: "Waiting for pairing approval"
+            }
+            delay(3_000L)
+        }
+        connectorStatus = "Pairing expired"
+    }
     //监控当前是否有任务正在进行
     var taskRunning by remember { mutableStateOf(true) }
     LaunchedEffect(Unit) {
         TaskSystem.tasksFlow.collect { tasks ->
             val noTasks = tasks.isEmpty()
             eventViewModel.sendKeepScreen(!noTasks)
-            taskRunning = noTasks
+            taskRunning = !noTasks
+            // TaskSystem exposes plain Task objects; task icon metadata is not available here.
         }
     }
 
@@ -171,10 +267,187 @@ fun MainScreen(
         color = backgroundColor,
         contentColor = onBackgroundColor()
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
+        Row(
+            modifier = Modifier.fillMaxSize()
         ) {
+            // NEXCRAFT landscape navigation rail: real destinations, not demo buttons.
+            Column(
+                modifier = Modifier
+                    .width(104.dp)
+                    .fillMaxHeight()
+                    .background(Color(0xFF171D1A))
+                    .padding(horizontal = 8.dp, vertical = 10.dp),
+                verticalArrangement = Arrangement.spacedBy(7.dp)
+            ) {
+                Text(
+                    text = "NEX\nCRAFT",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 7.dp, top = 5.dp, bottom = 12.dp),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = Color(0xFFFF9A4A)
+                )
+                Text(
+                    text = stringResource(R.string.nexcraft_nav_home),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(if (inLauncherScreen) Color(0xFF493021) else Color.Transparent)
+                        .clickable(onClick = toMainScreen)
+                        .padding(horizontal = 10.dp, vertical = 10.dp),
+                    color = Color(0xFFFFE8D0),
+                    style = MaterialTheme.typography.labelLarge
+                )
+                Text(
+                    text = stringResource(R.string.nexcraft_nav_versions),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .clickable(onClick = { screenBackStackModel.navigateToDownload() })
+                        .padding(horizontal = 10.dp, vertical = 10.dp),
+                    color = Color(0xFFE2E7E3),
+                    style = MaterialTheme.typography.labelLarge
+                )
+                Text(
+                    text = stringResource(R.string.nexcraft_nav_servers),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .clickable(onClick = {
+                            screenBackStackModel.mainScreen.removeAndNavigateTo(
+                                removes = screenBackStackModel.clearBeforeNavKeys,
+                                screenKey = NormalNavKey.Multiplayer
+                            )
+                        })
+                        .padding(horizontal = 10.dp, vertical = 10.dp),
+                    color = Color(0xFFE2E7E3),
+                    style = MaterialTheme.typography.labelLarge
+                )
+                Text(
+                    text = stringResource(R.string.nexcraft_nav_files),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .clickable(onClick = {
+                            eventViewModel.sendEvent(
+                                EventViewModel.Event.OpenFileManager(
+                                    rootPath = PathManager.DIR_FILES_EXTERNAL.absolutePath
+                                )
+                            )
+                        })
+                        .padding(horizontal = 10.dp, vertical = 10.dp),
+                    color = Color(0xFFE2E7E3),
+                    style = MaterialTheme.typography.labelLarge
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = stringResource(R.string.nexcraft_nav_ai_bridge),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .clickable(onClick = {
+                            val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                            val memoryInfo = ActivityManager.MemoryInfo()
+                            activityManager.getMemoryInfo(memoryInfo)
+                            val versionName = runCatching {
+                                context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "unknown"
+                            }.getOrDefault("unknown")
+                            val latestLog = PathManager.DIR_LAUNCHER_LOGS
+                                .listFiles()
+                                ?.filter { it.isFile && it.extension.equals("log", ignoreCase = true) }
+                                ?.maxByOrNull { it.lastModified() }
+                            val recentLog = runCatching {
+                                latestLog?.readText()?.takeLast(60_000)
+                            }.getOrNull()
+                            val crashReport = runCatching {
+                                PathManager.FILE_CRASH_REPORT.takeIf { it.isFile }?.readText()?.takeLast(30_000)
+                            }.getOrNull()
+                            val report = buildString {
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_report_title))
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_app, versionName))
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_device, Build.MANUFACTURER, Build.MODEL))
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_android, Build.VERSION.RELEASE, Build.VERSION.SDK_INT))
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_ram, memoryInfo.availMem / (1024 * 1024)))
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_low_memory, memoryInfo.lowMemory))
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_package, context.packageName))
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_log_file, latestLog?.name ?: context.getString(R.string.nexcraft_diagnostics_not_found)))
+                                appendLine()
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_recent_log))
+                                appendLine(recentLog ?: context.getString(R.string.nexcraft_diagnostics_no_log))
+                                appendLine()
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_last_crash))
+                                appendLine(crashReport ?: context.getString(R.string.nexcraft_diagnostics_no_crash))
+                                appendLine()
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_share_notice))
+                                appendLine(context.getString(R.string.nexcraft_diagnostics_privacy_notice))
+                            }
+                            diagnosticsReport = report
+                            diagnosticsScreenshotUri = null
+                            diagnosticsScreenshotPreparing = diagnosticsView.width > 0 && diagnosticsView.height > 0
+                            if (diagnosticsScreenshotPreparing) {
+                                val screenBitmap = Bitmap.createBitmap(
+                                    diagnosticsView.width,
+                                    diagnosticsView.height,
+                                    Bitmap.Config.ARGB_8888
+                                )
+                                diagnosticsView.draw(Canvas(screenBitmap))
+                                diagnosticsScope.launch {
+                                    try {
+                                        diagnosticsScreenshotUri = withContext(Dispatchers.IO) {
+                                            val directory = File(context.cacheDir, "ai_bridge").apply { mkdirs() }
+                                            directory.listFiles()?.filter { it.isFile && it.extension == "png" }?.forEach { it.delete() }
+                                            val screenshotFile = File(directory, "nexcraft_screen.png")
+                                            FileOutputStream(screenshotFile).use { output ->
+                                                check(screenBitmap.compress(Bitmap.CompressFormat.PNG, 100, output)) {
+                                                    "Could not encode launcher screenshot"
+                                                }
+                                            }
+                                            FileProvider.getUriForFile(
+                                                context,
+                                                "${context.packageName}.provider",
+                                                screenshotFile
+                                            )
+                                        }
+                                    } catch (_: Exception) {
+                                        diagnosticsScreenshotUri = null
+                                    } finally {
+                                        diagnosticsScreenshotPreparing = false
+                                        screenBitmap.recycle()
+                                    }
+                                }
+                            }
+                        })
+                        .padding(horizontal = 10.dp, vertical = 10.dp),
+                    color = Color(0xFFFFB36B),
+                    style = MaterialTheme.typography.labelLarge
+                )
+                Text(
+                    text = stringResource(R.string.nexcraft_connector_open),
+                    modifier = Modifier.fillMaxWidth().clip(MaterialTheme.shapes.medium)
+                        .clickable(onClick = { connectorDialogVisible = true })
+                        .padding(horizontal = 10.dp, vertical = 10.dp),
+                    color = Color(0xFF8DD8FF), style = MaterialTheme.typography.labelLarge
+                )
+                Text(
+                    text = stringResource(R.string.nexcraft_nav_settings),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.medium)
+                        .clickable(onClick = {
+                            screenBackStackModel.mainScreen.removeAndNavigateTo(
+                                removes = screenBackStackModel.clearBeforeNavKeys,
+                                screenKey = screenBackStackModel.settingsScreen
+                            )
+                        })
+                        .padding(horizontal = 10.dp, vertical = 10.dp),
+                    color = Color(0xFFE2E7E3),
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
             TopBar(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -215,11 +488,12 @@ fun MainScreen(
                 },
             )
 
-            Box(
+            BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
             ) {
+                val taskMenuWidth = if (maxWidth < 600.dp) 0.88f else 0.3f
                 NavStateHost(rootKey = screenBackStackModel.mainScreen) {
                     NavigationUI(
                         modifier = Modifier.fillMaxSize(),
@@ -236,14 +510,183 @@ fun MainScreen(
                     isExpanded = isTaskMenuExpanded,
                     modifier = Modifier
                         .fillMaxHeight()
-                        .fillMaxWidth(0.3f)
+                        .fillMaxWidth(taskMenuWidth)
                         .align(Alignment.CenterStart)
                         .padding(all = 6.dp)
                 ) {
                     changeTasksExpandedState()
                 }
             }
+            }
         }
+    }
+
+    if (connectorDialogVisible) {
+        AlertDialog(
+            onDismissRequest = { if (!connectorBusy) connectorDialogVisible = false },
+            title = { Text(stringResource(R.string.nexcraft_connector_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(R.string.nexcraft_connector_description), style = MaterialTheme.typography.bodySmall)
+                    OutlinedTextField(
+                        value = connectorRelayUrl,
+                        onValueChange = { connectorRelayUrl = it },
+                        label = { Text(stringResource(R.string.nexcraft_connector_relay_url)) },
+                        placeholder = { Text("https://your-relay.example") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Text(stringResource(R.string.nexcraft_connector_status, connectorStatus), style = MaterialTheme.typography.labelLarge)
+                    connectorPairing?.let { pairing ->
+                        Text(stringResource(R.string.nexcraft_connector_pair_code, pairing.pairingCode), style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.nexcraft_connector_pair_instructions), style = MaterialTheme.typography.bodySmall)
+                    }
+                    connectorError?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
+                    Text(stringResource(R.string.nexcraft_connector_privacy), style = MaterialTheme.typography.bodySmall)
+                }
+            },
+            confirmButton = {
+                Column(horizontalAlignment = Alignment.End) {
+                    Row {
+                        TextButton(enabled = !connectorBusy, onClick = {
+                            diagnosticsScope.launch {
+                                connectorBusy = true
+                                connectorError = null
+                                try {
+                                    connectorClient.setRelayUrl(connectorRelayUrl)
+                                    connectorPairing = connectorClient.createPairing(Build.MANUFACTURER + " " + Build.MODEL)
+                                    connectorStatus = "Waiting for ChatGPT pairing approval"
+                                } catch (error: Exception) {
+                                    connectorError = error.message ?: "Could not create pairing"
+                                } finally {
+                                    connectorBusy = false
+                                }
+                            }
+                        }) { Text(stringResource(R.string.nexcraft_connector_pair)) }
+                        TextButton(enabled = !connectorBusy && connectorPairing != null, onClick = {
+                            diagnosticsScope.launch {
+                                connectorBusy = true
+                                connectorError = null
+                                try {
+                                    val status = connectorClient.pairingStatus(connectorPairing!!)
+                                    connectorStatus = if (status.deviceToken != null || (status.status == "paired" && ConnectorTokenStore(context).read() != null)) "Connected" else status.status
+                                } catch (error: Exception) {
+                                    connectorError = error.message ?: "Could not check pairing"
+                                } finally {
+                                    connectorBusy = false
+                                }
+                            }
+                        }) { Text(stringResource(R.string.nexcraft_connector_check)) }
+                    }
+                    Row {
+                        TextButton(enabled = connectorPairing != null, onClick = {
+                            val code = connectorPairing?.pairingCode ?: return@TextButton
+                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                            clipboard.setPrimaryClip(android.content.ClipData.newPlainText("NEXCRAFT pairing code", code))
+                        }) { Text(stringResource(R.string.nexcraft_connector_copy_code)) }
+                        TextButton(enabled = !connectorBusy, onClick = {
+                            diagnosticsScope.launch {
+                                connectorBusy = true
+                                connectorError = null
+                                try {
+                                    connectorClient.disconnect()
+                                    context.startService(Intent(context, ConnectorScreenCaptureService::class.java).setAction(ConnectorScreenCaptureService.ACTION_STOP))
+                                    screenCaptureActive = false
+                                    connectorPairing = null
+                                    connectorStatus = "Disconnected"
+                                } catch (error: Exception) {
+                                    connectorError = error.message ?: "Could not disconnect"
+                                } finally {
+                                    connectorBusy = false
+                                }
+                            }
+                        }) { Text(stringResource(R.string.nexcraft_connector_disconnect)) }
+                    }
+                    Row {
+                        TextButton(enabled = ConnectorTokenStore(context).read() != null, onClick = {
+                            val manager = context.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+                            screenCaptureLauncher.launch(manager.createScreenCaptureIntent())
+                        }) { Text(stringResource(R.string.nexcraft_connector_start_share)) }
+                        TextButton(enabled = screenCaptureActive, onClick = {
+                            context.startService(Intent(context, ConnectorScreenCaptureService::class.java).setAction(ConnectorScreenCaptureService.ACTION_STOP))
+                            screenCaptureActive = false
+                        }) { Text(stringResource(R.string.nexcraft_connector_stop_share)) }
+                    }
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { connectorDialogVisible = false }) {
+                    Text(stringResource(R.string.nexcraft_diagnostics_cancel))
+                }
+            }
+        )
+    }
+
+    diagnosticsReport?.let { report ->
+        AlertDialog(
+            onDismissRequest = { diagnosticsReport = null },
+            title = { Text(stringResource(R.string.nexcraft_diagnostics_title)) },
+            text = {
+                Column {
+                    Text(
+                        text = report.take(7_000),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(
+                        text = when {
+                            diagnosticsScreenshotPreparing -> stringResource(R.string.nexcraft_diagnostics_screenshot_preparing)
+                            diagnosticsScreenshotUri != null -> stringResource(R.string.nexcraft_diagnostics_screenshot_ready)
+                            else -> stringResource(R.string.nexcraft_diagnostics_screenshot_unavailable)
+                        },
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+            },
+            confirmButton = {
+                Row {
+                TextButton(
+                    enabled = screenCaptureActive || ConnectorTokenStore(context).read() != null,
+                    onClick = {
+                        if (screenCaptureActive) {
+                            context.startService(Intent(context, ConnectorScreenCaptureService::class.java).setAction(ConnectorScreenCaptureService.ACTION_STOP))
+                            screenCaptureActive = false
+                        } else {
+                            val manager = context.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+                            screenCaptureLauncher.launch(manager.createScreenCaptureIntent())
+                        }
+                    }
+                ) { Text(stringResource(if (screenCaptureActive) R.string.nexcraft_connector_stop_share else R.string.nexcraft_connector_start_share)) }
+                TextButton(
+                    enabled = !diagnosticsScreenshotPreparing,
+                    onClick = {
+                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = if (diagnosticsScreenshotUri != null) "image/png" else "text/plain"
+                            putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.nexcraft_diagnostics_subject))
+                            putExtra(Intent.EXTRA_TEXT, report)
+                            diagnosticsScreenshotUri?.let { screenshotUri ->
+                                putExtra(Intent.EXTRA_STREAM, screenshotUri)
+                                clipData = android.content.ClipData.newUri(
+                                    context.contentResolver,
+                                    context.getString(R.string.nexcraft_diagnostics_screenshot_label),
+                                    screenshotUri
+                                )
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            }
+                        }
+                        diagnosticsReport = null
+                        context.startActivity(
+                            Intent.createChooser(shareIntent, context.getString(R.string.nexcraft_diagnostics_chooser))
+                        )
+                    }
+                ) { Text(stringResource(R.string.nexcraft_diagnostics_share)) }
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { diagnosticsReport = null }) {
+                    Text(stringResource(R.string.nexcraft_diagnostics_cancel))
+                }
+            }
+        )
     }
 }
 
@@ -729,6 +1172,8 @@ private fun TaskMenu(
                     }
                 }
 
+                
+
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxHeight()
@@ -744,6 +1189,7 @@ private fun TaskMenu(
                             taskProgress = taskProgress,
                             taskMessage = taskMessage,
                             rateBytesPerSec = rateBytesPerSec,
+                            taskIcon = null,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 6.dp)
@@ -759,14 +1205,127 @@ private fun TaskMenu(
 }
 
 @Composable
+private fun NexcraftGameLaunchBanner() {
+    val account by AccountsManager.currentAccountFlow.collectAsStateWithLifecycle()
+    val refreshWardrobe by AccountsManager.refreshWardrobe.collectAsStateWithLifecycle()
+    val skinStamp = account?.getSkinFile()?.lastModified()
+    val capeStamp = account?.getCapeFile()?.lastModified()
+    val skinBytes by produceState<ByteArray?>(null, account, refreshWardrobe, skinStamp) {
+        value = withContext(Dispatchers.IO) {
+            account?.getSkinFile()?.takeIf { it.exists() }
+                ?.inputStream()?.use { it.readBytes() }
+        }
+    }
+    val capeBytes by produceState<ByteArray?>(null, account, refreshWardrobe, capeStamp) {
+        value = withContext(Dispatchers.IO) {
+            account?.getCapeFile()?.takeIf { it.exists() }
+                ?.inputStream()?.use { it.readBytes() }
+        }
+    }
+    val transition = rememberInfiniteTransition(label = "NEXCRAFTVoxelIntro")
+    val hammerAngle by transition.animateFloat(
+        initialValue = -10f,
+        targetValue = 10f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1350, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "NEXCRAFTHammerSwing"
+    )
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 6.dp),
+        shape = MaterialTheme.shapes.large,
+        color = Color(0xFF171D1A),
+        contentColor = Color(0xFFFFE8D0),
+        shadowElevation = 4.dp
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(62.dp)
+                    .clip(MaterialTheme.shapes.medium)
+                    .background(Color(0xFF2A211B)),
+                contentAlignment = Alignment.Center
+            ) {
+                Surface(
+                    modifier = Modifier
+                        .size(30.dp)
+                        .graphicsLayer {
+                            rotationX = 38f
+                            rotationY = 42f
+                        }
+                        .align(Alignment.BottomEnd),
+                    shape = MaterialTheme.shapes.small,
+                    color = Color(0xFFB94C24)
+                ) {}
+                PetModelView(
+                    modifier = Modifier.size(58.dp),
+                    skin = skinBytes,
+                    cape = capeBytes,
+                    arm = account?.skinModelType?.toArmModel(),
+                    animation = PetAnimation.Walking,
+                    animationSpeed = 1.0f,
+                    gazeEnabled = false
+                )
+                Image(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .size(20.dp)
+                        .graphicsLayer {
+                            rotationZ = hammerAngle
+                            rotationY = hammerAngle * 0.45f
+                        },
+                    painter = painterResource(R.drawable.nexcraft_icon_lava_hammer),
+                    contentDescription = null
+                )
+            }
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.nexcraft_launch_title),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = Color(0xFFFFD3A5)
+                )
+                Text(
+                    text = stringResource(R.string.nexcraft_launch_subtitle),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color(0xFFC8B9AA)
+                )
+            }
+            Surface(
+                shape = MaterialTheme.shapes.small,
+                color = Color(0xFF5B2B1C)
+            ) {
+                Text(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp),
+                    text = "3D",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color(0xFFFFB36C)
+                )
+            }
+        }
+    }
+}
+
+@Composable
 private fun TaskItem(
     taskProgress: Float,
     taskMessage: AndroidStringText?,
     rateBytesPerSec: Long?,
+    taskIcon: Int?,
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.large,
-    color: Color = cardColor(false),
-    contentColor: Color = onCardColor(),
+    color: Color = Color(0xFF1B211E),
+    contentColor: Color = Color(0xFFFFE8D0),
     onCancelClick: () -> Unit = {}
 ) {
     Surface(
@@ -779,6 +1338,19 @@ private fun TaskItem(
             modifier = Modifier.padding(all = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            Surface(
+                modifier = Modifier
+                    .size(38.dp)
+                    .align(Alignment.CenterVertically),
+                shape = MaterialTheme.shapes.medium,
+                color = MaterialTheme.colorScheme.primaryContainer
+            ) {
+                Icon(
+                    modifier = Modifier.padding(4.dp),
+                    painter = painterResource(taskIcon ?: R.drawable.nexcraft_icon_lava_hammer),
+                    contentDescription = null
+                )
+            }
             IconButton(
                 modifier = Modifier
                     .size(24.dp)
@@ -806,12 +1378,16 @@ private fun TaskItem(
 
                 if (taskProgress < 0) { //负数则代表不确定
                     LinearProgressIndicator(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        color = Color(0xFFFF873D),
+                        trackColor = Color(0xFF493328)
                     )
                 } else {
                     LinearProgressIndicator(
                         progress = { taskProgress },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        color = Color(0xFFFF873D),
+                        trackColor = Color(0xFF493328)
                     )
                 }
 

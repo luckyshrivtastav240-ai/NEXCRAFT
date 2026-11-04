@@ -7,7 +7,7 @@ info:
     reading diagnostics explicitly shared by the device owner. Pairing codes
     expire after five minutes. Screen sharing requires Android runtime consent.
 servers:
-  - url: https://nexcraft-connector-relay.luckyshrivastav240.workers.dev
+  - url: https://nexcraft-connector-relay.luckyshrivtastav240.workers.dev
 paths:
   /health:
     get:

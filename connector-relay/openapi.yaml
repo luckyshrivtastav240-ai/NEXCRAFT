@@ -68,7 +68,6 @@ paths:
           description: Use the assistantToken returned by pairNexcraftDevice. Keep it private.
           schema: { type: string }
       summary: Read recent redacted diagnostics
-      parameters:
         - in: query
           name: limit
           schema:
@@ -130,7 +129,6 @@ paths:
           description: Use the assistantToken returned by pairNexcraftDevice. Keep it private.
           schema: { type: string }
       summary: Revoke and disconnect this paired device
-      parameters:
         - in: path
           name: id
           required: true

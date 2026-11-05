@@ -41,3 +41,35 @@ https://nexcraft-connector-relay.luckyshrivtastav240.workers.dev/mcp
 ```
 
 Available tools: `checkNexcraftRelay`, `pairNexcraftDevice`, `readNexcraftDiagnostics`, `viewNexcraftScreen`, and `revokeNexcraftPairing`. Pairing requires the temporary 10-character code shown by the Android launcher. The assistant token is a credential: do not paste it into chat or share it with anyone. The screen tool returns only the latest frame explicitly shared by the device owner. The MCP endpoint must be deployed and tested before adding it to ChatGPT; the URL alone does not mean the service is live.
+
+## Development project tracking API (new)
+
+The relay now includes authenticated, persistent project tracking endpoints backed by D1:
+
+- `POST /v1/dev/projects` — record a project request.
+- `GET /v1/dev/projects` — list the latest 50 project records.
+- `GET /v1/dev/projects/{projectId}` — read project details and its event history.
+- `PATCH /v1/dev/projects/{projectId}` — append progress events and update status/stage/progress.
+
+These endpoints are exposed through MCP tools:
+`createNexcraftDevelopmentProject`, `listNexcraftDevelopmentProjects`,
+`getNexcraftDevelopmentProject`, and `updateNexcraftDevelopmentProject`.
+The tracker records honest states (planned, analyzing, building, testing, blocked,
+completed, failed). It rejects a completed status unless the caller explicitly
+supplies `verified=true`.
+
+**Important boundary:** this is a persistent project tracker, not yet a code-execution
+or build runner. It does not clone repositories, edit arbitrary project files, run
+Gradle/npm builds, launch live previews, execute device/browser tests, or deploy
+applications. Those require a separately sandboxed worker/runner, artifact storage,
+preview hosting, job logs, and a tested authorization model. Do not describe a
+project record as a running build or verified deliverable.
+
+## Quality and release policy
+
+- Never mark a project completed unless actual build/test evidence has been collected.
+- Record failures and blockers as events; do not silently turn them into success.
+- Destructive operations and production deployments must require explicit user approval.
+- Keep project source changes version-controlled and retain rollback points.
+- Live preview must be connected to a real running preview server; static mockups must
+  be labelled as mockups and must not be presented as a working application.

@@ -24,3 +24,7 @@ Third-party libraries and components retain their respective copyright and licen
 ## Community
 
 For NEXCRAFT issues and project discussion, use the GitHub repository linked above.
+
+## Free-first development policy
+
+The connector's future development workspace follows the [Free-First Engineering Policy](docs/FREE_FIRST_ENGINEERING_POLICY.md): no paid-only dependencies or quota bypasses, portable source exports, documented provider limits, and honest build verification. The current project tracker is not yet a build runner.

@@ -51,6 +51,26 @@ const tools = [
     },
   },
   {
+    {
+      name: "createNexcraftDevelopmentProject",
+      description: "Record a software-development request in the authenticated NEXCRAFT project tracker. This records and tracks the request only; it does not claim code generation or a build has started.",
+      inputSchema: { type:"object", properties:{ assistantToken:{type:"string",minLength:20}, name:{type:"string",minLength:1,maxLength:120}, projectType:{type:"string",minLength:1,maxLength:40}, brief:{type:"string",minLength:1,maxLength:12000} }, required:["assistantToken","name","projectType","brief"], additionalProperties:false }
+    },
+    {
+      name: "listNexcraftDevelopmentProjects",
+      description: "List recent software-development projects recorded for the paired NEXCRAFT account.",
+      inputSchema: { type:"object", properties:{assistantToken:{type:"string",minLength:20}}, required:["assistantToken"], additionalProperties:false }
+    },
+    {
+      name: "getNexcraftDevelopmentProject",
+      description: "Read one project's current status, progress, stage, summary, and event history.",
+      inputSchema: { type:"object", properties:{assistantToken:{type:"string",minLength:20},projectId:{type:"string",format:"uuid"}}, required:["assistantToken","projectId"], additionalProperties:false }
+    },
+    {
+      name: "updateNexcraftDevelopmentProject",
+      description: "Append a truthful project progress event and update status. Mark completed only when verification has actually passed and verified=true is supplied.",
+      inputSchema: { type:"object", properties:{assistantToken:{type:"string",minLength:20},projectId:{type:"string",format:"uuid"},status:{type:"string",enum:["planned","analyzing","building","testing","blocked","completed","failed"]},progress:{type:"integer",minimum:0,maximum:100},currentStage:{type:"string",maxLength:120},summary:{type:"string",maxLength:2000},message:{type:"string",minLength:1,maxLength:2000},verified:{type:"boolean"}}, required:["assistantToken","projectId","message"], additionalProperties:false }
+    },
     name: "revokeNexcraftPairing",
     description: "Revoke the assistant's access to a paired NEXCRAFT device.",
     inputSchema: {
@@ -169,6 +189,27 @@ export async function handleMcp(request: Request): Promise<Response> {
           { type: "image", data: btoa(binary), mimeType: "image/jpeg" },
         ],
       });
+    }
+    if (name === "createNexcraftDevelopmentProject") {
+      const response = await fetch(base + "/v1/dev/projects", { method:"POST", headers:{"content-type":"application/json","X-Assistant-Token":args.assistantToken}, body:JSON.stringify({name:args.name,projectType:args.projectType,brief:args.brief}) });
+      const data = await response.json();
+      return result(rpc.id,textResult(response.ok ? data : {error:data}));
+    }
+    if (name === "listNexcraftDevelopmentProjects") {
+      const response = await fetch(base + "/v1/dev/projects", { headers:{"X-Assistant-Token":args.assistantToken} });
+      const data = await response.json();
+      return result(rpc.id,textResult(response.ok ? data : {error:data}));
+    }
+    if (name === "getNexcraftDevelopmentProject") {
+      const response = await fetch(base + "/v1/dev/projects/" + encodeURIComponent(args.projectId), { headers:{"X-Assistant-Token":args.assistantToken} });
+      const data = await response.json();
+      return result(rpc.id,textResult(response.ok ? data : {error:data}));
+    }
+    if (name === "updateNexcraftDevelopmentProject") {
+      const {assistantToken,projectId,...update} = args;
+      const response = await fetch(base + "/v1/dev/projects/" + encodeURIComponent(projectId), { method:"PATCH", headers:{"content-type":"application/json","X-Assistant-Token":assistantToken}, body:JSON.stringify(update) });
+      const data = await response.json();
+      return result(rpc.id,textResult(response.ok ? data : {error:data}));
     }
     if (name === "revokeNexcraftPairing") {
       const response = await fetch(base + "/v1/pairings/" + encodeURIComponent(args.pairingId) + "/revoke", {

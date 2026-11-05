@@ -190,6 +190,64 @@ export default {
         return new Response(binary,{headers:{"content-type":"image/jpeg","cache-control":"no-store","x-captured-at":String(row.created_at)}});
       }
 
+      if (request.method === "POST" && path === "/v1/dev/projects") {
+        const p = await authPairing(env,request,"assistant");
+        if (!p) return unauthorized();
+        const input = await bodyJson(request);
+        const name = typeof input.name === "string" ? input.name.trim() : "";
+        const projectType = typeof input.projectType === "string" ? input.projectType.trim() : "";
+        const brief = typeof input.brief === "string" ? input.brief.trim() : "";
+        if (!name || name.length > 120 || !projectType || projectType.length > 40 || !brief || brief.length > 12000) {
+          return json({ error:"name (1-120), projectType (1-40), and brief (1-12000) are required" },400);
+        }
+        const id = uuid(), now = Date.now();
+        await env.DB.prepare("INSERT INTO dev_projects (id,pairing_id,name,project_type,brief,status,progress,current_stage,summary,created_at,updated_at) VALUES (?,?,?,?,?,'planned',0,'Requirements review','Project request recorded; no build has started.',?,?)")
+          .bind(id,p.id,name,projectType,brief,now,now).run();
+        await env.DB.prepare("INSERT INTO dev_project_events (project_id,event_type,message,details,created_at) VALUES (?,?,?,?,?)")
+          .bind(id,"created","Project request recorded. Build execution has not started.",JSON.stringify({source:"assistant"}),now).run();
+        return json({ projectId:id,name,projectType,status:"planned",progress:0,currentStage:"Requirements review",buildStarted:false,createdAt:new Date(now).toISOString() },201);
+      }
+
+      if (request.method === "GET" && path === "/v1/dev/projects") {
+        const p = await authPairing(env,request,"assistant");
+        if (!p) return unauthorized();
+        const rows = await env.DB.prepare("SELECT id,name,project_type,status,progress,current_stage,summary,created_at,updated_at FROM dev_projects WHERE pairing_id=? ORDER BY updated_at DESC LIMIT 50")
+          .bind(p.id).all<any>();
+        return json({projects:rows.results.map(row=>({projectId:row.id,name:row.name,projectType:row.project_type,status:row.status,progress:row.progress,currentStage:row.current_stage,summary:row.summary,createdAt:new Date(row.created_at).toISOString(),updatedAt:new Date(row.updated_at).toISOString()}))});
+      }
+
+      const projectMatch = path.match(/^\/v1\/dev\/projects\/([0-9a-f-]+)$/i);
+      if (request.method === "GET" && projectMatch) {
+        const p = await authPairing(env,request,"assistant");
+        if (!p) return unauthorized();
+        const row = await env.DB.prepare("SELECT * FROM dev_projects WHERE id=? AND pairing_id=?").bind(projectMatch[1],p.id).first<any>();
+        if (!row) return json({error:"Project not found"},404);
+        const events = await env.DB.prepare("SELECT event_type,message,details,created_at FROM dev_project_events WHERE project_id=? ORDER BY created_at DESC LIMIT 100").bind(row.id).all<any>();
+        return json({project:{projectId:row.id,name:row.name,projectType:row.project_type,brief:row.brief,status:row.status,progress:row.progress,currentStage:row.current_stage,summary:row.summary,createdAt:new Date(row.created_at).toISOString(),updatedAt:new Date(row.updated_at).toISOString()},events:events.results.map(e=>({type:e.event_type,message:e.message,details:JSON.parse(e.details),createdAt:new Date(e.created_at).toISOString()}))});
+      }
+
+      const projectUpdate = path.match(/^\/v1\/dev\/projects\/([0-9a-f-]+)$/i);
+      if (request.method === "PATCH" && projectUpdate) {
+        const p = await authPairing(env,request,"assistant");
+        if (!p) return unauthorized();
+        const row = await env.DB.prepare("SELECT id FROM dev_projects WHERE id=? AND pairing_id=?").bind(projectUpdate[1],p.id).first<{id:string}>();
+        if (!row) return json({error:"Project not found"},404);
+        const input = await bodyJson(request);
+        const statuses = ["planned","analyzing","building","testing","blocked","completed","failed"];
+        if (input.status !== undefined && !statuses.includes(input.status)) return json({error:"Invalid project status"},400);
+        if (input.progress !== undefined && (!Number.isInteger(input.progress) || input.progress < 0 || input.progress > 100)) return json({error:"Progress must be an integer from 0 to 100"},400);
+        if (input.currentStage !== undefined && (typeof input.currentStage !== "string" || input.currentStage.length > 120)) return json({error:"Invalid currentStage"},400);
+        if (input.summary !== undefined && (typeof input.summary !== "string" || input.summary.length > 2000)) return json({error:"Invalid summary"},400);
+        if (typeof input.message !== "string" || !input.message.trim() || input.message.length > 2000) return json({error:"A non-empty event message is required"},400);
+        if (input.status === "completed" && input.verified !== true) return json({error:"Completion requires verified=true and a recorded verification event"},409);
+        const now = Date.now();
+        await env.DB.prepare("UPDATE dev_projects SET status=COALESCE(?,status),progress=COALESCE(?,progress),current_stage=COALESCE(?,current_stage),summary=COALESCE(?,summary),updated_at=? WHERE id=? AND pairing_id=?")
+          .bind(input.status ?? null,input.progress ?? null,input.currentStage ?? null,input.summary ?? null,now,row.id,p.id).run();
+        await env.DB.prepare("INSERT INTO dev_project_events (project_id,event_type,message,details,created_at) VALUES (?,?,?,?,?)")
+          .bind(row.id,"status_update",input.message.trim(),JSON.stringify({status:input.status ?? null,progress:input.progress ?? null,verified:input.verified === true}),now).run();
+        return json({updated:true,projectId:row.id,updatedAt:new Date(now).toISOString()});
+      }
+
       const revoke = path.match(/^\/v1\/pairings\/([^/]+)\/revoke$/);
       if (request.method === "POST" && revoke) {
         const p = await authPairing(env,request,"assistant");

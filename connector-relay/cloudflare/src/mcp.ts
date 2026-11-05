@@ -51,7 +51,6 @@ const tools = [
     },
   },
   {
-    {
       name: "createNexcraftDevelopmentProject",
       description: "Record a software-development request in the authenticated NEXCRAFT project tracker. This records and tracks the request only; it does not claim code generation or a build has started.",
       inputSchema: { type:"object", properties:{ assistantToken:{type:"string",minLength:20}, name:{type:"string",minLength:1,maxLength:120}, projectType:{type:"string",minLength:1,maxLength:40}, brief:{type:"string",minLength:1,maxLength:12000} }, required:["assistantToken","name","projectType","brief"], additionalProperties:false }
@@ -71,6 +70,7 @@ const tools = [
       description: "Append a truthful project progress event and update status. Mark completed only when verification has actually passed and verified=true is supplied.",
       inputSchema: { type:"object", properties:{assistantToken:{type:"string",minLength:20},projectId:{type:"string",format:"uuid"},status:{type:"string",enum:["planned","analyzing","building","testing","blocked","completed","failed"]},progress:{type:"integer",minimum:0,maximum:100},currentStage:{type:"string",maxLength:120},summary:{type:"string",maxLength:2000},message:{type:"string",minLength:1,maxLength:2000},verified:{type:"boolean"}}, required:["assistantToken","projectId","message"], additionalProperties:false }
     },
+  {
     name: "revokeNexcraftPairing",
     description: "Revoke the assistant's access to a paired NEXCRAFT device.",
     inputSchema: {
